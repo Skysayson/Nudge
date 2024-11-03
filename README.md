@@ -1,4 +1,6 @@
-# Nudge
+![Alt text](https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/Group%201.svg) <br>
+
+# What is Nudge?
 Nudge is a simple Task Manager with Team Collaboration created in compliance for our App Development (3105) class.
 
 ## Table of Contents
@@ -14,7 +16,7 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 - [License](#license)
 
 ## Technologies Used
-
+- **UI/UX:** Figma
 - **Frontend:** React, Tailwind CSS, Typescript, Mantine
 - **Backend:** Express, Sequelize, NodeJS
 - **Database:** SQL
@@ -24,7 +26,7 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 
 ```
 your-project/
-│![Uploading Group 1.svg…]()
+│
 |
 ├── Nudge-TaskManager/
   ├── Client/           # React frontend
