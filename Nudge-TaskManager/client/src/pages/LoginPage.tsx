@@ -41,12 +41,12 @@ function LoginPage() {
           </div>
           <div className="flex lg:h-full lg:w-full items-center flex-col">
             <h1 className="text-[#8B8B8B] lg:p-6">or login with</h1>
-            <div className="flex lg:w-full flex-col justify-around lg:h-[65%]">
+            <div className="flex lg:w-full flex-col lg:h-[65%]">
               <div className="">
                 <Button
                   fullWidth
-                  size="lg"
-                  className="rounded-[100px] border border-[#B7CDDD] bg-[#33424C]"
+                  size="sm"
+                  className="rounded-[100px] border border-[#B7CDDD] bg-[#33424C] lg:h-[45px] lg:mb-[40px]"
                 >
                   <div className="flex items-center ">
                     <img src={GoogleLogo} alt="" width={18} />
@@ -59,8 +59,8 @@ function LoginPage() {
               <div className="flex flex-col items-center">
                 <Button
                   fullWidth
-                  size="lg"
-                  className="rounded-[100px] border border-[#698192] bg-[#698192]"
+                  size="sm"
+                  className="rounded-[100px] border border-[#698192] bg-[#698192] md:mb-[10px] lg:h-[45px] lg:mb-[40px]"
                 >
                   <h1 className="text-[15px] font-normal text-[#33424C]">
                     Log in
@@ -68,9 +68,9 @@ function LoginPage() {
                 </Button>
               </div>
               <div className="flex lg:w-full justify-center">
-                <div className="flex lg:w-[55%] justify-between">
-                  <h1 className="text-[#8B8B8B]">Don't have an account?</h1>
-                  <h1 className="text-[#4285F4]">Register</h1>
+                <div className="flex lg:w-[50%] justify-between md:w-[54%]">
+                  <h1 className="text-[#8B8B8B] lg:text-[14px]">Don't have an account?</h1>
+                  <h1 className="text-[#4285F4] lg:text-[14px]">Register</h1>
                 </div>
               </div>
             </div>
@@ -79,7 +79,7 @@ function LoginPage() {
       </div>
 
       <div className="flex border-blue-600 justify-center items-center w-[50%] h-full bg-[#33424C]">
-        <img src={NudgeLogo} alt="#" className="w-[85%]" />
+        <img src={NudgeLogo} alt="#" className="w-[75%]" />
       </div>
     </div>
   );
