@@ -9,9 +9,9 @@ function LoginPage() {
   return (
     <div className="flex w-screen h-screen">
       <div className="flex border-red-600 w-[50%] h-full bg-[#151C21] items-center justify-center">
-        <div className="flex flex-col border-white lg:w-[43%] lg:h-[55%] md:w-[50%] md:h-[60%]">
+        <div className="flex flex-col border-white 2xl:w-[43%] 2xl:h-[55%] lg:w-[50%] lg:h-[60%]">
           <div className="flex flex-col lg:h-max md:h-[30%] border-orange-600 lg:w-[100%]">
-            <h1 className="text-[#B7CDDE] lg:mb-[15px] md:text-[20px] lg:text-[24px]">
+            <h1 className="text-[#B7CDDE] mb-[15px] 2xl:text-[20px] lg:text-[22px]">
               Welcome back to Nudge!
             </h1>
             <div className="lg:mb-[15px]">
@@ -39,14 +39,14 @@ function LoginPage() {
               <PasswordInput placeholder="Your Password" size="md" />
             </div>
           </div>
-          <div className="flex lg:h-full lg:w-full items-center flex-col">
-            <h1 className="text-[#8B8B8B] lg:p-6">or login with</h1>
+          <div className="flex h-full w-full items-center flex-col">
+            <h1 className="text-[#8B8B8B] lg:text-[13px] xl:p-6">or login with</h1>
             <div className="flex lg:w-full flex-col lg:h-[65%]">
               <div className="">
                 <Button
                   fullWidth
                   size="sm"
-                  className="rounded-[100px] border border-[#B7CDDD] bg-[#33424C] lg:h-[45px] lg:mb-[40px]"
+                  className="rounded-[100px] border border-[#B7CDDD] bg-[#33424C] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px]"
                 >
                   <div className="flex items-center ">
                     <img src={GoogleLogo} alt="" width={18} />
@@ -60,7 +60,7 @@ function LoginPage() {
                 <Button
                   fullWidth
                   size="sm"
-                  className="rounded-[100px] border border-[#698192] bg-[#698192] md:mb-[10px] lg:h-[45px] lg:mb-[40px]"
+                  className="rounded-[100px] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px]"
                 >
                   <h1 className="text-[15px] font-normal text-[#33424C]">
                     Log in
@@ -68,9 +68,9 @@ function LoginPage() {
                 </Button>
               </div>
               <div className="flex lg:w-full justify-center">
-                <div className="flex lg:w-[50%] justify-between md:w-[54%]">
-                  <h1 className="text-[#8B8B8B] lg:text-[14px]">Don't have an account?</h1>
-                  <h1 className="text-[#4285F4] lg:text-[14px]">Register</h1>
+                <div className="flex lg:w-[48%] 2xl:w-[49%] justify-between">
+                  <h1 className="text-[#8B8B8B] lg:text-[12px] 2xl:text-[14px]">Don't have an account?</h1>
+                  <h1 className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px]">Register</h1>
                 </div>
               </div>
             </div>
