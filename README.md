@@ -1,6 +1,6 @@
 ![Alt text](https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/Group%201.svg) <br>
 
-# What is Nudge?
+# What is it?
 Nudge is a simple Task Manager with Team Collaboration created in compliance for our App Development (3105) class.
 
 ## Table of Contents
