@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 import LoginPage from "./pages/LoginPage";
+import BasePage from "./components/BasePage";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -11,7 +12,8 @@ createRoot(document.getElementById("root")!).render(
     <MantineProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/LoginPage" element={<LoginPage />} />{" "}
+          <Route path="/BasePage" element={<BasePage/>}/>
+          <Route path="/LoginPage" element={<LoginPage />}/>
           {/* Fallback for 404 */}
         </Routes>
       </BrowserRouter>
