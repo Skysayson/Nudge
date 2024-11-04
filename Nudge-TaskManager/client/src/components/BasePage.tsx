@@ -24,7 +24,9 @@ const BasePage = () => {
               leftSection={<IconSearch size={17}></IconSearch>}
               styles={{
                 input: {
-                  backgroundColor: "#4B5D6A", // Change this to your desired color
+                  backgroundColor: "#4B5D6A",
+                  color: "white"
+                   // Change this to your desired color
                 },
               }}
               className="text-[#667988] mb-[29px] "
