@@ -1,0 +1,42 @@
+.card {
+    background-color: #33424C;
+    margin-top: 22.09px;
+    border: none;
+  }
+  
+  .label {
+    color: #C9C9C9;
+    line-height: 1;
+    font-size: 1;
+  }
+  
+  .lead {
+    color: #C9C9C9;
+    font-family: 'Greycliff CF', var(--mantine-font-family);
+    font-size: 1; /* 22px */
+    line-height: 1;
+  }
+  
+  .inner {
+    display: flex;
+  }
+  
+  @media (max-width: 640px) { /* Assuming $mantine-breakpoint-xs is 640px */
+    .inner {
+      flex-direction: column;
+    }
+  }
+  
+  .ring {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  @media (max-width: 640px) {
+    .ring {
+      justify-content: center;
+      margin-top: var(--mantine-spacing-md); /* Ensure this variable is defined */
+    }
+  }
+  

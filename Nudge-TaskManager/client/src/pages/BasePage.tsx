@@ -6,12 +6,17 @@ import {
   IconLogout,
   IconBell
 } from "@tabler/icons-react";
+import DashboardPage from "./DashboardPage";
+import { useState } from "react";
 
 const BasePage = () => {
-  const teams = ["Team 1", "Team 2", "Team 3"];
+  const teams = ["Team 1", "Team 2", "Team 3"]
+  const [selectDash, setSelectDash] = useState(false)
+
+  const DashBoard = () => { setSelectDash(true)}
 
   return (
-    <div className="flex w-screen h-screen border-blue-600">
+    <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
       <div className="flex flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
         <div className="flex border-blue-600 h-max w-max">
           <img src={NudgeLogo} alt="" width={152} />
@@ -26,7 +31,7 @@ const BasePage = () => {
                 input: {
                   backgroundColor: "#4B5D6A",
                   color: "white"
-                   // Change this to your desired color
+                  // Change this to your desired color
                 },
               }}
               className="text-[#667988] mb-[29px] "
@@ -45,6 +50,7 @@ const BasePage = () => {
                   />
                 }
                 className="flex items-center justify-start font-light"
+                onClick={DashBoard}
               >
                 DashBoard
               </Button>
@@ -54,6 +60,7 @@ const BasePage = () => {
               <h1 className="text-[#4B5D69] text-[12px]">TEAMS</h1>
               {teams.map((index) => (
                 <Button
+                  key={index}
                   variant="subtle"
                   color="#667988"
                   className="flex items-center justify-start"
@@ -85,23 +92,24 @@ const BasePage = () => {
           </div>
         </div>
       </div>
-      <div className="bg-[#151C21] w-full flex">
-        <div className="flex items-center pl-[33px] pr-[33px] justify-between shadow-custom-shadow  w-full border-b border-[#4B5D6A] h-[83px] bg-[#1A2329]">
+      <div className="bg-[#151C21] w-full h-full flex flex-col"> {/* MAIN CONTENT DIV */}
+        <div className="flex items-center pl-[33px] pr-[33px] justify-between shadow-custom-shadow  w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
           <div className="text-[#6C899C] text-[32px]">
-            Team Name / Team Name
+            Teamname / Teamname
           </div>
 
-          <div className="flex h-max w-max items-center ">
-            <div className="flex items-center">
+          <div className="flex items-center">
+            <div className="flex h-max w-max items-center ">
               <ActionIcon variant="transparent" color="gray">
-                <IconBell/>
+                <IconBell />
               </ActionIcon>
             </div>
             <div className="flex items-center ml-[28.4px]">
-             <Avatar/>
+              <Avatar />
             </div>
           </div>
         </div>
+        {selectDash && <DashboardPage />}
       </div>
     </div>
   );
