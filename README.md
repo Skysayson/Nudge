@@ -85,3 +85,5 @@ If you'd like to contribute to this project, please fork the repository and subm
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+README from https://github.com/chanAbay-abay/Kuripot
