@@ -78,10 +78,6 @@ To run both the frontend and backend, use Docker Compose:
 
 Your Express server should be accessible at `http://localhost:5001`, and your React app at `http://localhost:3000`.
 
-## Usage
-
-Provide instructions on how to use your project. Include examples if necessary.
-
 ## Contributing
 
 If you'd like to contribute to this project, please fork the repository and submit a pull request.
