@@ -1,5 +1,5 @@
 import TaskCard from "./TaskCard";
-import { StatTask } from ".././interfaces/interfaces";
+import { StatTask,TaskContent } from ".././interfaces/interfaces";
 
 const StatusBar = ({ TaskStat }: { TaskStat: StatTask }) => {
   return (
@@ -10,7 +10,7 @@ const StatusBar = ({ TaskStat }: { TaskStat: StatTask }) => {
 
       <div className="max-h-[75%] overflow-y-auto w-full mt-[10px] scrollbar-hide">
         {Array.from({ length: TaskStat.tasks }, (_, index) => (
-          <TaskCard key={index} TaskStat={TaskStat} />
+          <TaskCard key={index} TaskStat={TaskStat}/>
         ))}
       </div>
     </div>
