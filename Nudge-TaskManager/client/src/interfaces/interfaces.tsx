@@ -1,8 +1,3 @@
-export interface StatTask {
-    status: string;
-    tasks: number;
-}
-
 export interface TaskContent {
     priority: string;
     title: string;
@@ -10,3 +5,9 @@ export interface TaskContent {
     assigned: string[];
     comments: number;
 }
+export interface StatTask {
+    status: string;
+    tasks: number;
+    Content: TaskContent;
+}
+
