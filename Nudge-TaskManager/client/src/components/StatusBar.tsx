@@ -1,5 +1,5 @@
 import TaskCard from "./TaskCard";
-import { StatTask,TaskContent } from ".././interfaces/interfaces";
+import { StatTask, } from ".././interfaces/interfaces";
 
 const StatusBar = ({ TaskStat }: { TaskStat: StatTask }) => {
   return (
