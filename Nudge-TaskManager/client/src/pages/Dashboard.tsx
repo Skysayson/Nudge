@@ -6,7 +6,7 @@ import {
   IconLogout,
   IconBell
 } from "@tabler/icons-react";
-import DashboardPage from "./DashboardPage";
+import DashboardPage from "./DashboardContent";
 import { useState } from "react";
 
 const BasePage = () => {

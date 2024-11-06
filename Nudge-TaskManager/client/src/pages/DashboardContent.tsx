@@ -8,29 +8,37 @@ import {
 } from "@mantine/core";
 import { IconPlus, IconFilter, IconArrowsSort } from "@tabler/icons-react";
 import StatusBar from "../components/StatusBar";
-import { StatTask } from "../interfaces/interfaces";
+import { StatTask, TaskContent } from "../interfaces/interfaces";
 import { Calendar } from "@mantine/dates";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import classes from "../StatsRingCard.module.css";
 
 const DashboardPage = () => {
+  const mockTask: TaskContent = {
+    priority: "High",
+    title: "UI/UX Design",
+    content: "Wireframe needed for in figma",
+    assigned: ["Michael", "George", "Sky"],
+    comments: 5,
+  };
+
   const status: StatTask[] = [
-    { status: "Incomplete", tasks: 4 },
-    { status: "In Progress", tasks: 2 },
-    { status: "Complete", tasks: 6 },
+    { status: "Incomplete", tasks: 4, Content: mockTask },
+    { status: "In Progress", tasks: 2, Content: mockTask },
+    { status: "Complete", tasks: 6, Content: mockTask },
   ];
 
   const [screenSize, setScreenSize] = useState("sm");
 
   const stats = [
-    { value: 447, label: "Remaining" },
-    { value: 76, label: "In progress" },
+    { value: status[1].tasks, label: "In Progress" },
+    { value: status[0].tasks, label: "Incomplete" },
   ];
 
   const theme = useMantineTheme();
-  const completed = 1887;
-  const total = 2334;
+  const completed = status[2].tasks;
+  const total = status[0].tasks + status[1].tasks + status[2].tasks;
   const items = stats.map((stat) => (
     <div key={stat.label}>
       <Text className={classes.label}>{stat.value}</Text>
@@ -54,7 +62,7 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setScreenSize(window.innerWidth > 1536 ? "md" : "sm"); 
+      setScreenSize(window.innerWidth > 1536 ? "md" : "sm");
     };
 
     window.addEventListener("resize", handleResize);
@@ -108,12 +116,17 @@ const DashboardPage = () => {
       </div>
       <div className="w-max flex flex-col h-full">
         <Calendar
-          className={`bg-[#33424C] p-4 rounded-xl mt-[10px] w-full`} // Use w-full for responsive width
-          size={screenSize === "sm" ? "sm" : "md"} // Conditional size based on screen size
+          className="bg-[#33424C] p-4 rounded-md mt-[10px] w-full"
+          size={screenSize === "sm" ? "sm" : "md"}
           getDayProps={(date) => ({
             selected: selected.some((s) => dayjs(date).isSame(s, "date")),
             onClick: () => handleSelect(date),
           })}
+          styles={{
+            day: {
+              color: "#C9C9C9", // Change default day text color
+            },
+          }}
         />
         <Card p="xl" radius="md" className={`${classes.card}`}>
           <div className={`${classes.inner}`}>
@@ -123,13 +136,15 @@ const DashboardPage = () => {
               </Text>
               <div>
                 <Text className={classes.lead} mt={30}>
-                  1887
+                  {status[2].tasks}
                 </Text>
                 <Text fz="xs" c="dimmed">
                   Completed
                 </Text>
               </div>
-              <Group mt="lg">{items}</Group>
+              <Group className="text-white" mt="lg">
+                {items}
+              </Group>
             </div>
 
             <div className={classes.ring}>
