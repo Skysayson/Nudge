@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 import LoginPage from "./pages/LoginPage";
-import BasePage from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import "./index.css";
 import DashboardPage from "./pages/DashboardContent";
 import '@mantine/dates/styles.css';
@@ -14,8 +14,8 @@ createRoot(document.getElementById("root")!).render(
     <MantineProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/DashboardPage" element={<DashboardPage/>}></Route>
-          <Route path="/BasePage" element={<BasePage/>}/>
+          <Route path="/DashboardContent" element={<DashboardPage/>}></Route>
+          <Route path="/DashboardPage" element={<Dashboard/>}/>
           <Route path="/LoginPage" element={<LoginPage />}/>
         </Routes>
       </BrowserRouter>
