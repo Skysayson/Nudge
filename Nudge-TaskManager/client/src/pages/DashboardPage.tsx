@@ -8,18 +8,27 @@ import {
 } from "@mantine/core";
 import { IconPlus, IconFilter, IconArrowsSort } from "@tabler/icons-react";
 import StatusBar from "../components/StatusBar";
-import { StatTask } from "../interfaces/interfaces";
+import { StatTask, TaskContent } from "../interfaces/interfaces";
 import { Calendar } from "@mantine/dates";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import classes from "../StatsRingCard.module.css";
 
 const DashboardPage = () => {
+  const mockTask: TaskContent = {
+    priority: "High",
+    title: "UI/UX Design",
+    content: "Wireframe needed for in figma",
+    assigned: ["Michael", "George", "Sky"],
+    comments: 5
+  }
+
   const status: StatTask[] = [
-    { status: "Incomplete", tasks: 4 },
-    { status: "In Progress", tasks: 2 },
-    { status: "Complete", tasks: 6 },
+    { status: "Incomplete", tasks: 4 , Content: mockTask},
+    { status: "In Progress", tasks: 2 , Content: mockTask},
+    { status: "Complete", tasks: 6 , Content: mockTask},
   ];
+
 
   const [screenSize, setScreenSize] = useState("sm");
 
@@ -54,7 +63,7 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setScreenSize(window.innerWidth > 1536 ? "md" : "sm"); 
+      setScreenSize(window.innerWidth > 1536 ? "md" : "sm");
     };
 
     window.addEventListener("resize", handleResize);
@@ -102,13 +111,13 @@ const DashboardPage = () => {
         </div>
         <div className=" border-green-600 w-full h-full flex mt-[27.65px]">
           {status.map((stat: StatTask, index: number) => (
-            <StatusBar key={index} TaskStat={stat} />
+            <StatusBar key={index} TaskStat={stat}/>
           ))}
         </div>
       </div>
       <div className="w-max flex flex-col h-full">
         <Calendar
-          className={`bg-[#33424C] p-4 rounded-xl mt-[10px] w-full`} // Use w-full for responsive width
+          className={`bg-[#33424C] p-4 rounded-md mt-[10px] w-full`} // Use w-full for responsive width
           size={screenSize === "sm" ? "sm" : "md"} // Conditional size based on screen size
           getDayProps={(date) => ({
             selected: selected.some((s) => dayjs(date).isSame(s, "date")),
