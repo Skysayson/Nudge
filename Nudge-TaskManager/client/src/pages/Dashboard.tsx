@@ -9,11 +9,13 @@ import {
 import DashboardPage from "./DashboardContent";
 import { useState } from "react";
 
-const BasePage = () => {
+const DashBoard = () => {
   const teams = ["Team 1", "Team 2", "Team 3"]
   const [selectDash, setSelectDash] = useState(false)
+  const [changeTeam, setChangeTeam] = useState(false);
 
   const DashBoard = () => { setSelectDash(true)}
+  const TeamChange = () => {setChangeTeam(!changeTeam)}
 
   return (
     <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
@@ -64,6 +66,7 @@ const BasePage = () => {
                   variant="subtle"
                   color="#667988"
                   className="flex items-center justify-start"
+                  onClick={TeamChange}
                   leftSection={
                     <IconLayoutDashboard
                       size="1rem"
@@ -95,7 +98,7 @@ const BasePage = () => {
       <div className="bg-[#151C21] w-full h-full flex flex-col"> {/* MAIN CONTENT DIV */}
         <div className="flex items-center pl-[33px] pr-[33px] justify-between shadow-custom-shadow  w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
           <div className="text-[#6C899C] text-[32px]">
-            Teamname / Teamname
+              {teams[0]}
           </div>
 
           <div className="flex items-center">
@@ -115,4 +118,4 @@ const BasePage = () => {
   );
 };
 
-export default BasePage;
+export default DashBoard;
