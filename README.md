@@ -20,7 +20,6 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 - **Frontend:** React, Tailwind CSS, Typescript, Mantine
 - **Backend:** Express, Sequelize, NodeJS
 - **Database:** SQL
-- **Containerization:** Docker
 
 ## Project Structure
 
@@ -30,14 +29,12 @@ your-project/
 |
 ├── Nudge-TaskManager/
   ├── Client/           # React frontend
-  │   ├── Dockerfile
   │   ├── public/
   │   ├── src/
   │   ├── package.json
   │   └── ...
   │
   └── Server/           # Express backend
-      ├── Dockerfile
       ├── server.js
       ├── package.json
       └── ...
@@ -68,15 +65,6 @@ cd Nudge-TaskManager
 
 ### Running the Project
 
-To run both the frontend and backend, use Docker Compose:
-
-1. Make sure you’re in the root of your project directory.
-2. Run the following command:
-   ```bash
-   docker-compose up
-   ```
-
-Your Express server should be accessible at `http://localhost:5001`, and your React app at `http://localhost:3000`.
 
 ## Contributing
 
