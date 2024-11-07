@@ -9,7 +9,7 @@ const StatusBar = ({ TaskStat }: { TaskStat: StatTask }) => {
       </div>
 
       <div className="max-h-[75%] overflow-y-auto w-full mt-[10px] scrollbar-hide">
-        {Array.from({ length: TaskStat.tasks }, (_, index) => (
+        {Array.from({ length: TaskStat.Task.length }, (_, index) => (
           <TaskCard key={index} TaskStat={TaskStat}/>
         ))}
       </div>
