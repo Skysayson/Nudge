@@ -6,7 +6,6 @@ import { MantineProvider } from "@mantine/core";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import "./index.css";
-import DashboardPage from "./pages/DashboardContent";
 import '@mantine/dates/styles.css';
 
 createRoot(document.getElementById("root")!).render(
@@ -14,8 +13,7 @@ createRoot(document.getElementById("root")!).render(
     <MantineProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/DashboardContent" element={<DashboardPage/>}></Route>
-          <Route path="/DashboardPage" element={<Dashboard/>}/>
+          <Route path="/Dashboard" element={<Dashboard/>}/>
           <Route path="/LoginPage" element={<LoginPage />}/>
         </Routes>
       </BrowserRouter>
