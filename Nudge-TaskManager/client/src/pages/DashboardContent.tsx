@@ -20,7 +20,7 @@ const DashboardPage = () => {
         status: "Incomplete",
         priority: "High",
         title: "UI/UX Design",
-        content: "Wireframe needed in Figma",
+        content: "Wireframe needed in Figma ASAP",
         assigned: ["Michael", "George", "Sky"],
         comments: 5,
         due: new Date('2024-11-15'), // Example due date
