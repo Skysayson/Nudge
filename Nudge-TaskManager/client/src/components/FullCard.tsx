@@ -1,8 +1,8 @@
-import React from 'react'
-
 const FullCard = () => {
   return (
-    <div>FullCard</div>
+    <div className="flex w-screen h-screen items-center justify-center">
+      FullCard
+    </div>
   )
 }
 

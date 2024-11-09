@@ -35,24 +35,24 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
   }, [TaskStat.Task]);
 
   return (
-    <div className="hover:cursor-pointer flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       {TaskStat.Task.map((task, index) => (
         <Card
           key={index}
           radius="sm"
-          className="w-full h-[270px] bg-[#192228] mt-[15px] p-[25.36px]"
+          className="w-full h-[270px] bg-[#192228] mt-[15px] p-[25.36px] hover:cursor-pointer hover:border"
         >
-          <Group className="justify-between flex w-full">
+          <Group className="flex w-full justify-between">
             <Badge
               style={{ backgroundColor: statusColor }}
-              className="flex font-normal items-center 2xl:w-max lg:w-[100px] h-[23px]"
+              className="flex font-normal items-center 2xl:w-max h-[23px]"
               leftSection={
                 TaskStat.status === "Incomplete" ? (
-                  <IconX size="20" />
+                  <IconX size="15" />
                 ) : TaskStat.status === "In Progress" ? (
-                  <IconLoader size="20" />
+                  <IconLoader size="15" />
                 ) : (
-                  <IconCheck size="20" />
+                  <IconCheck size="15" />
                 )
               }
             >
