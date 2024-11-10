@@ -11,10 +11,13 @@ import StatusBar from "../components/StatusBar";
 import { StatTask, TaskContent } from "../interfaces/interfaces";
 import { Calendar } from "@mantine/dates";
 import dayjs from "dayjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import classes from "../StatsRingCard.module.css";
+import { ThemeContext } from "./Dashboard";
 
 const DashboardPage = () => {
+  const { selectDash, setSelectDash } = useContext(ThemeContext)
+
   const incompleteTasks: TaskContent[] = [
     {
         status: "Incomplete",
@@ -192,7 +195,7 @@ const completeTasks: TaskContent[] = [
         </div>
         <div className=" border-green-600 w-full h-full flex mt-[27.65px]">
           {status.map((stat: StatTask, index: number) => (
-            <StatusBar key={index} TaskStat={stat} />
+            <StatusBar key={index} TaskStat={stat} selectDash={selectDash} setSelectDash={setSelectDash}/>
           ))}
         </div>
       </div>

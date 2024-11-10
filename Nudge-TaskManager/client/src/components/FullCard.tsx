@@ -1,6 +1,6 @@
 const FullCard = () => {
   return (
-    <div className="flex w-screen h-screen items-center justify-center">
+    <div className="flex text-white border border-red-600 w-full h-full">
       FullCard
     </div>
   )
