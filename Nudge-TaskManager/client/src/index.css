@@ -42,19 +42,10 @@ body {
   
   .inner {
     display: flex;
-  
-    @media (max-width: $mantine-breakpoint-xs) {
-      flex-direction: column;
-    }
   }
   
   .ring {
     flex: 1;
     display: flex;
     justify-content: flex-end;
-  
-    @media (max-width: $mantine-breakpoint-xs) {
-      justify-content: center;
-      margin-top: var(--mantine-spacing-md);
-    }
   }
