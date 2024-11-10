@@ -84,9 +84,9 @@ function LoginPage() {
                   </h1>
                 </Button>
               </div>
-              <div className="flex lg:w-full justify-center">
-                <div className="flex lg:w-[45%] 2xl:w-[49%] justify-between">
-                  <h1 className="text-[#8B8B8B] lg:text-[12px] 2xl:text-[14px]">
+              <div className="flex lg:w-full justify-center items-center">
+                <div className="flex 2xl:w-[49%] justify-between">
+                  <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">
                     Don't have an account?
                   </h1>
                   <h1 className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px]">

@@ -14,9 +14,9 @@ createRoot(document.getElementById("root")!).render(
     <MantineProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/TaskCard" element={<FullCard/>}/>
+          <Route path="/Dashboard/TaskCard" element={<FullCard/>}/>
           <Route path="/Dashboard" element={<Dashboard/>}/>
-          <Route path="/LoginPage" element={<LoginPage />}/>
+          <Route path="/" element={<LoginPage />}/>
         </Routes>
       </BrowserRouter>
     </MantineProvider>

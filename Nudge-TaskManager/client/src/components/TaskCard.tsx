@@ -8,10 +8,18 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { StatTask } from "../interfaces/interfaces";
+import FullCard from "./FullCard";
 
-const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
+type TaskCardProps = {
+  TaskStat: StatTask;
+  selectDash: boolean;
+  setSelectDash: (value: boolean) => void;
+};
+
+const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
   const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState<string[]>([]);
+  const [renderFullTask, setRenderFullTask] = useState(false);
 
   // Set color based on TaskStat.status
   useEffect(() => {
@@ -34,18 +42,26 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
     setPriorityColors(colors);
   }, [TaskStat.Task]);
 
+  const handleClick = () => {
+    // Toggle the FullCard visibility
+    setRenderFullTask(!renderFullTask);
+    // Hide the dashboard
+    setSelectDash(false);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center">
       {TaskStat.Task.map((task, index) => (
         <Card
-          key={index}
+          key={task.title}
           radius="sm"
           className="w-full h-[270px] bg-[#192228] mt-[15px] p-[25.36px] hover:cursor-pointer hover:border"
+          onClick={handleClick} // Only this onClick should handle the logic
         >
           <Group className="flex w-full justify-between">
             <Badge
               style={{ backgroundColor: statusColor }}
-              className="flex font-normal items-center 2xl:w-max h-[23px]"
+              className="flex font-normal items-center lg:w-[51%] 2xl:w-max h-[23px]"
               leftSection={
                 TaskStat.status === "Incomplete" ? (
                   <IconX size="15" />
@@ -105,7 +121,7 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
                   ) : (
                     <span className="text-[#688193] text-[80%]">
                       No one assigned
-                    </span> // Optional fallback if no one is assigned
+                    </span>
                   )}
                 </div>
 
@@ -123,6 +139,7 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
           </div>
         </Card>
       ))}
+      {renderFullTask && <FullCard />}
     </div>
   );
 };
