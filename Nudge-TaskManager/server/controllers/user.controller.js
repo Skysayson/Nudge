@@ -5,10 +5,8 @@ const createUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user with the hashed password
     const user = await User.create({
       username,
       email,
@@ -59,13 +57,11 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Hash the new password if provided
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
     }
 
-    // Update user details
     user.username = username || user.username;
     user.email = email || user.email;
 
