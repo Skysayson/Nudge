@@ -8,125 +8,28 @@ import {
 } from "@mantine/core";
 import { IconPlus, IconFilter, IconArrowsSort } from "@tabler/icons-react";
 import StatusBar from "../components/StatusBar";
-import { StatTask, TaskContent } from "../interfaces/interfaces";
+import { StatTask } from "../interfaces/interfaces";
 import { Calendar } from "@mantine/dates";
 import dayjs from "dayjs";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import classes from "../StatsRingCard.module.css";
-import { ThemeContext } from "./Dashboard";
 
-const DashboardPage = () => {
-  const { selectDash, setSelectDash } = useContext(ThemeContext)
+const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
 
-  const incompleteTasks: TaskContent[] = [
-    {
-        status: "Incomplete",
-        priority: "High",
-        title: "UI/UX Design",
-        content: "Wireframe needed in Figma",
-        assigned: ["Michael", "George", "Sky"],
-        comments: 5,
-        due: new Date('2024-11-15'), // Example due date
-    },
-    {
-        status: "Incomplete",
-        priority: "Medium",
-        title: "Content Creation",
-        content: "Draft new articles for the blog",
-        assigned: ["Ava", "Mia"],
-        comments: 2,
-        due: new Date('2024-11-20'), // Example due date
-    },
-    {
-        status: "Incomplete",
-        priority: "Low",
-        title: "Meeting Preparation",
-        content: "Organize agenda for client meeting",
-        assigned: ["Henry"],
-        comments: 0,
-        due: new Date('2024-11-25'), // Example due date
-    },
-];
-
-const inProgressTasks: TaskContent[] = [
-    {
-        status: "In Progress",
-        priority: "High",
-        title: "Security Audit",
-        content: "Conduct vulnerability assessments",
-        assigned: ["James", "Lucas"],
-        comments: 4,
-        due: new Date('2024-11-18'), // Example due date
-    },
-    {
-        status: "In Progress",
-        priority: "Medium",
-        title: "API Integration",
-        content: "Connect the frontend with backend services",
-        assigned: ["Sophia", "Oliver"],
-        comments: 3,
-        due: new Date('2024-11-22'), // Example due date
-    },
-    {
-        status: "In Progress",
-        priority: "Low",
-        title: "Marketing Plan",
-        content: "Develop a Q4 marketing strategy",
-        assigned: ["William", "Ella"],
-        comments: 1,
-        due: new Date('2024-11-30'), // Example due date
-    },
-];
-
-const completeTasks: TaskContent[] = [
-    {
-        status: "Complete",
-        priority: "High",
-        title: "Bug Fixes",
-        content: "Resolve critical issues in production",
-        assigned: [],
-        comments: 6,
-        due: new Date('2024-10-30'), // Example due date
-    },
-    {
-        status: "Complete",
-        priority: "Medium",
-        title: "Testing",
-        content: "Create test cases for new features",
-        assigned: ["Isabella", "Jack"],
-        comments: 3,
-        due: new Date('2024-10-25'), // Example due date
-    },
-    {
-        status: "Complete",
-        priority: "Low",
-        title: "Database Optimization",
-        content: "Analyze and improve query performance",
-        assigned: ["Emma"],
-        comments: 1,
-        due: new Date('2024-10-20'), // Example due date
-    },
-];
-  
-  const status: StatTask[] = [
-    { status: "Incomplete", Task: incompleteTasks},
-    { status: "In Progress", Task: inProgressTasks},
-    { status: "Complete", Task: completeTasks},
-  ];
-
+  const [selectDash, setSelectDash] = useState(false)
   const [screenSize, setScreenSize] = useState("sm");
 
   const stats = [
-    { value: status[1].Task.length, label: "In Progress" },
-    { value: status[0].Task.length, label: "Incomplete" },
+    { value: StatTask[1], label: "In Progress" },
+    { value: StatTask[0], label: "Incomplete" },
   ];
 
   const theme = useMantineTheme();
-  const completed = status[2].Task.length;
-  const total = status[0].Task.length + status[1].Task.length + status[2].Task.length;
+  const completed = StatTask[2].Task.length;
+  const total = StatTask[0].Task.length + StatTask[1].Task.length + StatTask[2].Task.length;
   const items = stats.map((stat) => (
     <div key={stat.label}>
-      <Text className={classes.label}>{stat.value}</Text>
+      <Text className={classes.label}>s</Text>
       <Text size="xs" c="dimmed">
         {stat.label}
       </Text>
@@ -194,7 +97,7 @@ const completeTasks: TaskContent[] = [
           </div>
         </div>
         <div className=" border-green-600 w-full h-full flex mt-[27.65px]">
-          {status.map((stat: StatTask, index: number) => (
+          {StatTask.map((stat: StatTask, index: number) => (
             <StatusBar key={index} TaskStat={stat} selectDash={selectDash} setSelectDash={setSelectDash}/>
           ))}
         </div>
@@ -221,7 +124,7 @@ const completeTasks: TaskContent[] = [
               </Text>
               <div>
                 <Text className={classes.lead} mt={30}>
-                  {status[2].Task.length}
+                  {StatTask[2].Task.length}
                 </Text>
                 <Text fz="xs" c="dimmed">
                   Completed

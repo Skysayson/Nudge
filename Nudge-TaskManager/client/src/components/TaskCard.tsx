@@ -6,15 +6,28 @@ import {
   IconCheck,
   IconFlag,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState,createContext, Dispatch, SetStateAction } from "react";
 import { StatTask } from "../interfaces/interfaces";
-import FullCard from "./FullCard";
 
 type TaskCardProps = {
   TaskStat: StatTask;
   selectDash: boolean;
   setSelectDash: (value: boolean) => void;
 };
+
+// Define the correct type for the context
+type ThemeContextType = {
+  renderFullTask: boolean;
+  setRenderFullTask: Dispatch<SetStateAction<boolean>>; // Correct type for the setter function
+};
+
+// Create the context with the default value
+const defaultThemeContext: ThemeContextType = {
+  renderFullTask: false,
+  setRenderFullTask: () => {}, // Default function
+};
+
+export const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
 
 const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
   const [statusColor, setStatusColor] = useState("");
@@ -47,15 +60,17 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
     setRenderFullTask(!renderFullTask);
     // Hide the dashboard
     setSelectDash(false);
+    console.log(renderFullTask)
   };
 
   return (
+    <ThemeContext.Provider value={{ renderFullTask, setRenderFullTask }}>
     <div className="flex flex-col items-center justify-center">
       {TaskStat.Task.map((task, index) => (
         <Card
           key={task.title}
           radius="sm"
-          className="w-full h-[270px] bg-[#192228] mt-[15px] p-[25.36px] hover:cursor-pointer hover:border"
+          className="w-full h-max bg-[#192228] mt-[20px] p-[25.36px] hover:cursor-pointer hover:border"
           onClick={handleClick} // Only this onClick should handle the logic
         >
           <Group className="flex w-full justify-between">
@@ -93,8 +108,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
                 fz="sm"
                 c="dimmed"
                 mt={5}
-                lineClamp={3}
-                className="w-full"
+                lineClamp={10}
+                className="w-full mb-[15%] h-max"
                 style={{
                   wordBreak: "break-word",
                   overflowWrap: "break-word",
@@ -139,8 +154,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
           </div>
         </Card>
       ))}
-      {renderFullTask && <FullCard />}
     </div>
+    </ThemeContext.Provider>
   );
 };
 
