@@ -6,33 +6,15 @@ import {
   IconCheck,
   IconFlag,
 } from "@tabler/icons-react";
-import { useEffect, useState,createContext, Dispatch, SetStateAction } from "react";
-import { StatTask } from "../interfaces/interfaces";
+import { useEffect, useState, useContext } from "react";
+import { StatTask, TaskContent } from "../interfaces/interfaces";
+import { ThemeContext } from "../interfaces/ThemeContext";
 
-type TaskCardProps = {
-  TaskStat: StatTask;
-  selectDash: boolean;
-  setSelectDash: (value: boolean) => void;
-};
 
-// Define the correct type for the context
-type ThemeContextType = {
-  renderFullTask: boolean;
-  setRenderFullTask: Dispatch<SetStateAction<boolean>>; // Correct type for the setter function
-};
-
-// Create the context with the default value
-const defaultThemeContext: ThemeContextType = {
-  renderFullTask: false,
-  setRenderFullTask: () => {}, // Default function
-};
-
-export const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
-
-const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
+const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
   const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState<string[]>([]);
-  const [renderFullTask, setRenderFullTask] = useState(false);
+  const themeContext = useContext(ThemeContext);
 
   // Set color based on TaskStat.status
   useEffect(() => {
@@ -55,23 +37,19 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
     setPriorityColors(colors);
   }, [TaskStat.Task]);
 
-  const handleClick = () => {
-    // Toggle the FullCard visibility
-    setRenderFullTask(!renderFullTask);
-    // Hide the dashboard
-    setSelectDash(false);
-    console.log(renderFullTask)
+  const handleClick = (task: TaskContent) => {
+    themeContext?.setSelectedTask(task);
+    themeContext?.setRenderFullTask(!themeContext.renderFullTask);
   };
 
   return (
-    <ThemeContext.Provider value={{ renderFullTask, setRenderFullTask }}>
     <div className="flex flex-col items-center justify-center">
       {TaskStat.Task.map((task, index) => (
         <Card
           key={task.title}
           radius="sm"
           className="w-full h-max bg-[#192228] mt-[20px] p-[25.36px] hover:cursor-pointer hover:border"
-          onClick={handleClick} // Only this onClick should handle the logic
+          onClick={() => handleClick(task)} // Only this onClick should handle the logic 
         >
           <Group className="flex w-full justify-between">
             <Badge
@@ -105,11 +83,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
           <div className="mt-[10px] p-[2px] h-full min-w-full flex flex-col justify-between">
             <div className="flex flex-col">
               <Text
+                fz="lg"
+                lineClamp={10}
+                color="#B7CDDE"
+                className="w-full mb-[2%] h-max text-[#B7CDDE]"
+                >
+                {task.title}
+              </Text>
+              <Text
                 fz="sm"
-                c="dimmed"
                 mt={5}
                 lineClamp={10}
-                className="w-full mb-[15%] h-max"
+                className="w-full mb-[15%] h-max text-[#88A7BD]"
                 style={{
                   wordBreak: "break-word",
                   overflowWrap: "break-word",
@@ -155,7 +140,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
         </Card>
       ))}
     </div>
-    </ThemeContext.Provider>
   );
 };
 

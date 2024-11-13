@@ -9,21 +9,29 @@ import DashboardPage from "./DashboardContent";
 import { useState } from "react";
 import NudgeLogo from "../assets/Group 1.svg";
 import { StatTask, TaskContent } from "../interfaces/interfaces";
+import { ThemeContext } from "../interfaces/ThemeContext";
+import FullCard from "../components/FullCard";
 
-const DashBoard = () => {
+export const DashBoard:React.FC= () => {
   const teams = ["Team 1", "Team 2", "Team 3"];
-  const [selectDash, setSelectDash] = useState(false);
-  const [changeTeam, setChangeTeam] = useState(false);
+  const [selectDash, setSelectDash] = useState(false); //Render content of Dashboard
+  const [renderFullTask, setRenderFullTask] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskContent | null>(null);
+
+  // const [changeTeam, setChangeTeam] = useState(false); 
 
   // Toggle dashboard visibility
   const toggleDashboard = () => {
-    setSelectDash(!selectDash);
+    if(selectDash === false) {
+      setSelectDash(true);
+    }
+    setRenderFullTask(false)
   };
 
   // Toggle team change (not currently using the value, just the function)
-  const TeamChange = () => {
-    setChangeTeam(!changeTeam);
-  };
+  // const TeamChange = () => {
+  //   setChangeTeam(!changeTeam);
+  // };
 
   const incompleteTasks: TaskContent[] = [
     {
@@ -131,7 +139,7 @@ const status: StatTask[] = [
 ];
 
   return (
-    // <DashThemeContext.Provider value={{ selectDash, setSelectDash }}>
+    <ThemeContext.Provider value={{ renderFullTask, setRenderFullTask, selectedTask, setSelectedTask }}>
       <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
         <div className="flex flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
           {/* Sidebar Content */}
@@ -173,7 +181,6 @@ const status: StatTask[] = [
                     variant="subtle"
                     color="#667988"
                     className="flex items-center justify-start"
-                    onClick={TeamChange}
                     leftSection={<IconLayoutDashboard size="1rem" />}
                   >
                     <span className="text-[14px] font-light">{team}</span>
@@ -210,10 +217,11 @@ const status: StatTask[] = [
               </div>
             </div>
           </div>
-          {selectDash && <DashboardPage StatTask={status}/>}
+          {selectDash && !renderFullTask && <DashboardPage StatTask={status} />}
+        {renderFullTask && selectedTask && <FullCard TaskContent={selectedTask} />}
         </div>
       </div>
-  //  </DashThemeContext.Provider>
+  </ThemeContext.Provider>
   );
 };
 
