@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const { User } = require("../models");
+const { generateToken } = require("../utils/jwt.util");
 
-//NOTE: Read-up on how I will go about bcrypt
-
+//TO BE USED FOR REGISTRATION
 const createUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -15,10 +15,41 @@ const createUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(201).json({ message: "User created successfully", user });
+    res.status(201).json({ message: "User created successfully...", user });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error creating user", error });
+    res.status(500).json({ message: "Error creating user...", error });
+  }
+};
+
+//TO BE USED FOR LOGGING IN
+const loginUser = async (req, res) => {
+  try {
+    //add code in here
+    const { email, password } = req.body;
+
+    const user = User.findOne({ where: email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User DNE..." });
+    }
+
+    const isValidPassword = false;
+    isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(400).json({ message: "Incorrect Password..." });
+    } else {
+      //MARY CODE NOTE: add in the code here for generating the jwt
+      const jwtToken = generateToken(user);
+
+      return res.json({ token });
+    }
+  } catch (error) {
+    //add code in here
+    return res
+      .status(500)
+      .json({ message: "Uh Oh, Something went wrong!...", error });
   }
 };
 
@@ -101,4 +132,5 @@ module.exports = {
   getUserById,
   updateUser,
   deleteUser,
+  loginUser,
 };
