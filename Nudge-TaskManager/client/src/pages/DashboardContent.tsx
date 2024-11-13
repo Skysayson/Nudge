@@ -62,7 +62,7 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
   }, []);
 
   return (
-    <div className="flex p-[19px] border-red-600 h-full w-full text-white">
+    <div className="flex p-[24px] border-red-600 h-full w-full text-white">
       <div className="flex w-[100%] border-blue-600 flex-col">
         <div className="items-center h-max justify-between border-white flex w-full">
           <Button

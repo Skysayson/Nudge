@@ -206,7 +206,7 @@ const status: StatTask[] = [
 
         {/* Main Content */}
         <div className="bg-[#151C21] w-full h-full flex flex-col">
-          <div className="flex items-center pl-[33px] pr-[33px] justify-between shadow-custom-shadow w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
+          <div className="flex items-center pl-[24px] pr-[24px] justify-between shadow-custom-shadow w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
             <div className="text-[#6C899C] text-[32px]">{teams[0]}</div>
             <div className="flex items-center">
               <ActionIcon variant="transparent" color="gray">
