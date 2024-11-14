@@ -4,8 +4,71 @@ import { Input, PasswordInput } from "@mantine/core";
 import { Button } from "@mantine/core";
 import GoogleLogo from "../assets/Vector.svg";
 import "../index.css";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
 
 function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const nav = useNavigate();
+
+  //NOTE TO SKY: I dunno how to get rid of the underline
+  // const loginUser = async (event) => {
+  //   event.preventDefault();
+
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:3000/api/user/login",
+  //       {
+  //         email: email,
+  //         password: password,
+  //       }
+  //     );
+
+  //     if (response.data.token) {
+  //       // Store the token in localStorage or state as needed
+  //       localStorage.setItem("token", response.data.token);
+  //       nav("/Dashboard");
+  //     } else {
+  //       alert("Invalid login credentials");
+  //     }
+  //   } catch (error) {
+  //     console.error("Login failed:", error);
+  //     alert("Login failed. Please try again.");
+  //   }
+  // };
+  const loginUser = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/user/login", // Make sure this is correct
+        {
+          email: email,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json", // Make sure the content-type is set
+          },
+        }
+      );
+
+      if (response.data.token) {
+        console.log("JWT Token:", response.data.token);
+        // Store the token in localStorage or cookies
+        localStorage.setItem("jwtToken", response.data.token);
+        nav("/Dashboard"); // Redirect to the dashboard after successful login
+      } else {
+        alert("Invalid login credentials");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Login failed. Please try again.");
+    }
+  };
+
   return (
     <div className="flex w-screen h-screen">
       <div className="flex border-red-600 w-[50%] h-full bg-[#151C21] items-center justify-center">
@@ -24,17 +87,19 @@ function LoginPage() {
               <Input.Wrapper>
                 <Input
                   placeholder="Your Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Change this to your desired color
-                      color: "white", // Optional: change the text color inside the input
+                      backgroundColor: "#4B5D6A",
+                      color: "white",
                     },
                   }}
                 />
               </Input.Wrapper>
             </div>
 
-            <div className="">
+            <div>
               <Input.Label
                 required
                 className="text-[#6C899C] pb-[5px] text-[12px]"
@@ -44,10 +109,12 @@ function LoginPage() {
               <Input.Wrapper>
                 <PasswordInput
                   placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Change this to your desired color
-                      color: "white", // Optional: change the text color inside the input
+                      backgroundColor: "#4B5D6A",
+                      color: "white",
                     },
                   }}
                 />
@@ -59,13 +126,13 @@ function LoginPage() {
               or login with
             </h1>
             <div className="flex lg:w-full flex-col lg:h-[65%]">
-              <div className="">
+              <div>
                 <Button
                   fullWidth
                   size="sm"
                   className="rounded-[100px] border border-[#B7CDDD] bg-[#33424C] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px]"
                 >
-                  <div className="flex items-center ">
+                  <div className="flex items-center">
                     <img src={GoogleLogo} alt="" width={18} />
                     <h1 className="text-[16px] font-normal ml-[5px] text-[#B7CDDD]">
                       Google
@@ -77,6 +144,7 @@ function LoginPage() {
                 <Button
                   fullWidth
                   size="sm"
+                  onClick={loginUser}
                   className="rounded-[100px] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px]"
                 >
                   <h1 className="text-[15px] font-normal text-[#33424C]">
