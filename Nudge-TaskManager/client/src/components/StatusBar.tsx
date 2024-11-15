@@ -7,7 +7,7 @@ type StatusBarProps = {
   setSelectDash: (value: boolean) => void;
 };
 
-const StatusBar = ({ TaskStat, selectDash, setSelectDash }: StatusBarProps) => {
+const StatusBar = ({ TaskStat }: StatusBarProps) => {
   return (
     <div className="w-full h-full pr-[20px]">
       <div className="relative bg-[#192228] border-t-[5.056px] border-t-[#88A7BD] p-[15.2px] rounded-xl lg:w-full lg:mr-[10px] lg:h-[60px] shadow-md">
@@ -19,8 +19,6 @@ const StatusBar = ({ TaskStat, selectDash, setSelectDash }: StatusBarProps) => {
           <TaskCard
             key={index}
             TaskStat={TaskStat}
-            selectDash={selectDash}  // Passing selectDash to TaskCard
-            setSelectDash={setSelectDash} // Passing setSelectDash to TaskCard
           />
         ))}
       </div>
