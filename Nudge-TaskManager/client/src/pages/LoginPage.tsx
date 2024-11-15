@@ -1,19 +1,24 @@
-import "@mantine/core/styles.css";
-import NudgeLogo from "../assets/Group 1.svg";
-import { Input, PasswordInput } from "@mantine/core";
-import { Button } from "@mantine/core";
-import GoogleLogo from "../assets/Vector.svg";
-import "../index.css";
+import "@mantine/core/styles.css"; // Import Mantine core styles
+import NudgeLogo from "../assets/Group 1.svg"; // Import Nudge logo
+import { Input, PasswordInput } from "@mantine/core"; // Mantine input components
+import { Button } from "@mantine/core"; // Mantine button component
+import GoogleLogo from "../assets/Vector.svg"; // Import Google logo for button
+import "../index.css"; // Import custom styles
 
+// LoginPage Component
 function LoginPage() {
   return (
     <div className="flex w-screen h-screen">
+      {/* Left Section: Login Form */}
       <div className="flex border-red-600 w-[50%] h-full bg-[#151C21] items-center justify-center">
         <div className="flex flex-col border-white 2xl:w-[43%] 2xl:h-[55%] lg:w-[50%] lg:h-[60%]">
+          {/* Login Form Header */}
           <div className="flex flex-col lg:h-max md:h-[30%] border-orange-600 lg:w-[100%]">
             <h1 className="text-[#B7CDDE] mb-[15px] 2xl:text-[20px] lg:text-[22px]">
               Welcome back to Nudge!
             </h1>
+
+            {/* Email Input */}
             <div className="lg:mb-[15px]">
               <Input.Label
                 required
@@ -26,14 +31,15 @@ function LoginPage() {
                   placeholder="Your Email"
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Change this to your desired color
-                      color: "white", // Optional: change the text color inside the input
+                      backgroundColor: "#4B5D6A", // Input background color
+                      color: "white", // Input text color
                     },
                   }}
                 />
               </Input.Wrapper>
             </div>
 
+            {/* Password Input */}
             <div className="">
               <Input.Label
                 required
@@ -46,19 +52,22 @@ function LoginPage() {
                   placeholder="Enter your password"
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Change this to your desired color
-                      color: "white", // Optional: change the text color inside the input
+                      backgroundColor: "#4B5D6A", // Input background color
+                      color: "white", // Input text color
                     },
                   }}
                 />
               </Input.Wrapper>
             </div>
           </div>
+
+          {/* Login Options */}
           <div className="flex h-full w-full items-center flex-col">
             <h1 className="text-[#8B8B8B] lg:text-[13px] xl:p-6">
               or login with
             </h1>
             <div className="flex lg:w-full flex-col lg:h-[65%]">
+              {/* Google Login Button */}
               <div className="">
                 <Button
                   fullWidth
@@ -73,6 +82,8 @@ function LoginPage() {
                   </div>
                 </Button>
               </div>
+
+              {/* Regular Login Button */}
               <div className="flex flex-col items-center">
                 <Button
                   fullWidth
@@ -84,6 +95,8 @@ function LoginPage() {
                   </h1>
                 </Button>
               </div>
+
+              {/* Register Option */}
               <div className="flex lg:w-full justify-center items-center">
                 <div className="flex 2xl:w-[49%] justify-between">
                   <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">
@@ -99,6 +112,7 @@ function LoginPage() {
         </div>
       </div>
 
+      {/* Right Section: Nudge Logo */}
       <div className="flex border-blue-600 justify-center items-center w-[50%] h-full bg-[#33424C]">
         <img src={NudgeLogo} alt="#" className="w-[75%]" />
       </div>

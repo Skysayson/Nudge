@@ -14,6 +14,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState("");
 
+  //Function to format start date and due date of task
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
@@ -25,6 +26,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     return TaskContent.assigned.map((assignee) => assignee).join(", ");
   };
 
+  //This changes the color of the status pill based on its status
   useEffect(() => {
     if (TaskContent.status === "Incomplete") {
       setStatusColor("#FA5252");
@@ -35,6 +37,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   }, [TaskContent.status]);
 
+  //This changes the color of the priority pill based on the priority of the task
   useEffect(() => {
     if (TaskContent.priority === "High") {
       setPriorityColors("#FA5252");
@@ -45,6 +48,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   }, [TaskContent.priority]);
 
+  //This is an object array that contains the contents to be rendered for the Task Specifications
   const taskSpecifications = [
     {
       label: "Start Date",
@@ -71,13 +75,16 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   return (
     <div className="flex flex-col text-white border-red-600 w-full h-full p-[24px] overflow-y-auto scrollbar-hide">
+      {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
       <div className="flex w-full h-max mb-4">
         <h1 className="text-white 2xl:text-[32px] lg:text-[24px]">
           {" "}
           {TaskContent.title}{" "}
         </h1>
       </div>
+      {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
 
+      {/*------------------------------! TABLE COMPONENT (TASK SPECIFICATIONS) !------------------------------------*/}
       <Table verticalSpacing="md">
         <tbody>
           {taskSpecifications.map((spec, index) => (
@@ -86,53 +93,29 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 {spec.icon}
                 <span className="text-white text-[16px]">{spec.label}</span>
               </td>
-              <td className="text-white w-[100px] text-[16px] flex justify-center">
+              <td className="text-white w-[150px] text-[16px] flex justify-center">
                 {spec.value}
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      {/*------------------------------! TABLE COMPONENT (TASK SPECIFICATIONS) !------------------------------------*/}
 
+      {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
       <div className="border-t border-b mt-[32px] flex flex-col w-full h-max pb-[2%]">
         <div className="text-[20px] pt-[2%] pb-[2%]">Task Description</div>
 
-        <div className="">
-          Form context management, Switch, Grid and Indicator components
-          improvements, new hook and 10+ other changes. Form context management,
-          Switch, Grid and Indicator components improvements, new hook and 10+
-          other changes. Form context management, Switch, Grid and Indicator
-          components improvements, new hook and 10+ other changes. Form context
-          management, Switch, Grid and Indicator components improvements, new
-          hook and 10+ other changes. Form context management, Switch, Grid and
-          Indicator components improvements, new hook and 10+ other changes.
-          Form context management, Switch, Grid and Indicator components
-          improvements, new hook and 10+ other changes. Form context management,
-          Switch, Grid and Indicator components improvements, new hook and 10+
-          other changes. Form context management, Switch, Grid and Indicator
-          components improvements, new hook and 10+ other changes. Form context
-          management, Switch, Grid and Indicator components improvements, new
-          hook and 10+ other changes. Form context management, Switch, Grid and
-          Indicator components improvements, new hook and 10+ other changes.
-          Form context management, Switch, Grid and Indicator components
-          improvements, new hook and 10+ other changes. Form context management,
-          Switch, Grid and Indicator components improvements, new hook and 10+
-          other changes. Form context management, Switch, Grid and Indicator
-          components improvements, new hook and 10+ other changes. Form context
-          management, Switch, Grid and Indicator components improvements, new
-          hook and 10+ other changes. Form context management, Switch, Grid and
-          Indicator components improvements, new hook and 10+ other changes.
-          Form context management, Switch, Grid and Indicator components
-          improvements, new hook and 10+ other changes. Form context management,
-          Switch, Grid and Indicator components improvements, new hook and 10+
-          other changes. Form context management, Switch, Grid and Indicator
-          components improvements, new hook and 10+ other changes. Form context
-          management, Switch, Grid and Indicator components improvements, new
-          hook and 10+ other changes. Form context management, Switch, Grid and
-          Indicator components improvements, new hook and 10+ other changes.
-          Form context management, Switch, Grid and Indicator components
-          improvements, new hook and 10+ other changes. Form context management,
-          Switch, Grid and Indicator components
+        <div
+          className="h-max w-full"
+          style={{
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+          }}
+        >
+          {" "}
+          {/*TASK DESCRIPTION CONTENT DIV*/}
+          {TaskContent.content}
         </div>
       </div>
       <div className="flex flex-col mt-[36px] text-[20px] w-full h-max border">
@@ -152,6 +135,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           </div>
         </div>
       </div>
+      {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
     </div>
   );
 };
