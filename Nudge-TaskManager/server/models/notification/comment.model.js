@@ -15,23 +15,24 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
       },
+      //foreign key
       task_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: "Tasks",
-          key: "task_id",
-        },
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
+      //foreign key
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: "Users",
-          key: "user_id",
-        },
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
+      },
+      //foreign key
+      parent_comment_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE",
       },
     },
     {
@@ -39,11 +40,6 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
     }
   );
-
-  Comment.associate = function (models) {
-    Comment.belongsTo(models.User, { foreignKey: "user_id" });
-    Comment.belongsTo(models.Task, { foreignKey: "task_id" });
-  };
 
   return Comment;
 };

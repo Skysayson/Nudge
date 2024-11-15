@@ -18,36 +18,30 @@ module.exports = (sequelize, DataTypes) => {
       sent_at: {
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
+      //foreign key
       task_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: "Tasks",
-          key: "task_id",
-        },
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
+      //foreign key
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: "Users",
-          key: "user_id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "SET NULL",
       },
     },
     {
       tableName: "Notifications",
       timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
-  Notification.associate = function (models) {
-    Notification.belongsTo(models.User, { foreignKey: "user_id" });
-    Notification.belongsTo(models.Task, { foreignKey: "task_id" });
-  };
+  Notification.beforeCreate((notification, options) => {
+    notification.sent_at = new Date();
+  });
 
   return Notification;
 };

@@ -6,20 +6,15 @@ import {
   IconCheck,
   IconFlag,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { StatTask } from "../interfaces/interfaces";
-import FullCard from "./FullCard";
+import { useEffect, useState, useContext } from "react";
+import { StatTask, TaskContent } from "../interfaces/interfaces";
+import { ThemeContext } from "../interfaces/ThemeContext";
 
-type TaskCardProps = {
-  TaskStat: StatTask;
-  selectDash: boolean;
-  setSelectDash: (value: boolean) => void;
-};
 
-const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
+const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
   const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState<string[]>([]);
-  const [renderFullTask, setRenderFullTask] = useState(false);
+  const themeContext = useContext(ThemeContext);
 
   // Set color based on TaskStat.status
   useEffect(() => {
@@ -42,11 +37,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
     setPriorityColors(colors);
   }, [TaskStat.Task]);
 
-  const handleClick = () => {
-    // Toggle the FullCard visibility
-    setRenderFullTask(!renderFullTask);
-    // Hide the dashboard
-    setSelectDash(false);
+  const handleClick = (task: TaskContent) => {
+    themeContext?.setSelectedTask(task);
+    themeContext?.setRenderFullTask(!themeContext.renderFullTask);
   };
 
   return (
@@ -55,8 +48,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
         <Card
           key={task.title}
           radius="sm"
-          className="w-full h-[270px] bg-[#192228] mt-[15px] p-[25.36px] hover:cursor-pointer hover:border"
-          onClick={handleClick} // Only this onClick should handle the logic
+          className="w-full h-max bg-[#192228] mt-[20px] p-[25.36px] hover:cursor-pointer hover:border"
+          onClick={() => handleClick(task)} // Only this onClick should handle the logic 
         >
           <Group className="flex w-full justify-between">
             <Badge
@@ -90,11 +83,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
           <div className="mt-[10px] p-[2px] h-full min-w-full flex flex-col justify-between">
             <div className="flex flex-col">
               <Text
+                fz="lg"
+                lineClamp={10}
+                color="#B7CDDE"
+                className="w-full mb-[2%] h-max text-[#B7CDDE]"
+                >
+                {task.title}
+              </Text>
+              <Text
                 fz="sm"
-                c="dimmed"
                 mt={5}
-                lineClamp={3}
-                className="w-full"
+                lineClamp={10}
+                className="w-full mb-[15%] h-max text-[#88A7BD]"
                 style={{
                   wordBreak: "break-word",
                   overflowWrap: "break-word",
@@ -139,7 +139,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ TaskStat, setSelectDash }) => {
           </div>
         </Card>
       ))}
-      {renderFullTask && <FullCard />}
     </div>
   );
 };
