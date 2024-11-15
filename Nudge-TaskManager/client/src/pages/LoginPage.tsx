@@ -4,9 +4,57 @@ import { Input, PasswordInput } from "@mantine/core"; // Mantine input component
 import { Button } from "@mantine/core"; // Mantine button component
 import GoogleLogo from "../assets/Vector.svg"; // Import Google logo for button
 import "../index.css"; // Import custom styles
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+const API_URL = "http://localhost:3000"; // Replace with your actual API URL
+
+// interface User {
+//   id: number;
+//   email: string;
+// } am just keeping this here just in case
 
 // LoginPage Component
 function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  //const [users, setUsers] = useState<User[]>([]); // MARY CODE NOTE: just keep this syntax in mind
+  const navigate = useNavigate(); //this one is for navigating through pages
+
+  //this method is for logging in
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const user = {
+      email: email,
+      password: password,
+    };
+
+    console.log("Request payload:", user);
+
+    axios
+      .post(`${API_URL}/api/user/login`, user, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.data.token) {
+          localStorage.setItem("jwtToken", response.data.token); //this one stores the token in local storave
+          navigate("/Dashboard"); //this one navigates the page to dashboard or something
+        } else {
+          alert("Invalid login credentials");
+        }
+      })
+      .catch((error) => {
+        setError(error.message); // Display error message
+        console.error("Login failed:", error);
+        alert("Login failed. Please try again.");
+      });
+  };
+
   return (
     <div className="flex w-screen h-screen">
       {/* Left Section: Login Form */}
@@ -35,6 +83,8 @@ function LoginPage() {
                       color: "white", // Input text color
                     },
                   }}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Input.Wrapper>
             </div>
@@ -56,10 +106,18 @@ function LoginPage() {
                       color: "white", // Input text color
                     },
                   }}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </Input.Wrapper>
             </div>
           </div>
+
+          {/* !! INSERT ERROR MESSAGE HERE !! */}
+          {/* !! INSERT ERROR MESSAGE HERE !! */}
+          {/* !! INSERT ERROR MESSAGE HERE !! */}
+          {/* !! INSERT ERROR MESSAGE HERE !! */}
+          {/* !! INSERT ERROR MESSAGE HERE !! */}
 
           {/* Login Options */}
           <div className="flex h-full w-full items-center flex-col">
@@ -89,6 +147,7 @@ function LoginPage() {
                   fullWidth
                   size="sm"
                   className="rounded-[100px] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px]"
+                  onClick={handleLogin}
                 >
                   <h1 className="text-[15px] font-normal text-[#33424C]">
                     Log in
