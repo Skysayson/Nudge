@@ -2,10 +2,18 @@ const express = require("express");
 const db = require("./models");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const cors = require("cors");
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // The origin of your React app
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 
-db.sequelize.sync({ force: true }).then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
   console.log("DB and TB are made now");
 });
 

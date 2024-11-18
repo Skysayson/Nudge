@@ -25,31 +25,30 @@ const createUser = async (req, res) => {
 //TO BE USED FOR LOGGING IN
 const loginUser = async (req, res) => {
   try {
-    //add code in here
     const { email, password } = req.body;
 
-    const user = User.findOne({ where: email });
+    const user = await User.findOne({ where: { email } });
+    console.log("Checking credentials for:", email);
 
     if (!user) {
-      return res.status(400).json({ message: "User DNE..." });
+      return res.status(400).json({ message: "User does not exist..." });
     }
 
-    const isValidPassword = false;
-    isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(400).json({ message: "Incorrect Password..." });
+      return res.status(400).json({ message: "Incorrect password..." });
     } else {
-      //MARY CODE NOTE: add in the code here for generating the jwt
       const jwtToken = generateToken(user);
 
-      return res.json({ token });
+      return res.json({ token: jwtToken });
     }
   } catch (error) {
-    //add code in here
-    return res
-      .status(500)
-      .json({ message: "Uh Oh, Something went wrong!...", error });
+    console.error("Login error:", error);
+    return res.status(500).json({
+      message: "Uh Oh, Something went wrong...",
+      error: error.message || error,
+    });
   }
 };
 

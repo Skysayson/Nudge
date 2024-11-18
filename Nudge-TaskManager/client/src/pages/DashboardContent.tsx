@@ -14,19 +14,31 @@ import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import classes from "../StatsRingCard.module.css";
 
-const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
+// Main Dashboard Page Component
+const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
+  // State to manage dashboard visibility
+  const [selectDash, setSelectDash] = useState(false);
 
-  const [selectDash, setSelectDash] = useState(false)
+  // State to track current screen size for responsive design
   const [screenSize, setScreenSize] = useState("sm");
 
+  // Extract statistics for in-progress and incomplete tasks
   const stats = [
     { value: StatTask[1], label: "In Progress" },
     { value: StatTask[0], label: "Incomplete" },
   ];
 
+  // Mantine theme for accessing primary colors
   const theme = useMantineTheme();
+
+  // Calculate completed and total tasks for progress ring
   const completed = StatTask[2].Task.length;
-  const total = StatTask[0].Task.length + StatTask[1].Task.length + StatTask[2].Task.length;
+  const total =
+    StatTask[0].Task.length +
+    StatTask[1].Task.length +
+    StatTask[2].Task.length;
+
+  // Generate items for task statistics display
   const items = stats.map((stat) => (
     <div key={stat.label}>
       <Text className={classes.label}>s</Text>
@@ -36,7 +48,10 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
     </div>
   ));
 
+  // State to manage selected dates in the calendar
   const [selected, setSelected] = useState<Date[]>([]);
+
+  // Handle date selection and toggle selected state
   const handleSelect = (date: Date) => {
     const isSelected = selected.some((s) => dayjs(date).isSame(s, "date"));
     if (isSelected) {
@@ -48,6 +63,7 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
     }
   };
 
+  // Handle screen resize and adjust screen size state
   useEffect(() => {
     const handleResize = () => {
       setScreenSize(window.innerWidth > 1536 ? "md" : "sm");
@@ -56,6 +72,7 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
     window.addEventListener("resize", handleResize);
     handleResize();
 
+    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -63,8 +80,11 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
 
   return (
     <div className="flex p-[24px] border-red-600 h-full w-full text-white">
+      {/* Main Dashboard Section */}
       <div className="flex w-[100%] border-blue-600 flex-col">
+        {/* Header Section */}
         <div className="items-center h-max justify-between border-white flex w-full">
+          {/* Add Task Button */}
           <Button
             leftSection={<IconPlus />}
             variant="subtle"
@@ -74,6 +94,7 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
             Add Task
           </Button>
 
+          {/* Filter and Sort Buttons */}
           <div className="flex mr-[20px] items-center">
             <Button
               size="sm"
@@ -96,13 +117,23 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
             </Button>
           </div>
         </div>
-        <div className=" border-green-600 w-full h-full flex mt-[27.65px]">
+
+        {/* Status Bars for Tasks */}
+        <div className="border-green-600 w-full h-full flex mt-[27.65px]">
           {StatTask.map((stat: StatTask, index: number) => (
-            <StatusBar key={index} TaskStat={stat} selectDash={selectDash} setSelectDash={setSelectDash}/>
+            <StatusBar
+              key={index}
+              TaskStat={stat}
+              selectDash={selectDash}
+              setSelectDash={setSelectDash}
+            />
           ))}
         </div>
       </div>
+
+      {/* Sidebar Section */}
       <div className="w-max flex flex-col h-full">
+        {/* Calendar Component */}
         <Calendar
           className="bg-[#33424C] p-4 rounded-md mt-[10px] w-full"
           size={screenSize === "sm" ? "sm" : "md"}
@@ -116,6 +147,8 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
             },
           }}
         />
+
+        {/* Progress Overview Section */}
         <Card p="xl" radius="md" className={`${classes.card}`}>
           <div className={`${classes.inner}`}>
             <div>
@@ -130,11 +163,13 @@ const DashboardPage = ({ StatTask }:{ StatTask:StatTask[] }) => {
                   Completed
                 </Text>
               </div>
+              {/* Task Statistics Items */}
               <Group className="text-white" mt="lg">
                 {items}
               </Group>
             </div>
 
+            {/* Ring Progress Indicator */}
             <div className={classes.ring}>
               <RingProgress
                 roundCaps
