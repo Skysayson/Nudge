@@ -1,4 +1,4 @@
-import { Badge, Table, Textarea } from "@mantine/core";
+import { Badge, Table, Avatar } from "@mantine/core";
 import { TaskContent } from "../interfaces/interfaces";
 import {
   IconCalendar,
@@ -104,10 +104,10 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
       {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
       <div className="border-t border-b mt-[32px] flex flex-col w-full h-max pb-[2%]">
-        <div className="text-[20px] pt-[2%] pb-[2%]">Task Description</div>
+        <div className="text-[24px] pt-[2%] pb-[1.5%]">Task Description</div>
 
         <div
-          className="h-max w-full"
+          className="h-max w-full text-[16px]"
           style={{
             wordBreak: "break-word",
             overflowWrap: "break-word",
@@ -118,20 +118,23 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           {TaskContent.content}
         </div>
       </div>
-      <div className="flex flex-col mt-[36px] text-[20px] w-full h-max border">
-        <div className="flex justify-between w-[12%] items-center border-red-600">
+      <div className="flex flex-col mt-[24px] text-[20px] w-full h-max">
+        <div className="flex justify-between w-[11%] items-center border-red-600">
           <IconMessage />
           Comments
         </div>
-        <div className="text-[16px]">
+        <div className="flex flex-col text-[16px] mt-[16px] p-[8px]">
           {/* COMMENT DIV */}
-          <div className="flex flex-col border border-red-600">
+          <div className="flex items-center border-red-600 w-[13%] justify-between">
+            <Avatar size="md" />
+            <div className="flex flex-col">
+              <h1>Victorienne tiu</h1>
+              <h1 className="text-[12px] text-[#6C899C]">Time posted</h1>
+            </div>
+          </div>
+          <div className="flex text-[14px] flex-col border-red-600 mt-[6px]">
             {/* COMMENT */}
-            <Textarea
-              variant="unstyled"
-              label="Input label"
-              placeholder="Input placeholder"
-            />
+              This is a test comment
           </div>
         </div>
       </div>
