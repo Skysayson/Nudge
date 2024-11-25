@@ -53,7 +53,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     {
       label: "Start Date",
       icon: <IconCalendar size={16} />,
-      value: formatDate(TaskContent.due),
+      value: formatDate(TaskContent.created),
     },
     {
       label: "Due Date",
@@ -123,20 +123,22 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           <IconMessage />
           Comments
         </div>
-        <div className="flex flex-col text-[16px] mt-[16px] p-[8px]">
-          {/* COMMENT DIV */}
-          <div className="flex items-center border-red-600 w-[13%] justify-between">
-            <Avatar size="md" />
-            <div className="flex flex-col">
-              <h1>Victorienne tiu</h1>
-              <h1 className="text-[12px] text-[#6C899C]">Time posted</h1>
+        {TaskContent.comments.map((comment, index) => (
+          <div key={index} className="flex flex-col text-[16px] mt-[16px] p-[8px] border ml-[2%] bg-opacity-[10%]">
+            {/* COMMENT DIV */}
+            <div className="flex items-center border-red-600 w-[11%] justify-between">
+              <Avatar size="md" />
+              <div className="flex flex-col">
+                <h1>{comment.author}</h1>
+                <h1 className="text-[12px] text-[#6C899C]">{formatDate(comment.created)}</h1>
+              </div>
+            </div>
+            <div className="flex text-[14px] flex-col border-red-600 mt-[6px] p-[8px]">
+              {/* COMMENT */}
+              {comment.comment}
             </div>
           </div>
-          <div className="flex text-[14px] flex-col border-red-600 mt-[6px]">
-            {/* COMMENT */}
-              This is a test comment
-          </div>
-        </div>
+        ))}
       </div>
       {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
     </div>
