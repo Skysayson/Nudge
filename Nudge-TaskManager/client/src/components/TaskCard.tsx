@@ -140,7 +140,7 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
                   <ActionIcon variant="transparent">
                     <IconMessage color="#688193" /> {/* Comment icon */}
                   </ActionIcon>
-                  <h1 className="text-[#688193]">{task.comments}</h1> {/* Comment count */}
+                  <h1 className="text-[#688193]">{task.comments.length}</h1> {/* Comment count */}
                 </div>
               </div>
 

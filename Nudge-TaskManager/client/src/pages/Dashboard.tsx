@@ -33,7 +33,69 @@ export const DashBoard: React.FC = () => {
       title: "Kent Task",
       content: "Sample task content with detailed information.",
       assigned: ["Bryan", "Vi", "Sky"],
-      comments: 3,
+      comments: [
+        { 
+          author: "Bryan", 
+          comment: "This is a commentttttttttttttttttttttttttttttttttttttttttttttttttttttttt aasjdmaksldnmkalnsdklnaskdlnkalsdnklansdklnaksldsssssssssssssasdasdhbaskj dnjkalnsdjkanskjldnkal sndklansdklnaksldnklasnddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Sky", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        }
+      ],
+      created: new Date("2024-5-1"), // Added created property
       due: new Date("2024-5-11"), // Example due date
     },
     {
@@ -42,7 +104,14 @@ export const DashBoard: React.FC = () => {
       title: "UI/UX Design",
       content: "Wireframe needed in Figma.",
       assigned: ["Michael", "George", "Sky"],
-      comments: 5,
+      comments: [
+        { 
+          author: "Michael", 
+          comment: "Wireframe draft in progress.", 
+          created: new Date("2024-11-10") 
+        }
+      ],
+      created: new Date("2024-11-1"), // Added created property
       due: new Date("2024-11-15"), // Example due date
     },
     {
@@ -51,7 +120,14 @@ export const DashBoard: React.FC = () => {
       title: "Content Creation",
       content: "Draft new articles for the blog.",
       assigned: ["Ava", "Mia"],
-      comments: 2,
+      comments: [
+        { 
+          author: "Mia", 
+          comment: "Initial draft submitted.", 
+          created: new Date("2024-11-19") 
+        }
+      ],
+      created: new Date("2024-11-10"), // Added created property
       due: new Date("2024-11-20"), // Example due date
     },
     {
@@ -60,11 +136,12 @@ export const DashBoard: React.FC = () => {
       title: "Meeting Preparation",
       content: "Organize agenda for client meeting.",
       assigned: ["Henry"],
-      comments: 0,
+      comments: [],
+      created: new Date("2024-11-15"), // Added created property
       due: new Date("2024-11-25"), // Example due date
     },
   ];
-
+  
   const inProgressTasks: TaskContent[] = [
     {
       status: "In Progress",
@@ -72,7 +149,14 @@ export const DashBoard: React.FC = () => {
       title: "Security Audit",
       content: "Conduct vulnerability assessments.",
       assigned: ["James", "Lucas"],
-      comments: 4,
+      comments: [
+        { 
+          author: "Lucas", 
+          comment: "Audit phase 1 complete.", 
+          created: new Date("2024-11-16") 
+        }
+      ],
+      created: new Date("2024-11-10"), // Added created property
       due: new Date("2024-11-18"), // Example due date
     },
     {
@@ -81,7 +165,14 @@ export const DashBoard: React.FC = () => {
       title: "API Integration",
       content: "Connect the frontend with backend services.",
       assigned: ["Sophia", "Oliver"],
-      comments: 3,
+      comments: [
+        { 
+          author: "Sophia", 
+          comment: "Backend endpoint integrated.", 
+          created: new Date("2024-11-20") 
+        }
+      ],
+      created: new Date("2024-11-15"), // Added created property
       due: new Date("2024-11-22"), // Example due date
     },
     {
@@ -90,11 +181,18 @@ export const DashBoard: React.FC = () => {
       title: "Marketing Plan",
       content: "Develop a Q4 marketing strategy.",
       assigned: ["William", "Ella"],
-      comments: 1,
+      comments: [
+        { 
+          author: "Ella", 
+          comment: "Marketing draft ready for review.", 
+          created: new Date("2024-11-28") 
+        }
+      ],
+      created: new Date("2024-11-25"), // Added created property
       due: new Date("2024-11-30"), // Example due date
     },
   ];
-
+  
   const completeTasks: TaskContent[] = [
     {
       status: "Complete",
@@ -102,7 +200,14 @@ export const DashBoard: React.FC = () => {
       title: "Bug Fixes",
       content: "Resolve critical issues in production.",
       assigned: [],
-      comments: 6,
+      comments: [
+        { 
+          author: "James", 
+          comment: "Critical bug fixes deployed.", 
+          created: new Date("2024-10-29") 
+        }
+      ],
+      created: new Date("2024-10-15"), // Added created property
       due: new Date("2024-10-30"), // Example due date
     },
     {
@@ -111,7 +216,14 @@ export const DashBoard: React.FC = () => {
       title: "Testing",
       content: "Create test cases for new features.",
       assigned: ["Isabella", "Jack"],
-      comments: 3,
+      comments: [
+        { 
+          author: "Isabella", 
+          comment: "All test cases verified.", 
+          created: new Date("2024-10-20") 
+        }
+      ],
+      created: new Date("2024-10-10"), // Added created property
       due: new Date("2024-10-25"), // Example due date
     },
     {
@@ -120,10 +232,18 @@ export const DashBoard: React.FC = () => {
       title: "Database Optimization",
       content: "Analyze and improve query performance.",
       assigned: ["Emma"],
-      comments: 1,
+      comments: [
+        { 
+          author: "Emma", 
+          comment: "Queries optimized successfully.", 
+          created: new Date("2024-10-15") 
+        }
+      ],
+      created: new Date("2024-10-5"), // Added created property
       due: new Date("2024-10-20"), // Example due date
     },
   ];
+  
 
   // Combining all tasks into a unified structure for easy management
   const status: StatTask[] = [

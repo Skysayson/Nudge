@@ -4,8 +4,15 @@ export interface TaskContent {
     title: string;
     content: string;
     assigned: string[];
-    comments: number;
+    comments: taskComment[];
+    created: Date;
     due: Date;
+}
+
+export interface taskComment {
+    author: string;
+    comment: string;
+    created: Date;
 }
 
 export interface UserTeams {

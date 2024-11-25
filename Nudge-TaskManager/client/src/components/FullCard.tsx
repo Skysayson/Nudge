@@ -1,4 +1,4 @@
-import { Badge, Table, Avatar } from "@mantine/core";
+import { Badge, Table, Avatar, Text } from "@mantine/core";
 import { TaskContent } from "../interfaces/interfaces";
 import {
   IconCalendar,
@@ -53,7 +53,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     {
       label: "Start Date",
       icon: <IconCalendar size={16} />,
-      value: formatDate(TaskContent.due),
+      value: formatDate(TaskContent.created),
     },
     {
       label: "Due Date",
@@ -74,7 +74,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   ];
 
   return (
-    <div className="flex flex-col text-white border-red-600 w-full h-full p-[24px] overflow-y-auto scrollbar-hide">
+    <div className="flex flex-col text-white border-red-600 w-[90%] h-full p-[24px] overflow-y-auto scrollbar-hide">
       {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
       <div className="flex w-full h-max mb-4">
         <h1 className="text-white 2xl:text-[32px] lg:text-[24px]">
@@ -103,7 +103,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       {/*------------------------------! TABLE COMPONENT (TASK SPECIFICATIONS) !------------------------------------*/}
 
       {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
-      <div className="border-t border-b mt-[32px] flex flex-col w-full h-max pb-[2%]">
+      <div className="border-t border-b mt-[32px] flex flex-col w-[] h-max pb-[2%]">
         <div className="text-[24px] pt-[2%] pb-[1.5%]">Task Description</div>
 
         <div
@@ -119,24 +119,39 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         </div>
       </div>
       <div className="flex flex-col mt-[24px] text-[20px] w-full h-max">
-        <div className="flex justify-between w-[11%] items-center border-red-600">
+        <div className="flex justify-between 2xl:w-[9%] lg:w-[13%] items-center border-red-600">
           <IconMessage />
           Comments
         </div>
-        <div className="flex flex-col text-[16px] mt-[16px] p-[8px]">
-          {/* COMMENT DIV */}
-          <div className="flex items-center border-red-600 w-[13%] justify-between">
-            <Avatar size="md" />
-            <div className="flex flex-col">
-              <h1>Victorienne tiu</h1>
-              <h1 className="text-[12px] text-[#6C899C]">Time posted</h1>
+        {TaskContent.comments.map((comment, index) => (
+          <div
+            key={index}
+            className="flex flex-col text-[16px] mt-[16px] p-[8px] bg-opacity-[10%]"
+          >
+            {/* COMMENT DIV */}
+            <div className="flex items-center border-red-600 w-full">
+              <Avatar size="48" />
+              <div className="flex ml-[8px] flex-col">
+                <div className="flex items-center border-green-600 w-full">
+                  <h1 className="mr-[10px] text-[14px]">{comment.author}</h1>
+                  <h1 className="text-[14px] text-[#6C899C]">
+                    {formatDate(comment.created)}
+                  </h1>
+                </div>
+
+                  <Text
+                    className="text-[14px] w-full border-red-600 flex"
+                    style={{
+                      wordBreak: "break-word", // Break words for long content
+                      overflowWrap: "break-word", // Ensure proper wrapping
+                    }}
+                  >
+                    {comment.comment}
+                  </Text>
+              </div>
             </div>
           </div>
-          <div className="flex text-[14px] flex-col border-red-600 mt-[6px]">
-            {/* COMMENT */}
-              This is a test comment
-          </div>
-        </div>
+        ))}
       </div>
       {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
     </div>
