@@ -36,11 +36,56 @@ export const DashBoard: React.FC = () => {
       comments: [
         { 
           author: "Bryan", 
-          comment: "This is a comment", 
+          comment: "This is a commentttttttttttttttttttttttttttttttttttttttttttttttttttttttt aasjdmaksldnmkalnsdklnaskdlnkalsdnklansdklnaksldsssssssssssssasdasdhbaskj dnjkalnsdjkanskjldnkal sndklansdklnaksldnklasnddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", 
           created: new Date("2024-5-11") 
         },
         { 
           author: "Sky", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
+          comment: "This is a comment", 
+          created: new Date("2024-5-11") 
+        },
+        { 
+          author: "Vi", 
           comment: "This is a comment", 
           created: new Date("2024-5-11") 
         },
