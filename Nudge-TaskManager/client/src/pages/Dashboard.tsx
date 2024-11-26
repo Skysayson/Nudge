@@ -41,7 +41,7 @@ export const DashBoard: React.FC = () => {
         },
         { 
           author: "Sky", 
-          comment: "This is a comment", 
+          comment: "This is a comment dude I was like wtf is going on and this text is just to test the comment box", 
           created: new Date("2024-5-11") 
         },
         { 
