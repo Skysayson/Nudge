@@ -19,7 +19,7 @@ const API_URL = "http://localhost:3000"; // Replace with your actual API URL
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  //const [error, setError] = useState<string | null>(null);
   //const [users, setUsers] = useState<User[]>([]); // MARY CODE NOTE: just keep this syntax in mind
   const navigate = useNavigate(); //this one is for navigating through pages
 
@@ -49,7 +49,7 @@ function LoginPage() {
         }
       })
       .catch((error) => {
-        setError(error.message); // Display error message
+        //setError(error.message); // Display error message
         console.error("Login failed:", error);
         alert("Login failed. Please try again.");
       });
@@ -161,7 +161,7 @@ function LoginPage() {
                   <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">
                     Don't have an account?
                   </h1>
-                  <h1 className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px]">
+                  <h1 className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer">
                     Register
                   </h1>
                 </div>

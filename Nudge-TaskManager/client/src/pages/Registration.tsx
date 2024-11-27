@@ -2,7 +2,6 @@ import "@mantine/core/styles.css"; // Import Mantine core styles
 import NudgeLogo from "../assets/Group 1.svg"; // Import Nudge logo
 import { Input, PasswordInput } from "@mantine/core"; // Mantine input components
 import { Button } from "@mantine/core"; // Mantine button component
-import GoogleLogo from "../assets/Vector.svg"; // Import Google logo for button
 import "../index.css"; // Import custom styles
 
 const Registration = () => {
@@ -100,16 +99,8 @@ const Registration = () => {
                 </div>
               </div>
     
-              {/* !! INSERT ERROR MESSAGE HERE !! */}
-              {/* !! INSERT ERROR MESSAGE HERE !! */}
-              {/* !! INSERT ERROR MESSAGE HERE !! */}
-              {/* !! INSERT ERROR MESSAGE HERE !! */}
-              {/* !! INSERT ERROR MESSAGE HERE !! */}
-    
-              {/* Login Options */}
               <div className="flex h-full w-full items-center flex-col">
                 <div className="flex lg:w-full flex-col lg:h-[65%]">
-                  {/* Regular Login Button */}
                   <div className="flex flex-col items-center">
                     <Button
                       fullWidth
@@ -122,7 +113,6 @@ const Registration = () => {
                     </Button>
                   </div>
     
-                  {/* Register Option */}
                   <div className="flex lg:w-full justify-center items-center">
                     <div className="flex 2xl:w-[49%] justify-between">
                       <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">

@@ -1,4 +1,5 @@
 import { Input, Button, Avatar, ActionIcon } from "@mantine/core";
+import { Link } from "react-router-dom";
 import {
   IconLayoutDashboard,
   IconSearch,
@@ -17,7 +18,7 @@ export const DashBoard: React.FC = () => {
   const teams = ["Team 1", "Team 2", "Team 3"];
 
   // State for toggling the rendering of the dashboard
-  const [selectDash, setSelectDash] = useState(false);
+  const [selectDash, setSelectDash] = useState(true);
 
   // State for toggling the rendering of the full task view
   const [renderFullTask, setRenderFullTask] = useState(false);
@@ -28,75 +29,20 @@ export const DashBoard: React.FC = () => {
   // Sample task data for different statuses
   const incompleteTasks: TaskContent[] = [
     {
-      status: "Incomplete",
-      priority: "Low",
-      title: "Kent Task",
-      content: "Sample task content with detailed information.",
-      assigned: ["Bryan", "Vi", "Sky"],
+      status: "",
+      priority: "",
+      title: "",
+      content: "",
+      assigned: [],
       comments: [
-        { 
-          author: "Bryan", 
-          comment: "This is a commentttttttttttttttttttttttttttttttttttttttttttttttttttttttt aasjdmaksldnmkalnsdklnaskdlnkalsdnklansdklnaksldsssssssssssssasdasdhbaskj dnjkalnsdjkanskjldnkal sndklansdklnaksldnklasnddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Sky", 
-          comment: "This is a comment dude I was like wtf is going on and this text is just to test the comment box", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
+        {
+          author: "Sky",
+          comment: "Test",
+          created: new Date("2025-12-17")
         }
       ],
-      created: new Date("2024-5-1"), // Added created property
-      due: new Date("2024-5-11"), // Example due date
+      created: new Date(), // Added created property
+      due: new Date(), // Example due date
     },
     {
       status: "Incomplete",
@@ -321,6 +267,8 @@ export const DashBoard: React.FC = () => {
                 mt="md"
                 className="h-[32px] text-[16px] font-light"
                 style={{ fontSize: "14px", color: "#667988" }}
+                component={Link}
+                to={"/"}
               >
                 Log Out
               </Button>
