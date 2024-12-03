@@ -42,7 +42,7 @@ export const DashBoard: React.FC = () => {
         }
       ],
       created: new Date(), // Added created property
-      due: new Date(), // Example due date
+      due: null, // Example due date
     },
     {
       status: "Incomplete",
@@ -102,8 +102,8 @@ export const DashBoard: React.FC = () => {
           created: new Date("2024-11-16") 
         }
       ],
-      created: new Date("2024-11-10"), // Added created property
-      due: new Date("2024-11-18"), // Example due date
+      created: new Date(), // Added created property
+      due: null, // Example due date
     },
     {
       status: "In Progress",
@@ -189,7 +189,6 @@ export const DashBoard: React.FC = () => {
       due: new Date("2024-10-20"), // Example due date
     },
   ];
-  
 
   // Combining all tasks into a unified structure for easy management
   const status: StatTask[] = [

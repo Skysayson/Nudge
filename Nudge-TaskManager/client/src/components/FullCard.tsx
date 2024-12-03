@@ -1,4 +1,4 @@
-import { Badge, Table, Avatar, Text } from "@mantine/core";
+import { Badge, Table, Avatar, Text, Input } from "@mantine/core";
 import { TaskContent } from "../interfaces/interfaces";
 import {
   IconCalendar,
@@ -13,9 +13,22 @@ import { useEffect, useState } from "react";
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState("");
+  const [taskTitle, setTaskTitle] = useState("Enter Title");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTaskTitle(event.target.value);
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditingTitle(false);
+  };
 
   //Function to format start date and due date of task
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | null) => {
+    if (!date) {
+      return "No date inputted";
+    }
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
@@ -32,7 +45,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       setStatusColor("#FA5252");
     } else if (TaskContent.status === "In Progress") {
       setStatusColor("#FAB005");
-    } else if (TaskContent.status === "Complete"){
+    } else if (TaskContent.status === "Complete") {
       setStatusColor("#12B886");
     }
   }, [TaskContent.status]);
@@ -43,10 +56,10 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       setPriorityColors("#FA5252");
     } else if (TaskContent.priority === "Medium") {
       setPriorityColors("#FAB005");
-    } else if (TaskContent.priority === "Low"){
+    } else if (TaskContent.priority === "Low") {
       setPriorityColors("#12B886");
     } else {
-      setPriorityColors("#868E9633")
+      setPriorityColors("#868E9633");
     }
   }, [TaskContent.priority]);
 
@@ -56,25 +69,33 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       label: "Start Date",
       icon: <IconCalendar size={16} />,
       value: TaskContent.created
-      ? formatDate(TaskContent.created)
-      : "Enter start date", // Fallback message
+        ? formatDate(TaskContent.created)
+        : "Enter start date", // Fallback message
     },
     {
       label: "Due Date",
       icon: <IconCalendarDue size={16} />,
       value: TaskContent.created
-      ? formatDate(TaskContent.due)
-      : "Enter due date", // Fallback message
+        ? formatDate(TaskContent.due)
+        : "Enter due date", // Fallback message
     },
     {
       label: "Progress",
       icon: <IconProgress size={16} />,
-      value: <Badge color={TaskContent.status === "" ? "#E03131" : statusColor}>{TaskContent.status === "" ? "INCOMPLETE" : TaskContent.status}</Badge>,
+      value: (
+        <Badge color={TaskContent.status === "" ? "#E03131" : statusColor}>
+          {TaskContent.status === "" ? "INCOMPLETE" : TaskContent.status}
+        </Badge>
+      ),
     },
     {
       label: "Priority",
       icon: <IconFlag size={16} />,
-      value: <Badge color={priorityColors}>{TaskContent.priority === "" ? "Add Priority" : TaskContent.priority}</Badge>,
+      value: (
+        <Badge color={priorityColors}>
+          {TaskContent.priority === "" ? "Add Priority" : TaskContent.priority}
+        </Badge>
+      ),
     },
     { label: "Assignees", icon: <IconUser size={16} />, value: mapAssigned() },
   ];
@@ -83,14 +104,34 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     <div className="flex flex-col text-white border-red-600 w-[90%] h-full p-[24px] overflow-y-auto scrollbar-hide">
       {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
       <div className="flex w-full h-max mb-4">
-        <h1 className="text-[#B7CDDE] 2xl:text-[32px] lg:text-[24px]">
-          {" "}
-          {TaskContent.title.length === 0 && (<div className="text-[#688193]"> Enter Title </div>)}
-          {TaskContent.title}
-        </h1>
+        {isEditingTitle ? (
+          <Input
+            value={taskTitle}
+            onChange={handleTitleChange}
+            onBlur={handleTitleBlur}
+            placeholder="Enter Title"
+            variant="unstyled"
+            className="border-red-600 flex w-full"
+            styles={{
+              input: {
+                color: "#B7CDDE", // Text color
+                "::placeholder": {
+                  color: "#B7CDDE", // Placeholder text color
+                  
+                },
+              },
+            }}
+          />
+        ) : (
+          <div
+            className="text-[#688193] w-full cursor-pointer"
+            onClick={() => setIsEditingTitle(true)}
+          >
+            {taskTitle}
+          </div>
+        )}
       </div>
       {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
-
       {/*------------------------------! TABLE COMPONENT (TASK SPECIFICATIONS) !------------------------------------*/}
       <Table verticalSpacing="md">
         <tbody>
@@ -108,10 +149,11 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         </tbody>
       </Table>
       {/*------------------------------! TABLE COMPONENT (TASK SPECIFICATIONS) !------------------------------------*/}
-
       {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
       <div className="border-t border-b mt-[32px] flex flex-col w-[] h-max pb-[2%]">
-        <div className="text-[24px] pt-[2%] pb-[1.5%] text-[#B7CDDE]">Task Description</div>
+        <div className="text-[24px] pt-[2%] pb-[1.5%] text-[#B7CDDE]">
+          Task Description
+        </div>
         <div
           className="h-max w-full text-[16px]"
           style={{
@@ -121,9 +163,11 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         >
           {" "}
           {/*TASK DESCRIPTION CONTENT DIV*/}
-          {TaskContent.content.length === 0 && (<div className="text-[#88A7BD]">
-            Enter description for your task
-          </div>)}
+          {TaskContent.content.length === 0 && (
+            <div className="text-[#88A7BD]">
+              Enter description for your task
+            </div>
+          )}
           {TaskContent.content}
         </div>
       </div>
@@ -132,7 +176,12 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           <IconMessage />
           Comments
         </div>
-        {TaskContent.comments.length === 0 && (<div className="flex w-full justify-center items-center"> No Comments </div>)}
+        {TaskContent.comments.length === 0 && (
+          <div className="flex w-full justify-center items-center">
+            {" "}
+            No Comments{" "}
+          </div>
+        )}
         {TaskContent.comments.map((comment, index) => (
           <div
             key={index}
@@ -143,20 +192,22 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
               <Avatar size="48" />
               <div className="flex ml-[8px] flex-col">
                 <div className="flex items-center border-green-600 w-full">
-                  <h1 className="mr-[10px] text-[14px] text-[#B7CDDE]">{comment.author}</h1>
+                  <h1 className="mr-[10px] text-[14px] text-[#B7CDDE]">
+                    {comment.author}
+                  </h1>
                   <h1 className="text-[14px] text-[#6C899C]">
                     {formatDate(comment.created)}
                   </h1>
                 </div>
-                  <Text
-                    className="text-[14px] w-full border-red-600 flex text-[#B7CDDE]"
-                    style={{
-                      wordBreak: "break-word", // Break words for long content
-                      overflowWrap: "break-word", // Ensure proper wrapping
-                    }}
-                  >
-                    {comment.comment}
-                  </Text>
+                <Text
+                  className="text-[14px] w-full border-red-600 flex text-[#B7CDDE]"
+                  style={{
+                    wordBreak: "break-word", // Break words for long content
+                    overflowWrap: "break-word", // Ensure proper wrapping
+                  }}
+                >
+                  {comment.comment}
+                </Text>
               </div>
             </div>
           </div>

@@ -6,7 +6,7 @@ export interface TaskContent {
     assigned: string[];
     comments: taskComment[];
     created: Date;
-    due: Date;
+    due: Date | null;
 }
 
 export interface taskComment {
