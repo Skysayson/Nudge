@@ -161,7 +161,10 @@ function LoginPage() {
                   <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">
                     Don't have an account?
                   </h1>
-                  <h1 className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer">
+                  <h1
+                    className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer"
+                    onClick={() => navigate("/Registration")}
+                  >
                     Register
                   </h1>
                 </div>
