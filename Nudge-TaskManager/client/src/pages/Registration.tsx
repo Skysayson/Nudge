@@ -198,7 +198,10 @@ const Registration = () => {
                   <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">
                     Already have an account?
                   </h1>
-                  <ul className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer">
+                  <ul
+                    className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer"
+                    onClick={() => navigate("/")}
+                  >
                     Log in
                   </ul>
                 </div>
