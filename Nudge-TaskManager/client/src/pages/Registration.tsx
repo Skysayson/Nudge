@@ -19,7 +19,7 @@ const Registration = () => {
     confirmPassword: "",
   });
 
-  const updateUserState = (e) => {
+  const updateUserState = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setRegData((data) => ({
       ...data,
@@ -65,9 +65,11 @@ const Registration = () => {
         alert(response.data.message || "Registration successful!");
         navigate("/");
       } catch (error) {
-        alert(
-          error.response?.data?.message || "Uh oh! Something went wrong..." //Type error apparently but I dunno how to fix in TS,,, so the line stays
-        );
+        if (axios.isAxiosError(error)) {
+          alert(error.response?.data?.message || "Uh oh! Something went wrong...");
+        } else {
+          alert("An unknown error occurred.");
+        }
       }
     }
   };
@@ -187,7 +189,7 @@ const Registration = () => {
                   className="rounded-[100px] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px] mt-[32px]"
                   onClick={submitDetails}
                 >
-                  <h1 className="text-[15px] font-normal text-[#33424C]">
+                  <h1 className="text-[15px] font-normal text-[#1b2329]">
                     Sign In
                   </h1>
                 </Button>

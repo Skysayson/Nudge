@@ -1,4 +1,15 @@
-import { Badge, Table, Avatar, Text, Input } from "@mantine/core";
+import {
+  Badge,
+  Table,
+  Avatar,
+  Text,
+  Input,
+  Textarea,
+  Button,
+  Popover,
+  List,
+  ListItem
+} from "@mantine/core";
 import { TaskContent } from "../interfaces/interfaces";
 import {
   IconCalendar,
@@ -7,7 +18,10 @@ import {
   IconCalendarDue,
   IconUser,
   IconMessage,
+  IconThumbUp,
+  IconThumbDown,
 } from "@tabler/icons-react";
+import { Calendar } from "@mantine/dates";
 import { useEffect, useState } from "react";
 
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
@@ -15,6 +29,27 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [priorityColors, setPriorityColors] = useState("");
   const [taskTitle, setTaskTitle] = useState("Enter Title");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [renderCalendar, setRenderCalendar] = useState(false);
+  const [memberList, setMemberList] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMember, setSelectedMember] = useState(null);
+
+  const teamMembers = [
+    { id: 1, name: 'John Doe' },
+    { id: 2, name: 'Jane Smith' },
+    { id: 3, name: 'Sam Brown' },
+    { id: 4, name: 'Emily Davis' },
+  ];
+
+  const filteredMembers = teamMembers.filter(member =>
+    member.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSelectMember = (member) => {
+    setSelectedMember(member);
+    setMemberList(false);
+    // Add logic to handle assignment to the task
+  };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTaskTitle(event.target.value);
@@ -27,7 +62,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //Function to format start date and due date of task
   const formatDate = (date: Date | null) => {
     if (!date) {
-      return "No date inputted";
+      return false;
     }
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
@@ -68,16 +103,36 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     {
       label: "Start Date",
       icon: <IconCalendar size={16} />,
-      value: TaskContent.created
-        ? formatDate(TaskContent.created)
-        : "Enter start date", // Fallback message
+      value: TaskContent.created ? (
+        formatDate(TaskContent.created)
+      ) : (
+        <Button>
+          {renderCalendar && <Calendar />}
+        </Button>
+      ), // Fallback message
     },
     {
       label: "Due Date",
       icon: <IconCalendarDue size={16} />,
-      value: TaskContent.created
-        ? formatDate(TaskContent.due)
-        : "Enter due date", // Fallback message
+      value: (
+        <Popover position="bottom" withArrow shadow="md" opened={renderCalendar} onClose={() => setRenderCalendar(false)}>
+          <Popover.Target>
+            <Button
+              variant="filled"
+              color="#688193"
+              className="h-[90%] text-[13px]"
+              onClick={() => {
+                setRenderCalendar(!renderCalendar);
+              }}
+            >
+              Set Due Date
+            </Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Calendar />
+          </Popover.Dropdown>
+        </Popover>
+      ), // Fallback message
     },
     {
       label: "Progress",
@@ -97,7 +152,55 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         </Badge>
       ),
     },
-    { label: "Assignees", icon: <IconUser size={16} />, value: mapAssigned() },
+    {
+      label: "Assignees",
+      icon: <IconUser size={16} />,
+      value: mapAssigned() === "" ? (
+        <Popover
+          position="bottom"
+          withArrow
+          shadow="md"
+          opened={memberList}
+          onClose={() => setMemberList(false)}
+        >
+          <Popover.Target>
+            <Button
+              variant="filled"
+              color="#688193"
+              className="h-[90%] text-[13px]"
+              onClick={() => setMemberList(!memberList)}
+            >
+              Assign Member
+            </Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Input
+              placeholder="Search for a member..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              mb="xs"
+            />
+            {filteredMembers.length > 0 ? (
+              <List>
+                {filteredMembers.map(member => (
+                  <ListItem
+                    key={member.id}
+                    onClick={() => handleSelectMember(member)}
+                    style={{ cursor: 'pointer', padding: '5px 10px' }}
+                  >
+                    {member.name}
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Text size="xs">No members found</Text>
+            )}
+          </Popover.Dropdown>
+        </Popover>
+      ) : (
+        mapAssigned()
+      ),
+    },
   ];
 
   return (
@@ -117,7 +220,6 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 color: "#B7CDDE", // Text color
                 "::placeholder": {
                   color: "#B7CDDE", // Placeholder text color
-                  
                 },
               },
             }}
@@ -165,7 +267,16 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           {/*TASK DESCRIPTION CONTENT DIV*/}
           {TaskContent.content.length === 0 && (
             <div className="text-[#88A7BD]">
-              Enter description for your task
+              <Textarea
+                placeholder="Enter a task description..."
+                variant="unstyled"
+                autosize
+                styles={{
+                  input: {
+                    color: "#C9C9C9",
+                  },
+                }}
+              />
             </div>
           )}
           {TaskContent.content}
@@ -182,32 +293,85 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
             No Comments{" "}
           </div>
         )}
+        <Textarea
+          placeholder="Write a comment..."
+          autosize
+          minRows={3}
+          maxRows={6}
+          className="mt-2 placeholder:[#C9C9C9]"
+          variant="filled"
+        />
         {TaskContent.comments.map((comment, index) => (
           <div
             key={index}
-            className="flex flex-col text-[16px] mt-[16px] p-[8px] bg-opacity-[10%]"
+            className="flex flex-col text-[16px] mt-[32px] bg-opacity-[10%]"
           >
             {/* COMMENT DIV */}
             <div className="flex items-center border-red-600 w-full">
-              <Avatar size="48" />
-              <div className="flex ml-[8px] flex-col">
-                <div className="flex items-center border-green-600 w-full">
-                  <h1 className="mr-[10px] text-[14px] text-[#B7CDDE]">
-                    {comment.author}
-                  </h1>
-                  <h1 className="text-[14px] text-[#6C899C]">
-                    {formatDate(comment.created)}
-                  </h1>
+              <div className="flex w-max h-max  border-green-600">
+                <Avatar size="48" />
+                <div className="flex ml-[8px] flex-col">
+                  <div className="flex items-center border-green-600 w-full">
+                    <h1 className="mr-[10px] text-[14px] text-[#B7CDDE]">
+                      {comment.author}
+                    </h1>
+                    <h1 className="text-[14px] text-[#6C899C]">
+                      {formatDate(comment.created)}
+                    </h1>
+                  </div>
+                  <Text
+                    className="text-[14px] w-full border-red-600 flex text-white"
+                    style={{
+                      wordBreak: "break-word", // Break words for long content
+                      overflowWrap: "break-word", // Ensure proper wrapping
+                    }}
+                  >
+                    {comment.comment}
+                  </Text>
+                  <div className="flex w-[100%] justify-between mt-[8px] items-center">
+                    <div className="flex w-[75%] items-center border-red justify-between">
+                      <div className="flex w-full items-center">
+                        <IconThumbUp
+                          width="40%"
+                          className="hover:cursor-pointer"
+                          onClick={() => {
+                            comment.likes++; // Update this to update the likes in the backend
+                          }}
+                        />
+                        <h1 className="text-[14px] ml-[5px]">
+                          {" "}
+                          {comment.likes}{" "}
+                        </h1>
+                      </div>
+                      <div className="flex w-full items-center">
+                        <IconThumbDown
+                          width="49%"
+                          className="hover:cursor-pointer"
+                          onClick={() => {
+                            comment.dislikes++; // Update this to update the likes in the backend
+                          }}
+                        />
+                        <h1 className="text-[14px] ml-[5px]">
+                          {" "}
+                          {comment.dislikes}{" "}
+                        </h1>
+                      </div>
+                    </div>
+                    <div className="flex hover:underline">
+                      <Button
+                        variant="transparent"
+                        styles={{
+                          root: {
+                            color: "white", // Sets the initial color
+                          },
+                        }}
+                        className="text-[12px]"
+                      >
+                        Reply
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <Text
-                  className="text-[14px] w-full border-red-600 flex text-[#B7CDDE]"
-                  style={{
-                    wordBreak: "break-word", // Break words for long content
-                    overflowWrap: "break-word", // Ensure proper wrapping
-                  }}
-                >
-                  {comment.comment}
-                </Text>
               </div>
             </div>
           </div>
