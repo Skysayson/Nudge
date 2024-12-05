@@ -6,22 +6,15 @@ export interface TaskContent {
     assigned: string[];
     comments: taskComment[];
     created: Date;
-    due: Date;
+    due: Date | null;
 }
 
 export interface taskComment {
     author: string;
     comment: string;
     created: Date;
-}
-
-export interface UserTeams {
-    teams: TeamInfo[]
-}
-
-export interface TeamInfo {
-    teamName: string;
-    teamStatTask: StatTask;
+    likes: number;
+    dislikes: number;
 }
 
 export interface StatTask {

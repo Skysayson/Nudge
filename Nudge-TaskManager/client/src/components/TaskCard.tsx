@@ -31,7 +31,8 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
     const colors = TaskStat.Task.map((task) => {
       if (task.priority === "High") return "#FA5252"; // Red for high priority
       if (task.priority === "Medium") return "#FAB005"; // Yellow for medium priority
-      return "#12B886"; // Green for low priority
+      if(task.priority === "Low") return "#12B886"; // Green for low priority
+      return "#868E9633"
     });
     setPriorityColors(colors);
   }, [TaskStat.Task]);
@@ -50,7 +51,7 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
         <Card
           key={task.title} // Unique key for each card
           radius="sm"
-          className="w-full h-max bg-[#192228] mt-[20px] p-[25.36px] hover:cursor-pointer hover:border"
+          className="w-full h-max bg-[#192228] mt-[20px] p-[25.36px] hover:cursor-pointer hover:border border-[#88A7BD]"
           onClick={() => handleClick(task)} // Handles logic when the card is clicked
         >
           {/* TaskCard Header: Status and Priority Badges */}
@@ -146,7 +147,7 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
 
               {/* Due Date */}
               <h1 className="mt-[10px] text-[14px] text-[#688193] underline">
-                Due on: {task.due.toLocaleDateString()} {/* Formatted due date */}
+                Due on: {task.due ? task.due.toLocaleDateString() : "No date"} {/* Formatted due date */}
               </h1>
             </div>
           </div>

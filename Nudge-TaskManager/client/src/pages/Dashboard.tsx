@@ -1,4 +1,5 @@
 import { Input, Button, Avatar, ActionIcon } from "@mantine/core";
+import { Link } from "react-router-dom";
 import {
   IconLayoutDashboard,
   IconSearch,
@@ -17,7 +18,7 @@ export const DashBoard: React.FC = () => {
   const teams = ["Team 1", "Team 2", "Team 3"];
 
   // State for toggling the rendering of the dashboard
-  const [selectDash, setSelectDash] = useState(false);
+  const [selectDash, setSelectDash] = useState(true);
 
   // State for toggling the rendering of the full task view
   const [renderFullTask, setRenderFullTask] = useState(false);
@@ -28,75 +29,22 @@ export const DashBoard: React.FC = () => {
   // Sample task data for different statuses
   const incompleteTasks: TaskContent[] = [
     {
-      status: "Incomplete",
-      priority: "Low",
-      title: "Kent Task",
-      content: "Sample task content with detailed information.",
-      assigned: ["Bryan", "Vi", "Sky"],
+      status: "",
+      priority: "",
+      title: "",
+      content: "",
+      assigned: [],
       comments: [
-        { 
-          author: "Bryan", 
-          comment: "This is a commentttttttttttttttttttttttttttttttttttttttttttttttttttttttt aasjdmaksldnmkalnsdklnaskdlnkalsdnklansdklnaksldsssssssssssssasdasdhbaskj dnjkalnsdjkanskjldnkal sndklansdklnaksldnklasnddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Sky", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
-        },
-        { 
-          author: "Vi", 
-          comment: "This is a comment", 
-          created: new Date("2024-5-11") 
+        {
+          author: "Sky",
+          comment: "Test",
+          created: new Date("2025-12-17"),
+          likes: 5,
+          dislikes: 0
         }
       ],
-      created: new Date("2024-5-1"), // Added created property
-      due: new Date("2024-5-11"), // Example due date
+      created: new Date(), // Added created property
+      due: null, // Example due date
     },
     {
       status: "Incomplete",
@@ -108,7 +56,9 @@ export const DashBoard: React.FC = () => {
         { 
           author: "Michael", 
           comment: "Wireframe draft in progress.", 
-          created: new Date("2024-11-10") 
+          created: new Date("2024-11-10"),
+          likes: 5,
+          dislikes: 0
         }
       ],
       created: new Date("2024-11-1"), // Added created property
@@ -124,7 +74,9 @@ export const DashBoard: React.FC = () => {
         { 
           author: "Mia", 
           comment: "Initial draft submitted.", 
-          created: new Date("2024-11-19") 
+          created: new Date("2024-11-19"),
+          likes: 5,
+          dislikes: 0
         }
       ],
       created: new Date("2024-11-10"), // Added created property
@@ -153,11 +105,13 @@ export const DashBoard: React.FC = () => {
         { 
           author: "Lucas", 
           comment: "Audit phase 1 complete.", 
-          created: new Date("2024-11-16") 
+          created: new Date("2024-11-16"),
+          likes: 5,
+          dislikes: 0 
         }
       ],
-      created: new Date("2024-11-10"), // Added created property
-      due: new Date("2024-11-18"), // Example due date
+      created: new Date(), // Added created property
+      due: null, // Example due date
     },
     {
       status: "In Progress",
@@ -169,7 +123,9 @@ export const DashBoard: React.FC = () => {
         { 
           author: "Sophia", 
           comment: "Backend endpoint integrated.", 
-          created: new Date("2024-11-20") 
+          created: new Date("2024-11-20"),
+          likes: 5,
+          dislikes: 0
         }
       ],
       created: new Date("2024-11-15"), // Added created property
@@ -185,7 +141,9 @@ export const DashBoard: React.FC = () => {
         { 
           author: "Ella", 
           comment: "Marketing draft ready for review.", 
-          created: new Date("2024-11-28") 
+          created: new Date("2024-11-28"),
+          likes: 5,
+          dislikes: 0
         }
       ],
       created: new Date("2024-11-25"), // Added created property
@@ -204,7 +162,9 @@ export const DashBoard: React.FC = () => {
         { 
           author: "James", 
           comment: "Critical bug fixes deployed.", 
-          created: new Date("2024-10-29") 
+          created: new Date("2024-10-29"),
+          likes: 5,
+          dislikes: 0
         }
       ],
       created: new Date("2024-10-15"), // Added created property
@@ -220,7 +180,9 @@ export const DashBoard: React.FC = () => {
         { 
           author: "Isabella", 
           comment: "All test cases verified.", 
-          created: new Date("2024-10-20") 
+          created: new Date("2024-10-20"),
+          likes: 5,
+          dislikes: 0
         }
       ],
       created: new Date("2024-10-10"), // Added created property
@@ -236,14 +198,15 @@ export const DashBoard: React.FC = () => {
         { 
           author: "Emma", 
           comment: "Queries optimized successfully.", 
-          created: new Date("2024-10-15") 
+          created: new Date("2024-10-15"),
+          likes: 5,
+          dislikes: 0
         }
       ],
       created: new Date("2024-10-5"), // Added created property
       due: new Date("2024-10-20"), // Example due date
     },
   ];
-  
 
   // Combining all tasks into a unified structure for easy management
   const status: StatTask[] = [
@@ -321,6 +284,8 @@ export const DashBoard: React.FC = () => {
                 mt="md"
                 className="h-[32px] text-[16px] font-light"
                 style={{ fontSize: "14px", color: "#667988" }}
+                component={Link}
+                to={"/"}
               >
                 Log Out
               </Button>
