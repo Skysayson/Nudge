@@ -1,4 +1,4 @@
-const { Team } = require("../models");
+const { Team, Member } = require("../models");
 
 const createTeam = async (req, res) => {
   try {
@@ -42,8 +42,27 @@ const getTeamById = async (req, res) => {
   }
 };
 
+const getMemberByTeamId = async (req, res) => {
+  try {
+    const { team_id } = req.params;
+    const team = await Member.findAll({ where: { team_id } });
+
+    if (!team || team.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No members found for this team." });
+    }
+
+    res.status(200).json(team);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Uh oh, something went wrong!!!", error });
+  }
+};
+
 module.exports = {
   createTeam,
   getAllTeams,
   getTeamById,
+  getMemberByTeamId,
 };
