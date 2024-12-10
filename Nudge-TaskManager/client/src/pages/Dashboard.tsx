@@ -1,4 +1,12 @@
-import { Input, Button, Avatar, ActionIcon } from "@mantine/core";
+import {
+  Input,
+  Button,
+  Avatar,
+  ActionIcon,
+  Indicator,
+  Menu,
+  Text,
+} from "@mantine/core";
 import { Link } from "react-router-dom";
 import {
   IconLayoutDashboard,
@@ -26,6 +34,9 @@ export const DashBoard: React.FC = () => {
 
   // State for storing the currently selected task
   const [selectedTask, setSelectedTask] = useState<TaskContent | null>(null);
+
+  // Notifications
+  const [notificationClick, setNotification] = useState(false);
 
   //=> MARY CODE <=//
   const [numericalState, setNumericalState] = useState<number>(0); //PROBLEM: I need to make the default the first team somehow
@@ -159,7 +170,7 @@ export const DashBoard: React.FC = () => {
             priority: task.priority,
             status: task.status,
             created: task.created_at ? new Date(task.created_at) : null,
-            assigned: teamMembers,
+            assigned: [], //teamMembers,
             comments: [],
           }));
           setRenderedTasks(tasks);
@@ -202,6 +213,12 @@ export const DashBoard: React.FC = () => {
     { status: "In Progress", Task: inProgressTasks },
     { status: "Complete", Task: completeTasks },
   ];
+
+  // Toggle notification
+  const notifications = [
+    { id: 1, message: "New message from Alice" },
+    { id: 2, message: "Reminder: Meeting at 3 PM" },
+  ]; // Example notifications array
 
   // Toggles the visibility of the dashboard and ensures full task view is hidden
   const toggleDashboard = () => {
@@ -299,8 +316,70 @@ export const DashBoard: React.FC = () => {
           <div className="flex items-center pl-[24px] pr-[24px] justify-between shadow-custom-shadow w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
             <div className="text-[#6C899C] text-[32px]">{teamHeader}</div>
             <div className="flex items-center">
-              <ActionIcon variant="transparent" color="gray">
-                <IconBell />
+              <ActionIcon
+                variant="transparent"
+                color="gray"
+                onClick={() => setNotification(!notificationClick)}
+              >
+                <Menu
+                  position="bottom-end"
+                  shadow="md"
+                  opened={notificationClick}
+                  onClose={() => setNotification(false)}
+                >
+                  <Menu.Target>
+                    <ActionIcon
+                      variant="transparent"
+                      color="gray"
+                      onClick={() => setNotification(!notificationClick)}
+                    >
+                      {notifications.length === 0 ? (
+                        <IconBell size={32} color="#4A5568" />
+                      ) : (
+                        <Indicator
+                          inline
+                          label=""
+                          size={8}
+                          offset={5}
+                          color="red"
+                          position="top-end"
+                        >
+                          <IconBell size={32} color="#4A5568" />
+                        </Indicator>
+                      )}
+                    </ActionIcon>
+                  </Menu.Target>
+
+                  <Menu.Dropdown className="flex flex-col">
+                    <div className="flex w-[308px]">
+                      <h1>Notifications</h1>
+                    </div>
+
+                    {notifications.length === 0 ? (
+                      <Text size="sm" color="dimmed" p="xs">
+                        No notifications
+                      </Text>
+                    ) : (
+                      notifications.map((notification) => (
+                        <Menu.Item key={notification.id}>
+                          {notification.message}
+                        </Menu.Item>
+                      ))
+                    )}
+                    <Button
+                      fullWidth
+                      variant="subtle"
+                      color="gray"
+                      mt="xs"
+                      onClick={() => {
+                        setNotification(false); // Close dropdown
+                        console.log("View All clicked"); // Add your logic here
+                      }}
+                    >
+                      View All
+                    </Button>
+                  </Menu.Dropdown>
+                </Menu>
               </ActionIcon>
               <div className="ml-[28.4px]">
                 <Avatar />

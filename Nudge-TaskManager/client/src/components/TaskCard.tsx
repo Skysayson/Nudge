@@ -29,9 +29,9 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
   // Effect to calculate and set priority colors for each task
   useEffect(() => {
     const colors = TaskStat.Task.map((task) => {
-      if (task.priority === "High") return "#FA5252"; // Red for high priority
-      if (task.priority === "Medium") return "#FAB005"; // Yellow for medium priority
-      if(task.priority === "Low") return "#12B886"; // Green for low priority
+      if (task.priority === "high") return "#FA5252"; // Red for high priority
+      if (task.priority === "medium") return "#FAB005"; // Yellow for medium priority
+      if(task.priority === "low") return "#12B886"; // Green for low priority
       return "#868E9633"
     });
     setPriorityColors(colors);
