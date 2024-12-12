@@ -8,12 +8,14 @@ const {
   updateUser,
   deleteUser,
   loginUser,
+  findUserByEmail,
 } = require("../controllers/user.controller");
 
 router.post("/create", createUser);
 router.post("/login", loginUser);
 router.get("/", getAllUsers);
-router.get("/find/:user_id", getUserById);
+router.get("/find/:user_id", getUserById, authenticateToken);
+router.post("/find/email", findUserByEmail, authenticateToken);
 router.put("/update/:user_id", updateUser);
 router.delete("/delete/:user_id", deleteUser);
 

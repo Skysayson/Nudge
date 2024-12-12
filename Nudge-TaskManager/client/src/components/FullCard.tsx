@@ -8,7 +8,7 @@ import {
   Button,
   Popover,
   List,
-  ListItem
+  ListItem,
 } from "@mantine/core";
 import { TaskContent } from "../interfaces/interfaces";
 import {
@@ -31,17 +31,18 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [renderCalendar, setRenderCalendar] = useState(false);
   const [memberList, setMemberList] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedMember, setSelectedMember] = useState(null);
 
+  // Dummy Data for task assigning button
   const teamMembers = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Sam Brown' },
-    { id: 4, name: 'Emily Davis' },
+    { id: 1, name: "John Doe" },
+    { id: 2, name: "Jane Smith" },
+    { id: 3, name: "Sam Brown" },
+    { id: 4, name: "Emily Davis" },
   ];
 
-  const filteredMembers = teamMembers.filter(member =>
+  const filteredMembers = teamMembers.filter((member) =>
     member.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -78,7 +79,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   useEffect(() => {
     if (TaskContent.status === "Incomplete") {
       setStatusColor("#FA5252");
-    } else if (TaskContent.status === "In Progress") {
+    } else if (TaskContent.status === "in-progress") {
       setStatusColor("#FAB005");
     } else if (TaskContent.status === "Complete") {
       setStatusColor("#12B886");
@@ -106,16 +107,20 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       value: TaskContent.created ? (
         formatDate(TaskContent.created)
       ) : (
-        <Button>
-          {renderCalendar && <Calendar />}
-        </Button>
+        <Button>{renderCalendar && <Calendar />}</Button>
       ), // Fallback message
     },
     {
       label: "Due Date",
       icon: <IconCalendarDue size={16} />,
       value: (
-        <Popover position="bottom" withArrow shadow="md" opened={renderCalendar} onClose={() => setRenderCalendar(false)}>
+        <Popover
+          position="bottom"
+          withArrow
+          shadow="md"
+          opened={renderCalendar}
+          onClose={() => setRenderCalendar(false)}
+        >
           <Popover.Target>
             <Button
               variant="filled"
@@ -155,51 +160,52 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     {
       label: "Assignees",
       icon: <IconUser size={16} />,
-      value: mapAssigned() === "" ? (
-        <Popover
-          position="bottom"
-          withArrow
-          shadow="md"
-          opened={memberList}
-          onClose={() => setMemberList(false)}
-        >
-          <Popover.Target>
-            <Button
-              variant="filled"
-              color="#688193"
-              className="h-[90%] text-[13px]"
-              onClick={() => setMemberList(!memberList)}
-            >
-              Assign Member
-            </Button>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Input
-              placeholder="Search for a member..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              mb="xs"
-            />
-            {filteredMembers.length > 0 ? (
-              <List>
-                {filteredMembers.map(member => (
-                  <ListItem
-                    key={member.id}
-                    onClick={() => handleSelectMember(member)}
-                    style={{ cursor: 'pointer', padding: '5px 10px' }}
-                  >
-                    {member.name}
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Text size="xs">No members found</Text>
-            )}
-          </Popover.Dropdown>
-        </Popover>
-      ) : (
-        mapAssigned()
-      ),
+      value:
+        mapAssigned() === "" ? (
+          <Popover
+            position="bottom"
+            withArrow
+            shadow="md"
+            opened={memberList}
+            onClose={() => setMemberList(false)}
+          >
+            <Popover.Target>
+              <Button
+                variant="filled"
+                color="#688193"
+                className="h-[90%] text-[13px]"
+                onClick={() => setMemberList(!memberList)}
+              >
+                Assign Member
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Input
+                placeholder="Search for a member..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                mb="xs"
+              />
+              {filteredMembers.length > 0 ? (
+                <List>
+                  {filteredMembers.map((member) => (
+                    <ListItem
+                      key={member.id}
+                      onClick={() => handleSelectMember(member)}
+                      style={{ cursor: "pointer", padding: "5px 10px" }}
+                    >
+                      {member.name}
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Text size="xs">No members found</Text>
+              )}
+            </Popover.Dropdown>
+          </Popover>
+        ) : (
+          mapAssigned()
+        ),
     },
   ];
 
@@ -287,12 +293,6 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           <IconMessage />
           Comments
         </div>
-        {TaskContent.comments.length === 0 && (
-          <div className="flex w-full justify-center items-center">
-            {" "}
-            No Comments{" "}
-          </div>
-        )}
         <Textarea
           placeholder="Write a comment..."
           autosize
@@ -301,6 +301,13 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           className="mt-2 placeholder:[#C9C9C9]"
           variant="filled"
         />
+        {TaskContent.comments.length === 0 && (
+          <div className="flex w-full justify-center items-center mt-[5%]  text-[#B7CDDE]">
+            {" "}
+            No Comments{" "}
+          </div>
+        )}
+
         {TaskContent.comments.map((comment, index) => (
           <div
             key={index}

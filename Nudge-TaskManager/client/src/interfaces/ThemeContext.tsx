@@ -1,16 +1,16 @@
-// ThemeContext.ts
-import { Dispatch, SetStateAction,createContext } from "react";
+import { Dispatch, SetStateAction, createContext } from "react";
 import { TaskContent } from "./interfaces";
 
-// Define the ThemeContext for `renderFullTask` and `selectDash`
 export interface ThemeContextType {
   renderFullTask: boolean;
   setRenderFullTask: Dispatch<SetStateAction<boolean>>;
   selectedTask: TaskContent | null;
   setSelectedTask: (task: TaskContent | null) => void;
-};
+  numericalState: number;
+  setNumericalState: Dispatch<SetStateAction<number>>;
+  userId: number | null; // Global state for user_id
+  setUserId: Dispatch<SetStateAction<number | null>>; // Setter for user_id
+}
 
+// Create the context
 export const ThemeContext = createContext<ThemeContextType | null>(null);
-//fuck fuck render task and get task content to render
-
-//I want to pass the state of the fullCard to conditionally render it with the DashboardContent 

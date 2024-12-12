@@ -1,4 +1,12 @@
-import { Input, Button, Avatar, ActionIcon } from "@mantine/core";
+import {
+  Input,
+  Button,
+  Avatar,
+  ActionIcon,
+  Indicator,
+  Menu,
+  Text,
+} from "@mantine/core";
 import { Link } from "react-router-dom";
 import {
   IconLayoutDashboard,
@@ -7,16 +15,17 @@ import {
   IconBell,
 } from "@tabler/icons-react";
 import DashboardPage from "./DashboardContent";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NudgeLogo from "../assets/Group 1.svg";
 import { StatTask, TaskContent } from "../interfaces/interfaces";
 import { ThemeContext } from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
 
-export const DashBoard: React.FC = () => {
-  // Sample teams to display in the sidebar
-  const teams = ["Team 1", "Team 2", "Team 3"];
+//MARY IMPORTS
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
+export const DashBoard: React.FC = () => {
   // State for toggling the rendering of the dashboard
   const [selectDash, setSelectDash] = useState(true);
 
@@ -26,187 +35,177 @@ export const DashBoard: React.FC = () => {
   // State for storing the currently selected task
   const [selectedTask, setSelectedTask] = useState<TaskContent | null>(null);
 
-  // Sample task data for different statuses
-  const incompleteTasks: TaskContent[] = [
-    {
-      status: "",
-      priority: "",
-      title: "",
-      content: "",
-      assigned: [],
-      comments: [
-        {
-          author: "Sky",
-          comment: "Test",
-          created: new Date("2025-12-17"),
-          likes: 5,
-          dislikes: 0
+  // Notifications
+  const [notificationClick, setNotification] = useState(false);
+
+  //=> MARY CODE <=//
+  const [numericalState, setNumericalState] = useState<number>(0); //PROBLEM: I need to make the default the first team somehow
+  const [userId, setUserId] = useState<number | null>(null); // State for user_id
+  const [email, setEmail] = useState("");
+  const [teams, setTeams] = useState<string[]>([]);
+  const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
+  const [teamHeader, setTeamHeader] = useState("");
+  const [teamMembers, setTeamMembers] = useState<string[]>([]);
+
+  //task renders
+  const [renderedTasks, setRenderedTasks] = useState<TaskContent[]>([]);
+  const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
+  const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
+  const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
+
+  useEffect(() => {
+    const decodeToken = () => {
+      const token = localStorage.getItem("jwtToken");
+      if (token) {
+        try {
+          const decoded = jwtDecode<{ user_id: number; email: string }>(token);
+          setEmail(decoded.email);
+          console.log("Decoded email:", decoded.email);
+        } catch (error) {
+          console.error("Error decoding token:", error);
         }
-      ],
-      created: new Date(), // Added created property
-      due: null, // Example due date
-    },
-    {
-      status: "Incomplete",
-      priority: "High",
-      title: "UI/UX Design",
-      content: "Wireframe needed in Figma.",
-      assigned: ["Michael", "George", "Sky"],
-      comments: [
-        { 
-          author: "Michael", 
-          comment: "Wireframe draft in progress.", 
-          created: new Date("2024-11-10"),
-          likes: 5,
-          dislikes: 0
+      } else {
+        console.warn("No token found in localStorage.");
+      }
+    };
+
+    const fetchUserId = async (userEmail: string) => {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/user/find/email",
+          { email: userEmail }
+        );
+        if (response.data && response.data.user_id) {
+          setUserId(response.data.user_id);
+          console.log("Fetched user_id:", response.data.user_id);
+        } else {
+          console.warn("No user_id found for the provided email.");
         }
-      ],
-      created: new Date("2024-11-1"), // Added created property
-      due: new Date("2024-11-15"), // Example due date
-    },
-    {
-      status: "Incomplete",
-      priority: "Medium",
-      title: "Content Creation",
-      content: "Draft new articles for the blog.",
-      assigned: ["Ava", "Mia"],
-      comments: [
-        { 
-          author: "Mia", 
-          comment: "Initial draft submitted.", 
-          created: new Date("2024-11-19"),
-          likes: 5,
-          dislikes: 0
+      } catch (error) {
+        console.error("Error fetching user_id from backend:", error);
+      }
+    };
+
+    decodeToken();
+
+    if (email) {
+      fetchUserId(email);
+    }
+  }, [email]);
+
+  useEffect(() => {
+    const fetchTeams = async (userID: number) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/member/find/user/${userID}`
+        );
+        console.log("Backend response:", response.data);
+
+        if (response.data && Array.isArray(response.data)) {
+          const teams = response.data.map(
+            (member) => member.Team.team_name || "Unknown Team"
+          );
+          const team_id = response.data.map((member) => member.team_id || 0);
+          setTeams(teams);
+          setTeamNumbers(team_id);
+          setNumericalState(team_id[0]);
+          console.log("Fetched teams:", teams);
+        } else {
+          console.warn("No members found for the provided user_id.");
         }
-      ],
-      created: new Date("2024-11-10"), // Added created property
-      due: new Date("2024-11-20"), // Example due date
-    },
-    {
-      status: "Incomplete",
-      priority: "Low",
-      title: "Meeting Preparation",
-      content: "Organize agenda for client meeting.",
-      assigned: ["Henry"],
-      comments: [],
-      created: new Date("2024-11-15"), // Added created property
-      due: new Date("2024-11-25"), // Example due date
-    },
-  ];
-  
-  const inProgressTasks: TaskContent[] = [
-    {
-      status: "In Progress",
-      priority: "High",
-      title: "Security Audit",
-      content: "Conduct vulnerability assessments.",
-      assigned: ["James", "Lucas"],
-      comments: [
-        { 
-          author: "Lucas", 
-          comment: "Audit phase 1 complete.", 
-          created: new Date("2024-11-16"),
-          likes: 5,
-          dislikes: 0 
+      } catch (error) {
+        console.error("Error fetching teams from backend:", error);
+      }
+    };
+
+    if (userId) {
+      fetchTeams(userId);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    setTeamHeader(teams[0]);
+  }, [teams]);
+
+  //I think imma just place in the functions here
+  useEffect(() => {
+    const fetchMembersByTeamId = async (teamId: number) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/team/find/members/${teamId}`
+        );
+
+        if (response.data && Array.isArray(response.data)) {
+          const usernames = response.data.map((member) => member.username);
+          setTeamMembers(usernames);
+          console.log("Usernames:", usernames);
+        } else {
+          console.warn("No members found for the provided team_id.");
         }
-      ],
-      created: new Date(), // Added created property
-      due: null, // Example due date
-    },
-    {
-      status: "In Progress",
-      priority: "Medium",
-      title: "API Integration",
-      content: "Connect the frontend with backend services.",
-      assigned: ["Sophia", "Oliver"],
-      comments: [
-        { 
-          author: "Sophia", 
-          comment: "Backend endpoint integrated.", 
-          created: new Date("2024-11-20"),
-          likes: 5,
-          dislikes: 0
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    };
+
+    if (numericalState) {
+      fetchMembersByTeamId(numericalState);
+    }
+  }, [numericalState]);
+
+  useEffect(() => {
+    const fetchTasksByTeamId = async (teamId: number) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/task/find/team/${teamId}`
+        );
+
+        if (response.data && Array.isArray(response.data)) {
+          console.log("Fetched tasks:", response.data);
+          const tasks = response.data.map((task) => ({
+            taskID: task.task_id,
+            teamID: task.team_id,
+            title: task.title,
+            content: task.description,
+            due: task.due_date ? new Date(task.due_date) : null,
+            priority: task.priority,
+            status: task.status,
+            created: task.created_at ? new Date(task.created_at) : null,
+            assigned: [], //teamMembers,
+            comments: [],
+          }));
+          setRenderedTasks(tasks);
+
+          const incomplete = tasks.filter((task) => task.status === "pending");
+          const inProgress = tasks.filter(
+            (task) => task.status === "in-progress"
+          );
+          const completed = tasks.filter((task) => task.status === "completed");
+          setIncompleteTasks(incomplete);
+          setInProgressTasks(inProgress);
+          setCompleteTasks(completed);
+        } else {
+          console.warn("No tasks found for the provided team_id.");
         }
-      ],
-      created: new Date("2024-11-15"), // Added created property
-      due: new Date("2024-11-22"), // Example due date
-    },
-    {
-      status: "In Progress",
-      priority: "Low",
-      title: "Marketing Plan",
-      content: "Develop a Q4 marketing strategy.",
-      assigned: ["William", "Ella"],
-      comments: [
-        { 
-          author: "Ella", 
-          comment: "Marketing draft ready for review.", 
-          created: new Date("2024-11-28"),
-          likes: 5,
-          dislikes: 0
-        }
-      ],
-      created: new Date("2024-11-25"), // Added created property
-      due: new Date("2024-11-30"), // Example due date
-    },
-  ];
-  
-  const completeTasks: TaskContent[] = [
-    {
-      status: "Complete",
-      priority: "High",
-      title: "Bug Fixes",
-      content: "Resolve critical issues in production.",
-      assigned: [],
-      comments: [
-        { 
-          author: "James", 
-          comment: "Critical bug fixes deployed.", 
-          created: new Date("2024-10-29"),
-          likes: 5,
-          dislikes: 0
-        }
-      ],
-      created: new Date("2024-10-15"), // Added created property
-      due: new Date("2024-10-30"), // Example due date
-    },
-    {
-      status: "Complete",
-      priority: "Medium",
-      title: "Testing",
-      content: "Create test cases for new features.",
-      assigned: ["Isabella", "Jack"],
-      comments: [
-        { 
-          author: "Isabella", 
-          comment: "All test cases verified.", 
-          created: new Date("2024-10-20"),
-          likes: 5,
-          dislikes: 0
-        }
-      ],
-      created: new Date("2024-10-10"), // Added created property
-      due: new Date("2024-10-25"), // Example due date
-    },
-    {
-      status: "Complete",
-      priority: "Low",
-      title: "Database Optimization",
-      content: "Analyze and improve query performance.",
-      assigned: ["Emma"],
-      comments: [
-        { 
-          author: "Emma", 
-          comment: "Queries optimized successfully.", 
-          created: new Date("2024-10-15"),
-          likes: 5,
-          dislikes: 0
-        }
-      ],
-      created: new Date("2024-10-5"), // Added created property
-      due: new Date("2024-10-20"), // Example due date
-    },
-  ];
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
+    if (numericalState && teamMembers.length > 0) {
+      fetchTasksByTeamId(numericalState);
+    }
+  }, [numericalState, teamMembers]);
+
+  useEffect(() => {
+    console.log("Rendered tasks", renderedTasks);
+  }, [renderedTasks]);
+
+  //=>HERE ARE MY METHODS/FUNCTIONS<=//
+  const updateCurrentTeam = (index: number) => {
+    setTeamHeader(teams[index]);
+    const teamNumber = teamNumbers[index];
+    setNumericalState(teamNumber);
+  };
 
   // Combining all tasks into a unified structure for easy management
   const status: StatTask[] = [
@@ -214,6 +213,12 @@ export const DashBoard: React.FC = () => {
     { status: "In Progress", Task: inProgressTasks },
     { status: "Complete", Task: completeTasks },
   ];
+
+  // Toggle notification
+  const notifications = [
+    { id: 1, message: "New message from Alice" },
+    { id: 2, message: "Reminder: Meeting at 3 PM" },
+  ]; // Example notifications array
 
   // Toggles the visibility of the dashboard and ensures full task view is hidden
   const toggleDashboard = () => {
@@ -224,7 +229,18 @@ export const DashBoard: React.FC = () => {
   };
 
   return (
-    <ThemeContext.Provider value={{ renderFullTask, setRenderFullTask, selectedTask, setSelectedTask }}>
+    <ThemeContext.Provider
+      value={{
+        renderFullTask,
+        setRenderFullTask,
+        selectedTask,
+        setSelectedTask,
+        numericalState,
+        setNumericalState,
+        userId,
+        setUserId,
+      }}
+    >
       <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
         {/* Sidebar */}
         <div className="flex flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
@@ -265,6 +281,7 @@ export const DashBoard: React.FC = () => {
                 {teams.map((team, index) => (
                   <Button
                     key={index}
+                    onClick={() => updateCurrentTeam(index)} //bro this just for trial frfr
                     variant="subtle"
                     color="#667988"
                     className="flex items-center justify-start"
@@ -297,10 +314,72 @@ export const DashBoard: React.FC = () => {
         <div className="bg-[#151C21] w-full h-full flex flex-col">
           {/* Header Section */}
           <div className="flex items-center pl-[24px] pr-[24px] justify-between shadow-custom-shadow w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
-            <div className="text-[#6C899C] text-[32px]">{teams[0]}</div>
+            <div className="text-[#6C899C] text-[32px]">{teamHeader}</div>
             <div className="flex items-center">
-              <ActionIcon variant="transparent" color="gray">
-                <IconBell />
+              <ActionIcon
+                variant="transparent"
+                color="gray"
+                onClick={() => setNotification(!notificationClick)}
+              >
+                <Menu
+                  position="bottom-end"
+                  shadow="md"
+                  opened={notificationClick}
+                  onClose={() => setNotification(false)}
+                >
+                  <Menu.Target>
+                    <ActionIcon
+                      variant="transparent"
+                      color="gray"
+                      onClick={() => setNotification(!notificationClick)}
+                    >
+                      {notifications.length === 0 ? (
+                        <IconBell size={32} color="#4A5568" />
+                      ) : (
+                        <Indicator
+                          inline
+                          label=""
+                          size={8}
+                          offset={5}
+                          color="red"
+                          position="top-end"
+                        >
+                          <IconBell size={32} color="#4A5568" />
+                        </Indicator>
+                      )}
+                    </ActionIcon>
+                  </Menu.Target>
+
+                  <Menu.Dropdown className="flex flex-col">
+                    <div className="flex w-[308px]">
+                      <h1>Notifications</h1>
+                    </div>
+
+                    {notifications.length === 0 ? (
+                      <Text size="sm" color="dimmed" p="xs">
+                        No notifications
+                      </Text>
+                    ) : (
+                      notifications.map((notification) => (
+                        <Menu.Item key={notification.id}>
+                          {notification.message}
+                        </Menu.Item>
+                      ))
+                    )}
+                    <Button
+                      fullWidth
+                      variant="subtle"
+                      color="gray"
+                      mt="xs"
+                      onClick={() => {
+                        setNotification(false); // Close dropdown
+                        console.log("View All clicked"); // Add your logic here
+                      }}
+                    >
+                      View All
+                    </Button>
+                  </Menu.Dropdown>
+                </Menu>
               </ActionIcon>
               <div className="ml-[28.4px]">
                 <Avatar />
@@ -309,7 +388,9 @@ export const DashBoard: React.FC = () => {
           </div>
           {/* Conditional Rendering of Dashboard and Full Task View */}
           {selectDash && !renderFullTask && <DashboardPage StatTask={status} />}
-          {renderFullTask && selectedTask && <FullCard TaskContent={selectedTask} />}
+          {renderFullTask && selectedTask && (
+            <FullCard TaskContent={selectedTask} />
+          )}
         </div>
       </div>
     </ThemeContext.Provider>

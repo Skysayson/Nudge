@@ -9,15 +9,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
+        defaultValue: "",
       },
       description: {
         type: DataTypes.TEXT,
         allowNull: true,
+        defaultValue: "",
       },
       due_date: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
         validate: {
           isAfter: {
             args: new Date().toISOString(), //read more on this later... but basically ensures future dates

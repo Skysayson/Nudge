@@ -78,6 +78,31 @@ const getUserById = async (req, res) => {
   }
 };
 
+const findUserByEmail = async (req, res) => {
+  try {
+    const { email } = req.body; // Retrieve email from query string
+
+    // Check if the email is provided
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    // Fetch user based on the email
+    const user = await User.findOne({ where: { email } });
+
+    // Handle case where user does not exist
+    if (!user) {
+      return res.status(404).json({ message: "User DNE" });
+    }
+
+    // Return the user if found
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    res.status(500).json({ message: "Error retrieving user", error });
+  }
+};
+
 const updateUser = async (req, res) => {
   try {
     const { user_id } = req.params;
@@ -132,4 +157,5 @@ module.exports = {
   updateUser,
   deleteUser,
   loginUser,
+  findUserByEmail,
 };
