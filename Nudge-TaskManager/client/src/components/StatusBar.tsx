@@ -23,7 +23,7 @@ const StatusBar = ({ TaskStat }: StatusBarProps) => {
       {/* ----------------------------! TASK LIST DIV !---------------------------- */}
       {/* Scrollable container holding individual TaskCards for each task in the task group */}
       <div className="max-h-[75%] 2xl:max-h-[80%] overflow-y-auto w-full mt-[10px] scrollbar-hide">
-        {Array.from({ length: TaskStat.Task.length }, (_, index) => (
+        {Array.from({ length: 1 }, (_, index) => (
           <TaskCard
             key={index} // Unique key for each task card
             TaskStat={TaskStat} // Pass the task group data to each TaskCard

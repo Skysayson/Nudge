@@ -34,9 +34,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   // Calculate completed and total tasks for progress ring
   const completed = StatTask[2].Task.length;
   const total =
-    StatTask[0].Task.length +
-    StatTask[1].Task.length +
-    StatTask[2].Task.length;
+    StatTask[0].Task.length + StatTask[1].Task.length + StatTask[2].Task.length;
 
   // Generate items for task statistics display
   const items = stats.map((stat) => (
@@ -90,6 +88,9 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
             variant="subtle"
             color="#667988"
             className="bg-[#192228] text-[#8CAFC7]"
+            onClick={() => {
+              console.log(StatTask[0].Task);
+            }}
           >
             Add Task
           </Button>

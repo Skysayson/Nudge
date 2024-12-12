@@ -48,7 +48,6 @@ export const DashBoard: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<string[]>([]);
 
   //task renders
-  const [renderedTasks, setRenderedTasks] = useState<TaskContent[]>([]);
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
@@ -173,7 +172,6 @@ export const DashBoard: React.FC = () => {
             assigned: [], //teamMembers,
             comments: [],
           }));
-          setRenderedTasks(tasks);
 
           const incomplete = tasks.filter((task) => task.status === "pending");
           const inProgress = tasks.filter(
@@ -195,10 +193,6 @@ export const DashBoard: React.FC = () => {
       fetchTasksByTeamId(numericalState);
     }
   }, [numericalState, teamMembers]);
-
-  useEffect(() => {
-    console.log("Rendered tasks", renderedTasks);
-  }, [renderedTasks]);
 
   //=>HERE ARE MY METHODS/FUNCTIONS<=//
   const updateCurrentTeam = (index: number) => {
