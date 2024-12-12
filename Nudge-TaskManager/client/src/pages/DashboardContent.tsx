@@ -121,14 +121,26 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
 
         {/* Status Bars for Tasks */}
         <div className="border-green-600 w-full h-full flex mt-[27.65px]">
-          {StatTask.map((stat: StatTask, index: number) => (
-            <StatusBar
-              key={index}
-              TaskStat={stat}
-              selectDash={selectDash}
-              setSelectDash={setSelectDash}
-            />
-          ))}
+          {StatTask[0].Task.length > 0 ||
+          StatTask[1].Task.length > 0 ||
+          StatTask[2].Task.length > 0 ? (
+            <div className="border-green-600 w-full h-full flex mt-[27.65px]">
+              {StatTask.map((stat: StatTask, index: number) => (
+                <StatusBar
+                  key={index}
+                  TaskStat={stat}
+                  selectDash={selectDash}
+                  setSelectDash={setSelectDash}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center -translate-y-[10%]">
+              <p className="text-center text-[#B7CDDE] text-xl text-gray font-normal opacity-50">
+                No tasks available for the selected team.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

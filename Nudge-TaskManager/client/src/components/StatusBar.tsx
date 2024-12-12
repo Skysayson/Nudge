@@ -23,12 +23,16 @@ const StatusBar = ({ TaskStat }: StatusBarProps) => {
       {/* ----------------------------! TASK LIST DIV !---------------------------- */}
       {/* Scrollable container holding individual TaskCards for each task in the task group */}
       <div className="max-h-[75%] 2xl:max-h-[80%] overflow-y-auto w-full mt-[10px] scrollbar-hide">
-        {Array.from({ length: 1 }, (_, index) => (
-          <TaskCard
-            key={index} // Unique key for each task card
-            TaskStat={TaskStat} // Pass the task group data to each TaskCard
-          />
-        ))}
+        {TaskStat.Task.length > 0 ? (
+          Array.from({ length: 1 }, (_, index) => (
+            <TaskCard
+              key={index} // Unique key for each task card
+              TaskStat={TaskStat} // Pass the task group data to each TaskCard
+            />
+          ))
+        ) : (
+          <div className="text-center text-gray-400 mt-4">No tasks</div>
+        )}
       </div>
       {/* ----------------------------! TASK LIST DIV !---------------------------- */}
     </div>

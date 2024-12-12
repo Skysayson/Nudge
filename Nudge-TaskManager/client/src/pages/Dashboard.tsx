@@ -158,7 +158,7 @@ export const DashBoard: React.FC = () => {
           `http://localhost:3000/api/task/find/team/${teamId}`
         );
 
-        if (response.data && Array.isArray(response.data)) {
+        if (Array.isArray(response.data)) {
           console.log("Fetched tasks:", response.data);
           const tasks = response.data.map((task) => ({
             taskID: task.task_id,
@@ -169,7 +169,7 @@ export const DashBoard: React.FC = () => {
             priority: task.priority,
             status: task.status,
             created: task.created_at ? new Date(task.created_at) : null,
-            assigned: [], //teamMembers,
+            assigned: [], // Placeholder for teamMembers
             comments: [],
           }));
 
@@ -178,14 +178,22 @@ export const DashBoard: React.FC = () => {
             (task) => task.status === "in-progress"
           );
           const completed = tasks.filter((task) => task.status === "completed");
+
           setIncompleteTasks(incomplete);
           setInProgressTasks(inProgress);
           setCompleteTasks(completed);
         } else {
-          console.warn("No tasks found for the provided team_id.");
+          console.warn("Unexpected response format:", response.data);
         }
       } catch (error) {
-        console.error("Error fetching tasks:", error);
+        if (error.response?.status === 404) {
+          console.warn("No tasks found for the provided team_id.");
+          setIncompleteTasks([]);
+          setInProgressTasks([]);
+          setCompleteTasks([]);
+        } else {
+          console.error("Error fetching tasks:", error);
+        }
       }
     };
 
@@ -198,6 +206,7 @@ export const DashBoard: React.FC = () => {
   const updateCurrentTeam = (index: number) => {
     setTeamHeader(teams[index]);
     const teamNumber = teamNumbers[index];
+    //alert(teamNumber);
     setNumericalState(teamNumber);
   };
 
