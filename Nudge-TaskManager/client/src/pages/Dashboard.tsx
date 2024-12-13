@@ -13,6 +13,7 @@ import {
   IconSearch,
   IconLogout,
   IconBell,
+  IconX,
 } from "@tabler/icons-react";
 import DashboardPage from "./DashboardContent";
 import { useState, useEffect } from "react";
@@ -27,7 +28,7 @@ import { jwtDecode } from "jwt-decode";
 
 export const DashBoard: React.FC = () => {
   // State for toggling the empty task when add task is clicked
-  const [emptyTask, setEmptyTask] = useState(false)
+  const [emptyTask, setEmptyTask] = useState(false);
 
   // State for toggling the rendering of the dashboard
   const [selectDash, setSelectDash] = useState(true);
@@ -67,7 +68,6 @@ export const DashBoard: React.FC = () => {
     created: null, // No creation date
     due: null, // No due date
   };
-
 
   useEffect(() => {
     const decodeToken = () => {
@@ -202,7 +202,7 @@ export const DashBoard: React.FC = () => {
         } else {
           console.warn("Unexpected response format:", response.data);
         }
-      } catch (error:unknown) {
+      } catch (error: unknown) {
         if (error instanceof AxiosError && error.response?.status === 404) {
           console.warn("No tasks found for the provided team_id.");
           setIncompleteTasks([]);
@@ -238,6 +238,8 @@ export const DashBoard: React.FC = () => {
   const notifications = [
     { id: 1, message: "New message from Alice" },
     { id: 2, message: "Reminder: Meeting at 3 PM" },
+    { id: 1, message: "New message from Alice" },
+    { id: 2, message: "Reminder: Meeting at 3 PM" },
   ]; // Example notifications array
 
   // Toggles the visibility of the dashboard and ensures full task view is hidden
@@ -246,7 +248,10 @@ export const DashBoard: React.FC = () => {
       setSelectDash(true);
     }
     setRenderFullTask(false);
+    setEmptyTask(false);
   };
+
+  console.log(`EmptyTask in Dashboard` + emptyTask);
 
   return (
     <ThemeContext.Provider
@@ -260,7 +265,7 @@ export const DashBoard: React.FC = () => {
         userId,
         setUserId,
         emptyTask,
-        setEmptyTask
+        setEmptyTask,
       }}
     >
       <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
@@ -372,9 +377,16 @@ export const DashBoard: React.FC = () => {
                     </ActionIcon>
                   </Menu.Target>
 
-                  <Menu.Dropdown className="flex flex-col">
-                    <div className="flex w-[308px]">
-                      <h1>Notifications</h1>
+                  <Menu.Dropdown className="flex flex-col p-2 bg-[#485560] border-none">
+                    <div className="flex items-center justify-between mb-3">
+                      <h1 className="text-lg font-semibold text-[#ECF1F6]">Notifications</h1>
+                      <ActionIcon
+                        variant="transparent"
+                        color="gray"
+                        onClick={() => setNotification(false)}
+                      >
+                        <IconX size={20} />
+                      </ActionIcon>
                     </div>
 
                     {notifications.length === 0 ? (
@@ -383,11 +395,25 @@ export const DashBoard: React.FC = () => {
                       </Text>
                     ) : (
                       notifications.map((notification) => (
-                        <Menu.Item key={notification.id}>
-                          {notification.message}
-                        </Menu.Item>
+                        <div
+                          key={notification.id}
+                          className="flex items-center justify-between p-2 my-1 rounded-lg hover:bg-gray-500 hover:cursor-pointer"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <IconBell size={20} color="gray" />
+                            <Text size="sm" className="text-[#ECF1F6]">{notification.message}</Text>
+                          </div>
+                          <ActionIcon
+                            variant="transparent"
+                            color="gray"
+                            size={18}
+                          >
+                            <IconX size={16} />
+                          </ActionIcon>
+                        </div>
                       ))
                     )}
+
                     <Button
                       fullWidth
                       variant="subtle"
@@ -409,7 +435,9 @@ export const DashBoard: React.FC = () => {
             </div>
           </div>
           {/* Conditional Rendering of Dashboard and Full Task View */}
-          {selectDash && !renderFullTask && <DashboardPage StatTask={status} />}
+          {selectDash && !renderFullTask && !emptyTask && (
+            <DashboardPage StatTask={status} />
+          )}
           {renderFullTask && selectedTask && (
             <FullCard TaskContent={selectedTask} />
           )}

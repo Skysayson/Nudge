@@ -11,8 +11,9 @@ import StatusBar from "../components/StatusBar";
 import { StatTask } from "../interfaces/interfaces";
 import { Calendar } from "@mantine/dates";
 import dayjs from "dayjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import classes from "../StatsRingCard.module.css";
+import { ThemeContext } from "../interfaces/ThemeContext";
 
 // Main Dashboard Page Component
 const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
@@ -22,14 +23,13 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   // State to track current screen size for responsive design
   const [screenSize, setScreenSize] = useState("sm");
 
-  // State to render new empty task
-  const [emptyTask, setEmptyTask] = useState(false);
-
   // Extract statistics for in-progress and incomplete tasks
   const stats = [
     { value: StatTask[1], label: "In Progress" },
     { value: StatTask[0], label: "Incomplete" },
   ];
+
+  const themeContext = useContext(ThemeContext); // Access theme context for task selection and rendering logic
 
   // Mantine theme for accessing primary colors
   const theme = useMantineTheme();
@@ -92,7 +92,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
             color="#667988"
             className="bg-[#192228] text-[#8CAFC7]"
             onClick={() => {
-              setEmptyTask(!emptyTask)
+              themeContext?.setEmptyTask(!themeContext.emptyTask)
             }}
           >
             Add Task

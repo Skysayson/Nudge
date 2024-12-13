@@ -32,8 +32,13 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [renderCalendar, setRenderCalendar] = useState(false);
   const [memberList, setMemberList] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [startCalendar, setStartCalendar] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
-
+  const [progressDropdownOpen, setProgressDropdownOpen] = useState(false);
+  const [progress, setProgress] = useState<string>("INCOMPLETE");
+  const [priorityDropdownOpen, setPriorityDropdownOpen] = useState(false);
+  const [priority, setPriority] = useState(""); // Store the selected priority
+  
   // Dummy Data for task assigning button
   const teamMembers = [
     { id: 1, name: "John Doe" },
@@ -42,9 +47,74 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     { id: 4, name: "Emily Davis" },
   ];
 
+  const progressArr = [
+    <Button
+      variant="filled"
+      size="xs"
+      className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
+      color={"#FA5252"}
+    >
+      INCOMPLETE
+    </Button>,
+    <Button
+      variant="filled"
+      size="xs"
+      className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
+      color={"#FAB005"}
+    >
+      IN-PROGRESS
+    </Button>,
+
+    <Button
+      variant="filled"
+      size="xs"
+      className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
+      color={"#12B886"}
+      key="status-badge" // Always add a key when creating components dynamically
+    >
+      COMPLETE
+    </Button>,
+  ];
+
   const filteredMembers = teamMembers.filter((member) =>
     member.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handlePriorityChange = (index) => {
+    const priorityLevels = ["LOW", "MEDIUM", "HIGH"];
+    setPriority(priorityLevels[index]);
+    setPriorityDropdownOpen(false); // Close dropdown after selection
+  };
+
+  const priorityArr = [
+    <Button
+      variant="filled"
+      size="xs"
+      className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
+      color="#12B886"
+      leftSection={<IconFlag size="20"/>}
+    >
+      LOW
+    </Button>,
+    <Button
+      variant="filled"
+      size="xs"
+      className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
+      color="#FAB005"
+      leftSection={<IconFlag size="20"/>}
+    >
+      MEDIUM
+    </Button>,
+    <Button
+      variant="filled"
+      size="xs"
+      className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
+      color="#FA5252"
+      leftSection={<IconFlag size="20"/>}
+    >
+      HIGH
+    </Button>,
+  ];
 
   const handleSelectMember = (member) => {
     setSelectedMember(member);
@@ -99,6 +169,14 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   }, [TaskContent.priority]);
 
+  const handleProgressChange = (index: number) => {
+    // Update progress status based on the clicked index
+    const newProgress =
+      index === 0 ? "INCOMPLETE" : index === 1 ? "IN-PROGRESS" : "COMPLETE";
+    setProgress(newProgress);
+    setProgressDropdownOpen(false); // Close dropdown after selection
+  };
+
   //This is an object array that contains the contents to be rendered for the Task Specifications
   const taskSpecifications = [
     {
@@ -107,7 +185,21 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       value: TaskContent.created ? (
         formatDate(TaskContent.created)
       ) : (
-        <Button>{renderCalendar && <Calendar />}</Button>
+        <Popover>
+          <Popover.Target>
+            <Button
+              variant="filled"
+              color="#688193"
+              className="h-[90%] text-[13px]"
+              onClick={() => setStartCalendar(!startCalendar)}
+            >
+              Set Start Date
+            </Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Calendar />
+          </Popover.Dropdown>
+        </Popover>
       ), // Fallback message
     },
     {
@@ -143,18 +235,88 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       label: "Progress",
       icon: <IconProgress size={16} />,
       value: (
-        <Badge color={TaskContent.status === "" ? "#E03131" : statusColor}>
-          {TaskContent.status === "" ? "INCOMPLETE" : TaskContent.status}
-        </Badge>
+        <Popover
+          position="bottom"
+          withArrow
+          shadow="md"
+          opened={progressDropdownOpen}
+          onClose={() => setProgressDropdownOpen(false)}
+        >
+          <Popover.Target>
+            <Button
+              variant="filled"
+              size="xs"
+              className="rounded-[20px] h-[20px]"
+              color={
+                progress === "INCOMPLETE"
+                  ? "#FA5252"
+                  : progress === "IN-PROGRESS"
+                  ? "#FAB005"
+                  : progress === "COMPLETE"
+                  ? "#12B886"
+                  : ""
+              }
+              onClick={() => setProgressDropdownOpen(!progressDropdownOpen)}
+            >
+              {progress}
+            </Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <div>
+              {progressArr.map((badge, index) => (
+                <div
+                  key={index}
+                  style={{ cursor: "pointer", padding: "5px 10px" }}
+                  onClick={() => handleProgressChange(index)}
+                >
+                  {badge}
+                </div>
+              ))}
+            </div>
+          </Popover.Dropdown>
+        </Popover>
       ),
     },
     {
       label: "Priority",
       icon: <IconFlag size={16} />,
       value: (
-        <Badge color={priorityColors}>
-          {TaskContent.priority === "" ? "Add Priority" : TaskContent.priority}
-        </Badge>
+        <Popover
+          position="bottom"
+          withArrow
+          shadow="md"
+          opened={priorityDropdownOpen}
+          onClose={() => setPriorityDropdownOpen(false)}
+        >
+          <Popover.Target>
+            <Button
+              variant="filled"
+              size="xs"
+              className="rounded-[20px] h-[20px]"
+              color={
+                priority === "LOW" ? "#12B886" :
+                priority === "MEDIUM" ? "#FAB005" :
+                priority === "HIGH" ? "#FA5252" : ""
+              }
+              onClick={() => setPriorityDropdownOpen(!priorityDropdownOpen)}
+            >
+              <IconFlag size="15" className="mr-[5px] flex items-center justify-center"/> {priority === "" ? "N/A" : priority}
+            </Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <div>
+              {priorityArr.map((badge, index) => (
+                <div
+                  key={index}
+                  style={{ cursor: "pointer", padding: "5px 10px" }}
+                  onClick={() => handlePriorityChange(index)}
+                >
+                  {badge}
+                </div>
+              ))}
+            </div>
+          </Popover.Dropdown>
+        </Popover>
       ),
     },
     {
