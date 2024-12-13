@@ -10,6 +10,8 @@ export interface ThemeContextType {
   setNumericalState: Dispatch<SetStateAction<number>>;
   userId: number | null; // Global state for user_id
   setUserId: Dispatch<SetStateAction<number | null>>; // Setter for user_id
+  emptyTask: boolean;
+  setEmptyTask: Dispatch<SetStateAction<boolean>>;
 }
 
 // Create the context

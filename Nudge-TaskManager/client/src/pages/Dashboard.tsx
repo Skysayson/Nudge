@@ -22,10 +22,13 @@ import { ThemeContext } from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
 
 //MARY IMPORTS
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
 
 export const DashBoard: React.FC = () => {
+  // State for toggling the empty task when add task is clicked
+  const [emptyTask, setEmptyTask] = useState(false)
+
   // State for toggling the rendering of the dashboard
   const [selectDash, setSelectDash] = useState(true);
 
@@ -51,6 +54,20 @@ export const DashBoard: React.FC = () => {
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
+
+  const dummyTask: TaskContent = {
+    taskID: 0, // Assuming 0 represents a placeholder ID for an empty task
+    teamID: 0, // Placeholder team ID
+    status: "", // No status assigned
+    priority: "", // No priority assigned
+    title: "", // Empty title
+    content: "", // No content
+    assigned: [], // No one is assigned
+    comments: [], // No comments
+    created: null, // No creation date
+    due: null, // No due date
+  };
+
 
   useEffect(() => {
     const decodeToken = () => {
@@ -185,8 +202,8 @@ export const DashBoard: React.FC = () => {
         } else {
           console.warn("Unexpected response format:", response.data);
         }
-      } catch (error) {
-        if (error.response?.status === 404) {
+      } catch (error:unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
           console.warn("No tasks found for the provided team_id.");
           setIncompleteTasks([]);
           setInProgressTasks([]);
@@ -242,6 +259,8 @@ export const DashBoard: React.FC = () => {
         setNumericalState,
         userId,
         setUserId,
+        emptyTask,
+        setEmptyTask
       }}
     >
       <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
@@ -394,6 +413,7 @@ export const DashBoard: React.FC = () => {
           {renderFullTask && selectedTask && (
             <FullCard TaskContent={selectedTask} />
           )}
+          {emptyTask && <FullCard TaskContent={dummyTask} />}
         </div>
       </div>
     </ThemeContext.Provider>

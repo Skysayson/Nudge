@@ -22,6 +22,9 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   // State to track current screen size for responsive design
   const [screenSize, setScreenSize] = useState("sm");
 
+  // State to render new empty task
+  const [emptyTask, setEmptyTask] = useState(false);
+
   // Extract statistics for in-progress and incomplete tasks
   const stats = [
     { value: StatTask[1], label: "In Progress" },
@@ -79,7 +82,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   return (
     <div className="flex p-[24px] border-red-600 h-full w-full text-white">
       {/* Main Dashboard Section */}
-      <div className="flex w-[100%] border-blue-600 flex-col">
+      <div className="flex w-[100%] border-blue-600 flex-col h-full">
         {/* Header Section */}
         <div className="items-center h-max justify-between border-white flex w-full">
           {/* Add Task Button */}
@@ -89,7 +92,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
             color="#667988"
             className="bg-[#192228] text-[#8CAFC7]"
             onClick={() => {
-              console.log(StatTask[0].Task);
+              setEmptyTask(!emptyTask)
             }}
           >
             Add Task
@@ -135,7 +138,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
               ))}
             </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center -translate-y-[10%]">
+            <div className="w-full h-full flex items-center justify-center">
               <p className="text-center text-[#B7CDDE] text-xl text-gray font-normal opacity-50">
                 No tasks available for the selected team.
               </p>
