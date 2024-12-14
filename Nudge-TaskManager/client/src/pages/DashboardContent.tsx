@@ -92,7 +92,8 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
             color="#667988"
             className="bg-[#192228] text-[#8CAFC7]"
             onClick={() => {
-              themeContext?.setEmptyTask(!themeContext.emptyTask)
+              themeContext?.setEmptyTask(!themeContext.emptyTask);
+              console.log(themeContext?.emptyTask);
             }}
           >
             Add Task

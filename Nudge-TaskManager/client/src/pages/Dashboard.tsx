@@ -19,7 +19,7 @@ import DashboardPage from "./DashboardContent";
 import { useState, useEffect } from "react";
 import NudgeLogo from "../assets/Group 1.svg";
 import { StatTask, TaskContent } from "../interfaces/interfaces";
-import { ThemeContext } from "../interfaces/ThemeContext";
+import { ThemeContext, TeamMember } from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
 
 //MARY IMPORTS
@@ -49,25 +49,37 @@ export const DashBoard: React.FC = () => {
   const [teams, setTeams] = useState<string[]>([]);
   const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
   const [teamHeader, setTeamHeader] = useState("");
-  const [teamMembers, setTeamMembers] = useState<string[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [dummyTask, setDummyTask] = useState<TaskContent>({
+    taskID: 0, // Placeholder ID
+    teamID: 0, // Placeholder team ID
+    status: "",
+    priority: "",
+    title: "",
+    content: "",
+    assigned: [],
+    comments: [],
+    created: null,
+    due: null,
+  });
 
   //task renders
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
 
-  const dummyTask: TaskContent = {
-    taskID: 0, // Assuming 0 represents a placeholder ID for an empty task
-    teamID: 0, // Placeholder team ID
-    status: "", // No status assigned
-    priority: "", // No priority assigned
-    title: "", // Empty title
-    content: "", // No content
-    assigned: [], // No one is assigned
-    comments: [], // No comments
-    created: null, // No creation date
-    due: null, // No due date
-  };
+  // const dummyTask: TaskContent = {
+  //   taskID: 0,
+  //   teamID: 0,
+  //   status: "",
+  //   priority: "",
+  //   title: "",
+  //   content: "",
+  //   assigned: [],
+  //   comments: [],
+  //   created: null,
+  //   due: null,
+  // };
 
   useEffect(() => {
     const decodeToken = () => {
@@ -152,9 +164,14 @@ export const DashBoard: React.FC = () => {
         );
 
         if (response.data && Array.isArray(response.data)) {
-          const usernames = response.data.map((member) => member.username);
-          setTeamMembers(usernames);
-          console.log("Usernames:", usernames);
+          const teamMembers = response.data.map(
+            (member: { user_id: number; username: string }) => ({
+              id: member.user_id, // Map the 'id' field
+              name: member.username, // Map the 'username' field to 'name'
+            })
+          );
+          setTeamMembers(teamMembers);
+          console.log(teamMembers);
         } else {
           console.warn("No members found for the provided team_id.");
         }
@@ -266,6 +283,8 @@ export const DashBoard: React.FC = () => {
         setUserId,
         emptyTask,
         setEmptyTask,
+        teamMembers,
+        setTeamMembers,
       }}
     >
       <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
