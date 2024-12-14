@@ -49,6 +49,7 @@ export const DashBoard: React.FC = () => {
   const [opened, { open, close }] = useDisclosure(false);
 
   //=> MARY CODE <=//
+  const [reloadTasks, setReloadTasks] = useState<boolean>(false);
   const [numericalState, setNumericalState] = useState<number>(0); //PROBLEM: I need to make the default the first team somehow
   const [userId, setUserId] = useState<number | null>(null); // State for user_id
   const [email, setEmail] = useState("");
@@ -237,10 +238,12 @@ export const DashBoard: React.FC = () => {
       }
     };
 
-    if (numericalState && teamMembers.length > 0) {
+    if ((numericalState && teamMembers.length > 0) || reloadTasks === true) {
       fetchTasksByTeamId(numericalState);
+      setReloadTasks(false);
+      console.log(reloadTasks);
     }
-  }, [numericalState, teamMembers]);
+  }, [numericalState, teamMembers, reloadTasks]);
 
   //=>HERE ARE MY METHODS/FUNCTIONS<=//
   const updateCurrentTeam = (index: number) => {
@@ -291,6 +294,8 @@ export const DashBoard: React.FC = () => {
         setEmptyTask,
         teamMembers,
         setTeamMembers,
+        reloadTasks,
+        setReloadTasks,
       }}
     >
       <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">

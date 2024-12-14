@@ -45,8 +45,8 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   //MARY STUFF
   const myContext = useContext(ThemeContext);
-  const navigate = useNavigate();
 
+  const [addTaskButton, setAddTaskButton] = useState<boolean>(false);
   const [myContent, setMyContent] = useState<string>("");
   const [count, setCount] = useState<boolean[]>([false, false, true]);
   const [dummyTask, setDummyTask] = useState<TaskContent>({
@@ -105,27 +105,30 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   };
 
-  // {
-  //   "title": "imma cry",
-  //   "description": "Finalize and submit the project report",
-  //   "due_date": "2024-12-15T12:00:00Z",
-  //   "priority": "low",
-  //   "status": "completed",
-  //   "team_id": 1,
-  //   "admin_id": 1
-  // }
+  const newTaskAdder = async () => {
+    try {
+      console.log("Creating task...");
+      await createTask(dummyTask, myContext?.userId);
+      console.log("Task created successfully.");
+      myContext?.setRenderFullTask(false);
+      myContext?.setReloadTasks(true);
+      setAddTaskButton(false);
+    } catch (error) {
+      console.error("Failed to create task:", error);
+      // Optionally: Display error feedback to the user
+    }
+  };
 
   useEffect(() => {
-    if (count.every((val) => val === true) && myContext?.userId) {
+    if (
+      count.every((val) => val === true) &&
+      myContext?.userId &&
+      addTaskButton
+    ) {
       // Prevent duplicate task creation
-      createTask(dummyTask, myContext.userId)
-        .then(() => {
-          console.log("Task created successfully!");
-          setCount([false, false, false]); // Reset count or add more logic to manage it
-        })
-        .catch((error) => console.error("Failed to create task:", error));
+      newTaskAdder();
     }
-  }, [count, myContext?.userId]); // Only trigger when 'count' or 'userId' changes
+  }, [count, myContext?.userId, addTaskButton]); // Only trigger when 'count' or 'userId' changes
   // Adjust dependencies if necessary
 
   useEffect(() => {
@@ -592,7 +595,8 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         <Button
           variant="light"
           color="#B7CDDE"
-          onClick={() => myContext?.setRenderFullTask(false)}
+          onClick={() => setAddTaskButton(true)}
+          disabled={!myContext?.userId || count.some((val) => val !== true)}
         >
           SAVE
         </Button>

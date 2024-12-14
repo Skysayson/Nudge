@@ -20,6 +20,8 @@ export interface ThemeContextType {
   setEmptyTask: Dispatch<SetStateAction<boolean>>;
   teamMembers: TeamMember[]; // Array of objects with id and name
   setTeamMembers: Dispatch<SetStateAction<TeamMember[]>>; // Setter for the array of objects
+  reloadTasks: boolean;
+  setReloadTasks: Dispatch<SetStateAction<boolean>>;
 }
 
 // Create the context
