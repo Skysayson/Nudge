@@ -379,7 +379,9 @@ export const DashBoard: React.FC = () => {
 
                   <Menu.Dropdown className="flex flex-col p-2 bg-[#485560] border-none">
                     <div className="flex items-center justify-between mb-3">
-                      <h1 className="text-lg font-semibold text-[#ECF1F6]">Notifications</h1>
+                      <h1 className="text-lg font-semibold text-[#ECF1F6]">
+                        Notifications
+                      </h1>
                       <ActionIcon
                         variant="transparent"
                         color="gray"
@@ -401,7 +403,9 @@ export const DashBoard: React.FC = () => {
                         >
                           <div className="flex items-center space-x-2">
                             <IconBell size={20} color="gray" />
-                            <Text size="sm" className="text-[#ECF1F6]">{notification.message}</Text>
+                            <Text size="sm" className="text-[#ECF1F6]">
+                              {notification.message}
+                            </Text>
                           </div>
                           <ActionIcon
                             variant="transparent"
