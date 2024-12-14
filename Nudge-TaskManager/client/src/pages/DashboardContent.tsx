@@ -80,7 +80,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   }, []);
 
   return (
-    <div className="flex p-[24px] border-red-600 h-full w-full text-white">
+    <div className="flex p-[24px] border-red-600 h-full w-full text-white overflow-x-auto overflow-y-hidden">
       {/* Main Dashboard Section */}
       <div className="flex w-[100%] border-blue-600 flex-col h-full">
         {/* Header Section */}
@@ -149,7 +149,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
       </div>
 
       {/* Sidebar Section */}
-      <div className="w-max flex flex-col h-full">
+      <div className="w-max flex flex-col h-full max-lg:hidden">
         {/* Calendar Component */}
         <Calendar
           className="bg-[#33424C] p-4 rounded-md mt-[10px] w-full"

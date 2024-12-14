@@ -365,7 +365,7 @@ export const DashBoard: React.FC = () => {
         <Drawer
           opened={opened}
           onClose={close}
-          size="40%"
+          size="60%"
           className="flex flex-col w-full border-red-600 h-full shadow-custom-shadow border-r"
           styles={{
             content: {

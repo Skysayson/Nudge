@@ -1,5 +1,4 @@
 import {
-  Badge,
   Table,
   Avatar,
   Text,
@@ -9,6 +8,7 @@ import {
   Popover,
   List,
   ListItem,
+  ActionIcon,
 } from "@mantine/core";
 import { TaskContent } from "../interfaces/interfaces";
 import {
@@ -558,35 +558,44 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   ];
 
   return (
-    <div className="flex flex-col text-white border-red-600 w-[90%] h-full p-[24px] overflow-y-auto scrollbar-hide">
+    <div className="flex flex-col text-white border-red-600 w-[100%] h-full p-[24px] overflow-y-auto scrollbar-hide">
       {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
-      <div className="flex w-full h-max mb-4">
-        {isEditingTitle ? (
-          <Input
-            value={taskTitle}
-            onChange={handleTitleChange}
-            onBlur={handleTitleBlur}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter Title"
-            variant="unstyled"
-            className="border-red-600 flex w-full"
-            styles={{
-              input: {
-                color: "#B7CDDE", // Text color
-                "::placeholder": {
-                  color: "#B7CDDE", // Placeholder text color
+      <div className="flex w-full justify-between">
+        <div className="flex border-red-600 w-[90%] h-max mb-4">
+          {isEditingTitle ? (
+            <Input
+              value={taskTitle}
+              onChange={handleTitleChange}
+              onBlur={handleTitleBlur}
+              onKeyDown={handleKeyDown}
+              placeholder="Enter Title"
+              variant="unstyled"
+              className="border-red-600 flex w-full"
+              styles={{
+                input: {
+                  color: "#B7CDDE", // Text color
+                  "::placeholder": {
+                    color: "#B7CDDE", // Placeholder text color
+                  },
                 },
-              },
-            }}
-          />
-        ) : (
-          <div
-            className="text-[#688193] w-full cursor-pointer"
-            onClick={() => setIsEditingTitle(true)}
-          >
-            {TaskContent.title || taskTitle}
-          </div>
-        )}
+              }}
+            />
+          ) : (
+            <div
+              className="text-[#B7CDDE] w-full cursor-pointer text-[35px]"
+              onClick={() => setIsEditingTitle(true)}
+            >
+              {TaskContent.title || taskTitle}
+            </div>
+          )}
+        </div>
+        <Button
+          variant="light"
+          color="#B7CDDE"
+          onClick={() => myContext?.setRenderFullTask(false)}
+        >
+          SAVE
+        </Button>
       </div>
       {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
       {/*------------------------------! TABLE COMPONENT (TASK SPECIFICATIONS) !------------------------------------*/}
