@@ -58,16 +58,21 @@ function LoginPage() {
   return (
     <div className="flex w-screen h-screen">
       {/* Left Section: Login Form */}
-      <div className="flex border-red-600 w-[50%] h-full bg-[#151C21] items-center justify-center">
-        <div className="flex flex-col border-white 2xl:w-[43%] 2xl:h-[55%] lg:w-[50%] lg:h-[60%]">
+      <div className="flex border-red-600 max-lg:w-full lg:w-[50%] h-full bg-[#151C21] items-center justify-center">
+        <div className="flex flex-col border-white justify-center  max-sm:w-[75%] max-lg:w-[60%] 2xl:w-[43%] 2xl:h-[55%] lg:w-[50%] lg:h-[70%]">
           {/* Login Form Header */}
-          <div className="flex flex-col lg:h-max md:h-[30%] border-orange-600 lg:w-[100%]">
-            <h1 className="text-[#B7CDDE] mb-[15px] 2xl:text-[20px] lg:text-[22px]">
-              Welcome back to Nudge!
-            </h1>
+          <div className="flex flex-col max-lg:w-[100%] lg:h-max md:h-[30%] border-orange-600 lg:w-[100%]">
+            <div className="text-[#B7CDDE] mb-[15px] max-sm:justify-center items-center flex 2xl:text-[20px] lg:text-[22px]">
+              <h1 className="max-sm:hidden"> Welcome back to Nudge! </h1>
+              <img
+                src={NudgeLogo}
+                alt="#"
+                className="sm:hidden w-[75%] max-sm:w-[70%]"
+              />
+            </div>
 
             {/* Email Input */}
-            <div className="lg:mb-[15px]">
+            <div className="lg:mb-[15px] max-lg:w-[100%]">
               <Input.Label
                 required
                 className="text-[#6C899C] pb-[5px] text-[12px]"
@@ -90,7 +95,7 @@ function LoginPage() {
             </div>
 
             {/* Password Input */}
-            <div className="">
+            <div className="max-lg:w-[100%] max-lg:mt-[15px]">
               <Input.Label
                 required
                 className="text-[#6C899C] pb-[5px] text-[12px]"
@@ -120,17 +125,17 @@ function LoginPage() {
           {/* !! INSERT ERROR MESSAGE HERE !! */}
 
           {/* Login Options */}
-          <div className="flex h-full w-full items-center flex-col">
-            <h1 className="text-[#8B8B8B] lg:text-[13px] xl:p-6">
+          <div className="flex h-max w-full items-center flex-col">
+            <h1 className="text-[#8B8B8B] lg:text-[13px] xl:p-6 max-lg:text-[13px] max-lg:mt-[16px] max-lg:mb-[16px] lg:mb-[8px] lg:mt-[8px]">
               or login with
             </h1>
-            <div className="flex lg:w-full flex-col lg:h-[65%]">
+            <div className="flex max-lg:w-[100%] lg:w-full flex-col lg:h-[65%]">
               {/* Google Login Button */}
               <div className="">
                 <Button
                   fullWidth
                   size="sm"
-                  className="rounded-[100px] border border-[#B7CDDD] bg-[#33424C] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px]"
+                  className="rounded-[100px] border-[#B7CDDD] bg-[#33424C] lg:mb-[24px] 2xl:h-[45px] 2xl:mb-[35px] max-lg:h-[40px] max-lg:mb-[16px]"
                 >
                   <div className="flex items-center ">
                     <img src={GoogleLogo} alt="" width={18} />
@@ -146,7 +151,7 @@ function LoginPage() {
                 <Button
                   fullWidth
                   size="sm"
-                  className="rounded-[100px] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px]"
+                  className="rounded-[100px] max-lg:w-[100%] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px] max-lg:h-[40px] max-lg:mt-[15px] max-lg:mb-[15px]"
                   onClick={handleLogin}
                 >
                   <h1 className="text-[15px] font-normal text-[#33424C]">
@@ -157,12 +162,12 @@ function LoginPage() {
 
               {/* Register Option */}
               <div className="flex lg:w-full justify-center items-center">
-                <div className="flex 2xl:w-[49%] justify-between">
-                  <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">
+                <div className="flex 2xl:w-[49%] justify-between ">
+                  <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px] max-lg:text-[11.52px] w-full">
                     Don't have an account?
                   </h1>
                   <h1
-                    className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer"
+                    className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer max-lg:text-[11.52px]"
                     onClick={() => navigate("/Registration")}
                   >
                     Register
@@ -175,7 +180,7 @@ function LoginPage() {
       </div>
 
       {/* Right Section: Nudge Logo */}
-      <div className="flex border-blue-600 justify-center items-center w-[50%] h-full bg-[#33424C]">
+      <div className=" max-lg:hidden flex border-blue-600 justify-center items-center max-lg:w-0 w-[50%] h-full bg-[#33424C]">
         <img src={NudgeLogo} alt="#" className="w-[75%]" />
       </div>
     </div>

@@ -6,6 +6,8 @@ import {
   Indicator,
   Menu,
   Text,
+  Drawer,
+  Burger,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 import {
@@ -21,6 +23,7 @@ import NudgeLogo from "../assets/Group 1.svg";
 import { StatTask, TaskContent } from "../interfaces/interfaces";
 import { ThemeContext, TeamMember } from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
+import { useDisclosure } from "@mantine/hooks";
 
 //MARY IMPORTS
 import axios, { AxiosError } from "axios";
@@ -42,6 +45,9 @@ export const DashBoard: React.FC = () => {
   // Notifications
   const [notificationClick, setNotification] = useState(false);
 
+  // SideBar Drawer
+  const [opened, { open, close }] = useDisclosure(false);
+
   //=> MARY CODE <=//
   const [numericalState, setNumericalState] = useState<number>(0); //PROBLEM: I need to make the default the first team somehow
   const [userId, setUserId] = useState<number | null>(null); // State for user_id
@@ -50,7 +56,7 @@ export const DashBoard: React.FC = () => {
   const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
   const [teamHeader, setTeamHeader] = useState("");
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [dummyTask, setDummyTask] = useState<TaskContent>({
+  const dummyTask: TaskContent = {
     taskID: 0, // Placeholder ID
     teamID: 0, // Placeholder team ID
     status: "",
@@ -61,7 +67,7 @@ export const DashBoard: React.FC = () => {
     comments: [],
     created: null,
     due: null,
-  });
+  };
 
   //task renders
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
@@ -289,7 +295,7 @@ export const DashBoard: React.FC = () => {
     >
       <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
         {/* Sidebar */}
-        <div className="flex flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
+        <div className="flex max-lg:hidden flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
           {/* Logo Section */}
           <div className="flex border-blue-600 h-max w-max">
             <img src={NudgeLogo} alt="" width={152} />
@@ -355,11 +361,98 @@ export const DashBoard: React.FC = () => {
             </div>
           </div>
         </div>
+        {/*BURGER SIDEBAR*/}
+        <Drawer
+          opened={opened}
+          onClose={close}
+          size="40%"
+          className="flex flex-col w-full border-red-600 h-full shadow-custom-shadow border-r"
+          styles={{
+            content: {
+              backgroundColor: "#1A2329", // Custom background color
+            },
+            header: {
+              backgroundColor: "#1A2329",
+            },
+          }}
+        >
+          {/* Logo Section */}
+          <div className="flex border-blue-600 h-max w-max">
+            <img src={NudgeLogo} alt="" width={152} />
+          </div>
+          <div className="mt-[29px] flex flex-col h-screen justify-between">
+            {/* Main Menu Section */}
+            <div className="flex flex-col">
+              <Input
+                placeholder="Search"
+                size="xs"
+                leftSection={<IconSearch size={17} />}
+                styles={{
+                  input: {
+                    backgroundColor: "#4B5D6A",
+                    color: "white",
+                  },
+                }}
+                className="text-[#667988] mb-[29px]"
+              />
+              <div className="flex flex-col mb-[29px]">
+                <h1 className="text-[#4B5D69] text-[12px]">MAIN MENU</h1>
+                <Button
+                  variant="subtle"
+                  color="#667988"
+                  leftSection={<IconLayoutDashboard size="1rem" />}
+                  className="flex items-center justify-start font-light"
+                  onClick={toggleDashboard}
+                >
+                  Dashboard
+                </Button>
+              </div>
+              {/* Teams Section */}
+              <div className="flex flex-col">
+                <h1 className="text-[#4B5D69] text-[12px]">TEAMS</h1>
+                {teams.map((team, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => updateCurrentTeam(index)} //bro this just for trial frfr
+                    variant="subtle"
+                    color="#667988"
+                    className="flex items-center justify-start"
+                    leftSection={<IconLayoutDashboard size="1rem" />}
+                  >
+                    <span className="text-[14px] font-light">{team}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+            {/* Logout Section */}
+            <div className="flex h-max items-center justify-center">
+              <Button
+                leftSection={<IconLogout size="16px" />}
+                variant="subtle"
+                color="#667988"
+                mt="md"
+                className="h-[32px] text-[16px] font-light"
+                style={{ fontSize: "14px", color: "#667988" }}
+                component={Link}
+                to={"/"}
+              >
+                Log Out
+              </Button>
+            </div>
+          </div>
+        </Drawer>
 
         {/* Main Content */}
         <div className="bg-[#151C21] w-full h-full flex flex-col">
           {/* Header Section */}
           <div className="flex items-center pl-[24px] pr-[24px] justify-between shadow-custom-shadow w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
+            <ActionIcon
+              variant="transparent"
+              onClick={open}
+              className="lg:hidden"
+            >
+              <Burger color="#6C899C" />
+            </ActionIcon>
             <div className="text-[#6C899C] text-[32px]">{teamHeader}</div>
             <div className="flex items-center">
               <ActionIcon
