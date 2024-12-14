@@ -14,6 +14,8 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 
 - [Technologies Used](#technologies-used)
   - [UI/UX and Design](#uiux-and-design)
+  - [UI Design Preview](#ui-design-preview)
+  - [Figma Inclusions](#figma-inclusions)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -31,7 +33,33 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 
 ### UIUX and Design
 
-<center><a href="https://www.figma.com/design/KNiUcVvqErx09mbVHYZ2QI/nudge?node-id=2-4&t=1RhZCWnfLu7DzAq4-1"><img src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/figmabutton.svg"></img></a></center>
+Click here to view the UI deisgn and UX process:
+
+<a href="https://www.figma.com/design/KNiUcVvqErx09mbVHYZ2QI/nudge?node-id=2-4&t=1RhZCWnfLu7DzAq4-1"><img src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/figmabutton.svg"></img></a>
+
+### UI Design Preview 
+<img algin="center" src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/preview.jpg"></img>
+
+### Figma Inclusions
+
+```
+👀Cover Page
+│
+|
+├── Dev Handoff
+  ├── ✅Final Design/Handoff
+  ├── ▶️Prototype
+  │   
+  │
+├── UI and UX Process
+  ├── 🖼️Wireframe
+  ├── 💻Production
+  │   
+  │
+├── App Design
+  ├── 🎁Brand Kit
+  ├── 📁Components
+```
 
 ## Project Structure
 
@@ -51,7 +79,6 @@ your-project/
       ├── package.json
       └── ...
 
-docker-compose.yml
 README.md
 ```
 
