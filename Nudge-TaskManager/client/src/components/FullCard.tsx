@@ -22,11 +22,11 @@ import {
   IconThumbDown,
 } from "@tabler/icons-react";
 import { Calendar } from "@mantine/dates";
-import { useClickOutside } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import { Axios } from "axios";
+import axios from "axios";
 import { ThemeContext } from "../interfaces/ThemeContext";
 import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [statusColor, setStatusColor] = useState("");
@@ -45,13 +45,16 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   //MARY STUFF
   const myContext = useContext(ThemeContext);
+  const navigate = useNavigate();
 
+  const [myContent, setMyContent] = useState<string>("");
+  const [count, setCount] = useState<boolean[]>([false, false, true]);
   const [dummyTask, setDummyTask] = useState<TaskContent>({
     taskID: 0, // Placeholder ID
-    teamID: 0, // Placeholder team ID
+    teamID: myContext?.numericalState | undefined, // Placeholder team ID
     status: "",
     priority: "",
-    title: "",
+    title: "my",
     content: "",
     assigned: [],
     comments: [],
@@ -59,10 +62,75 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     due: null,
   });
 
+  const createTask = async (currTask: TaskContent, userID: number) => {
+    try {
+      // Preparing task data
+      const newTask = {
+        title: currTask.title,
+        description: currTask.content,
+        admin_id: userID,
+        team_id: currTask.teamID,
+        due_date: new Date(),
+        status: currTask.status,
+        priority: currTask.priority,
+      };
+
+      // API call to create a new task
+      const response = await axios.post(
+        "http://localhost:3000/api/task/create",
+        newTask
+      );
+      console.log(response);
+
+      // setDummyTask({
+      //   taskID: 0, // Placeholder ID
+      //   teamID: myContext?.numericalState, // Placeholder team ID
+      //   status: "pending",
+      //   priority: "",
+      //   title: "",
+      //   content: "",
+      //   assigned: [],
+      //   comments: [],
+      //   created: null,
+      //   due: null,
+      // });
+
+      // Handle success
+      console.log("Task created successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      // Handle error
+      console.error("Error creating task:", error);
+      throw error; // You can choose to throw or handle the error as needed
+    }
+  };
+
+  // {
+  //   "title": "imma cry",
+  //   "description": "Finalize and submit the project report",
+  //   "due_date": "2024-12-15T12:00:00Z",
+  //   "priority": "low",
+  //   "status": "completed",
+  //   "team_id": 1,
+  //   "admin_id": 1
+  // }
+
+  useEffect(() => {
+    if (count.every((val) => val === true) && myContext?.userId) {
+      // Prevent duplicate task creation
+      createTask(dummyTask, myContext.userId)
+        .then(() => {
+          console.log("Task created successfully!");
+          setCount([false, false, false]); // Reset count or add more logic to manage it
+        })
+        .catch((error) => console.error("Failed to create task:", error));
+    }
+  }, [count, myContext?.userId]); // Only trigger when 'count' or 'userId' changes
+  // Adjust dependencies if necessary
+
   useEffect(() => {
     console.log(dummyTask);
   }, [dummyTask]);
-
   //tester:)
   // useEffect(() => {
   //   if (myContext?.emptyTask == true) {
@@ -134,12 +202,17 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color="#12B886"
       leftSection={<IconFlag size="20" />}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           priority: "low",
-        }))
-      }
+        }));
+        setCount((prevCount) => {
+          const newCount = [...prevCount];
+          newCount[1] = true;
+          return newCount;
+        });
+      }}
     >
       LOW
     </Button>,
@@ -149,12 +222,17 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color="#FAB005"
       leftSection={<IconFlag size="20" />}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           priority: "medium",
-        }))
-      }
+        }));
+        setCount((prevCount) => {
+          const newCount = [...prevCount];
+          newCount[1] = true;
+          return newCount;
+        });
+      }}
     >
       MEDIUM
     </Button>,
@@ -165,12 +243,17 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       color="#FA5252"
       leftSection={<IconFlag size="20" />}
       //onClick={() => alert("hello")}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           priority: "high",
-        }))
-      }
+        }));
+        setCount((prevCount) => {
+          const newCount = [...prevCount];
+          newCount[1] = true;
+          return newCount;
+        });
+      }}
     >
       HIGH
     </Button>,
@@ -193,6 +276,19 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       ...prevTask,
       title: taskTitle,
     }));
+    setCount((prevCount) => {
+      const newCount = [...prevCount]; // Make a copy of the current count array
+      newCount[0] = true; // Update the first element of the array
+      return newCount; // Return the updated array
+    });
+  };
+
+  const handleContentBlur = () => {
+    //setIsEditingTitle(false);
+    setDummyTask((prevTask) => ({
+      ...prevTask,
+      content: myContent,
+    }));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -201,6 +297,12 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         ...prevTask,
         title: taskTitle,
       }));
+
+      setCount((prevCount) => {
+        const newCount = [...prevCount];
+        newCount[0] = true;
+        return newCount;
+      });
     }
   };
 
@@ -334,7 +436,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
               }
               onClick={() => setProgressDropdownOpen(!progressDropdownOpen)}
             >
-              {progress}
+              {TaskContent.status || "INCOMPLETE"}
             </Button>
           </Popover.Target>
           <Popover.Dropdown>
@@ -384,7 +486,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 size="15"
                 className="mr-[5px] flex items-center justify-center"
               />{" "}
-              {priority === "" ? "N/A" : priority}
+              {TaskContent.priority || "N/A"}
             </Button>
           </Popover.Target>
           <Popover.Dropdown>
@@ -482,7 +584,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
             className="text-[#688193] w-full cursor-pointer"
             onClick={() => setIsEditingTitle(true)}
           >
-            {taskTitle}
+            {TaskContent.title || taskTitle}
           </div>
         )}
       </div>
@@ -521,6 +623,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           {TaskContent.content.length === 0 && (
             <div className="text-[#88A7BD]">
               <Textarea
+                value={myContent}
                 placeholder="Enter a task description..."
                 variant="unstyled"
                 autosize
@@ -529,6 +632,8 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                     color: "#C9C9C9",
                   },
                 }}
+                onBlur={handleContentBlur}
+                onChange={(e) => setMyContent(e.target.value)}
               />
             </div>
           )}
