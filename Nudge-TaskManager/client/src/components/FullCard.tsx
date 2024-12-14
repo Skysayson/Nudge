@@ -23,9 +23,10 @@ import {
 } from "@tabler/icons-react";
 import { Calendar } from "@mantine/dates";
 import { useEffect, useState } from "react";
-import { Axios } from "axios";
+import axios from "axios";
 import { ThemeContext } from "../interfaces/ThemeContext";
 import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [statusColor, setStatusColor] = useState("");
@@ -44,13 +45,14 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   //MARY STUFF
   const myContext = useContext(ThemeContext);
+  const navigate = useNavigate();
 
   const [myContent, setMyContent] = useState<string>("");
   const [count, setCount] = useState<boolean[]>([false, false, true]);
   const [dummyTask, setDummyTask] = useState<TaskContent>({
     taskID: 0, // Placeholder ID
     teamID: myContext?.numericalState | undefined, // Placeholder team ID
-    status: "",
+    status: "pending",
     priority: "",
     title: "",
     content: "",
@@ -60,11 +62,75 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     due: null,
   });
 
+  const createTask = async (currTask: TaskContent, userID: number) => {
+    try {
+      // Preparing task data
+      const newTask = {
+        title: currTask.title,
+        description: currTask.content,
+        admin_id: userID,
+        team_id: currTask.teamID,
+        due_date: new Date(),
+        status: currTask.status,
+        priority: currTask.priority,
+      };
+
+      // API call to create a new task
+      const response = await axios.post(
+        "http://localhost:3000/api/task/create",
+        newTask
+      );
+      console.log(response);
+
+      // setDummyTask({
+      //   taskID: 0, // Placeholder ID
+      //   teamID: myContext?.numericalState, // Placeholder team ID
+      //   status: "pending",
+      //   priority: "",
+      //   title: "",
+      //   content: "",
+      //   assigned: [],
+      //   comments: [],
+      //   created: null,
+      //   due: null,
+      // });
+
+      // Handle success
+      console.log("Task created successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      // Handle error
+      console.error("Error creating task:", error);
+      throw error; // You can choose to throw or handle the error as needed
+    }
+  };
+
+  // {
+  //   "title": "imma cry",
+  //   "description": "Finalize and submit the project report",
+  //   "due_date": "2024-12-15T12:00:00Z",
+  //   "priority": "low",
+  //   "status": "completed",
+  //   "team_id": 1,
+  //   "admin_id": 1
+  // }
+
+  useEffect(() => {
+    if (count.every((val) => val === true) && myContext?.userId) {
+      // Prevent duplicate task creation
+      createTask(dummyTask, myContext.userId)
+        .then(() => {
+          console.log("Task created successfully!");
+          setCount([false, false, false]); // Reset count or add more logic to manage it
+        })
+        .catch((error) => console.error("Failed to create task:", error));
+    }
+  }, [count, myContext?.userId]); // Only trigger when 'count' or 'userId' changes
+  // Adjust dependencies if necessary
+
   useEffect(() => {
     console.log(dummyTask);
-    console.log(count);
-  }, [dummyTask, count]);
-
+  }, [dummyTask]);
   //tester:)
   // useEffect(() => {
   //   if (myContext?.emptyTask == true) {
