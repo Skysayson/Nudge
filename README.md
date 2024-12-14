@@ -4,11 +4,11 @@
 Nudge is a simple Task Manager with Team Collaboration created in compliance for our App Development (3105) class.
 
 # Project Members:
-**Mary Chevel Modesto** - Backend Developer
+- **Mary Chevel Modesto** - Backend Developer
 
-**Jonaz Juan Sayson** - Frontend Developer
+- **Jonaz Juan Sayson** - Frontend Developer
 
-**Victorienne Tiu** - UI/UX Designer 
+- **Victorienne Tiu** - UI/UX Designer 
 
 ## Table of Contents
 
