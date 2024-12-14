@@ -29,7 +29,7 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 - **Backend:** Express, Sequelize, NodeJS
 - **Database:** SQL
 
-## UI/UX and Design
+### UI/UX and Design
 [Figma File](https://www.figma.com/design/KNiUcVvqErx09mbVHYZ2QI/nudge?node-id=2-4&t=1RhZCWnfLu7DzAq4-1)
 
 ## Project Structure
