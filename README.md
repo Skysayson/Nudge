@@ -30,7 +30,7 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 - **Database:** SQL
 
 ### UIUX and Design
-[Figma File](https://www.figma.com/design/KNiUcVvqErx09mbVHYZ2QI/nudge?node-id=2-4&t=1RhZCWnfLu7DzAq4-1)
+<a href="https://stackoverflow.com/](https://www.figma.com/design/KNiUcVvqErx09mbVHYZ2QI/nudge?node-id=2-4&t=1RhZCWnfLu7DzAq4-1)"><img src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/figmabutton.svg"></img></a>
 
 ## Project Structure
 
