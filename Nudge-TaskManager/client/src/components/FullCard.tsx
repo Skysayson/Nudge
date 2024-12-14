@@ -54,7 +54,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     teamID: myContext?.numericalState | undefined, // Placeholder team ID
     status: "",
     priority: "",
-    title: "my",
+    title: "",
     content: "",
     assigned: [],
     comments: [],
@@ -436,7 +436,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
               }
               onClick={() => setProgressDropdownOpen(!progressDropdownOpen)}
             >
-              {TaskContent.status || "INCOMPLETE"}
+              {TaskContent.status || progress || "INCOMPLETE"}
             </Button>
           </Popover.Target>
           <Popover.Dropdown>
@@ -486,7 +486,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 size="15"
                 className="mr-[5px] flex items-center justify-center"
               />{" "}
-              {TaskContent.priority || "N/A"}
+              {TaskContent.priority || priority || "N/A"}
             </Button>
           </Popover.Target>
           <Popover.Dropdown>
