@@ -22,7 +22,6 @@ import {
   IconThumbDown,
 } from "@tabler/icons-react";
 import { Calendar } from "@mantine/dates";
-import { useClickOutside } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { Axios } from "axios";
 import { ThemeContext } from "../interfaces/ThemeContext";
@@ -46,9 +45,11 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //MARY STUFF
   const myContext = useContext(ThemeContext);
 
+  const [myContent, setMyContent] = useState<string>("");
+  const [count, setCount] = useState<boolean[]>([false, false, true]);
   const [dummyTask, setDummyTask] = useState<TaskContent>({
     taskID: 0, // Placeholder ID
-    teamID: 0, // Placeholder team ID
+    teamID: myContext?.numericalState | undefined, // Placeholder team ID
     status: "",
     priority: "",
     title: "",
@@ -61,7 +62,8 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   useEffect(() => {
     console.log(dummyTask);
-  }, [dummyTask]);
+    console.log(count);
+  }, [dummyTask, count]);
 
   //tester:)
   // useEffect(() => {
@@ -134,12 +136,17 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color="#12B886"
       leftSection={<IconFlag size="20" />}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           priority: "low",
-        }))
-      }
+        }));
+        setCount((prevCount) => {
+          const newCount = [...prevCount];
+          newCount[1] = true;
+          return newCount;
+        });
+      }}
     >
       LOW
     </Button>,
@@ -149,12 +156,17 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color="#FAB005"
       leftSection={<IconFlag size="20" />}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           priority: "medium",
-        }))
-      }
+        }));
+        setCount((prevCount) => {
+          const newCount = [...prevCount];
+          newCount[1] = true;
+          return newCount;
+        });
+      }}
     >
       MEDIUM
     </Button>,
@@ -165,12 +177,17 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       color="#FA5252"
       leftSection={<IconFlag size="20" />}
       //onClick={() => alert("hello")}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           priority: "high",
-        }))
-      }
+        }));
+        setCount((prevCount) => {
+          const newCount = [...prevCount];
+          newCount[1] = true;
+          return newCount;
+        });
+      }}
     >
       HIGH
     </Button>,
@@ -193,6 +210,19 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       ...prevTask,
       title: taskTitle,
     }));
+    setCount((prevCount) => {
+      const newCount = [...prevCount]; // Make a copy of the current count array
+      newCount[0] = true; // Update the first element of the array
+      return newCount; // Return the updated array
+    });
+  };
+
+  const handleContentBlur = () => {
+    //setIsEditingTitle(false);
+    setDummyTask((prevTask) => ({
+      ...prevTask,
+      content: myContent,
+    }));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -201,6 +231,12 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         ...prevTask,
         title: taskTitle,
       }));
+
+      setCount((prevCount) => {
+        const newCount = [...prevCount];
+        newCount[0] = true;
+        return newCount;
+      });
     }
   };
 
@@ -521,6 +557,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           {TaskContent.content.length === 0 && (
             <div className="text-[#88A7BD]">
               <Textarea
+                value={myContent}
                 placeholder="Enter a task description..."
                 variant="unstyled"
                 autosize
@@ -529,6 +566,8 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                     color: "#C9C9C9",
                   },
                 }}
+                onBlur={handleContentBlur}
+                onChange={(e) => setMyContent(e.target.value)}
               />
             </div>
           )}
