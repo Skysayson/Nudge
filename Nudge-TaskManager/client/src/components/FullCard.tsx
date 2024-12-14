@@ -52,7 +52,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [dummyTask, setDummyTask] = useState<TaskContent>({
     taskID: 0, // Placeholder ID
     teamID: myContext?.numericalState | undefined, // Placeholder team ID
-    status: "pending",
+    status: "",
     priority: "",
     title: "my",
     content: "",
