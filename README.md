@@ -11,7 +11,7 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 ## Table of Contents
 
 - [Technologies Used](#technologies-used)
-  -[UI/UX and Design](#ui/ux-and-design)
+  - [UI/UX and Design](#ui/ux-and-design)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
