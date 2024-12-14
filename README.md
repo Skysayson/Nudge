@@ -5,7 +5,9 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 
 # Project Members:
 **Mary Chevel Modesto** - Backend Developer
+
 **Jonaz Juan Sayson** - Frontend Developer
+
 **Victorienne Tiu** - UI/UX Designer 
 
 ## Table of Contents
