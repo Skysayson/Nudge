@@ -1,6 +1,12 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 import { TaskContent } from "./interfaces";
 
+// Define the structure of each team member
+export interface TeamMember {
+  id: number; // Member's ID
+  name: string; // Member's name
+}
+
 export interface ThemeContextType {
   renderFullTask: boolean;
   setRenderFullTask: Dispatch<SetStateAction<boolean>>;
@@ -12,6 +18,8 @@ export interface ThemeContextType {
   setUserId: Dispatch<SetStateAction<number | null>>; // Setter for user_id
   emptyTask: boolean;
   setEmptyTask: Dispatch<SetStateAction<boolean>>;
+  teamMembers: TeamMember[]; // Array of objects with id and name
+  setTeamMembers: Dispatch<SetStateAction<TeamMember[]>>; // Setter for the array of objects
 }
 
 // Create the context

@@ -22,12 +22,16 @@ import {
   IconThumbDown,
 } from "@tabler/icons-react";
 import { Calendar } from "@mantine/dates";
+import { useClickOutside } from "@mantine/hooks";
 import { useEffect, useState } from "react";
+import { Axios } from "axios";
+import { ThemeContext } from "../interfaces/ThemeContext";
+import React, { useContext } from "react";
 
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState("");
-  const [taskTitle, setTaskTitle] = useState("Enter Title");
+  const [taskTitle, setTaskTitle] = useState("Enter Title"); //MARY NOTE: Fix this later and make the default title the actual title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [renderCalendar, setRenderCalendar] = useState(false);
   const [memberList, setMemberList] = useState(false);
@@ -38,14 +42,33 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [progress, setProgress] = useState<string>("INCOMPLETE");
   const [priorityDropdownOpen, setPriorityDropdownOpen] = useState(false);
   const [priority, setPriority] = useState(""); // Store the selected priority
-  
-  // Dummy Data for task assigning button
-  const teamMembers = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Sam Brown" },
-    { id: 4, name: "Emily Davis" },
-  ];
+
+  //MARY STUFF
+  const myContext = useContext(ThemeContext);
+
+  const [dummyTask, setDummyTask] = useState<TaskContent>({
+    taskID: 0, // Placeholder ID
+    teamID: 0, // Placeholder team ID
+    status: "",
+    priority: "",
+    title: "",
+    content: "",
+    assigned: [],
+    comments: [],
+    created: null,
+    due: null,
+  });
+
+  useEffect(() => {
+    console.log(dummyTask);
+  }, [dummyTask]);
+
+  //tester:)
+  // useEffect(() => {
+  //   if (myContext?.emptyTask == true) {
+  //     console.log("true now");
+  //   }
+  // }, [myContext?.emptyTask]);
 
   const progressArr = [
     <Button
@@ -53,6 +76,12 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       size="xs"
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color={"#FA5252"}
+      onClick={() =>
+        setDummyTask((prevTask) => ({
+          ...prevTask,
+          status: "pending",
+        }))
+      }
     >
       INCOMPLETE
     </Button>,
@@ -61,6 +90,12 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       size="xs"
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color={"#FAB005"}
+      onClick={() =>
+        setDummyTask((prevTask) => ({
+          ...prevTask,
+          status: "in-progress",
+        }))
+      }
     >
       IN-PROGRESS
     </Button>,
@@ -71,12 +106,18 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color={"#12B886"}
       key="status-badge" // Always add a key when creating components dynamically
+      onClick={() =>
+        setDummyTask((prevTask) => ({
+          ...prevTask,
+          status: "completed",
+        }))
+      }
     >
       COMPLETE
     </Button>,
   ];
 
-  const filteredMembers = teamMembers.filter((member) =>
+  const filteredMembers = myContext?.teamMembers.filter((member) =>
     member.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -92,7 +133,13 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       size="xs"
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color="#12B886"
-      leftSection={<IconFlag size="20"/>}
+      leftSection={<IconFlag size="20" />}
+      onClick={() =>
+        setDummyTask((prevTask) => ({
+          ...prevTask,
+          priority: "low",
+        }))
+      }
     >
       LOW
     </Button>,
@@ -101,7 +148,13 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       size="xs"
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color="#FAB005"
-      leftSection={<IconFlag size="20"/>}
+      leftSection={<IconFlag size="20" />}
+      onClick={() =>
+        setDummyTask((prevTask) => ({
+          ...prevTask,
+          priority: "medium",
+        }))
+      }
     >
       MEDIUM
     </Button>,
@@ -110,7 +163,14 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       size="xs"
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color="#FA5252"
-      leftSection={<IconFlag size="20"/>}
+      leftSection={<IconFlag size="20" />}
+      //onClick={() => alert("hello")}
+      onClick={() =>
+        setDummyTask((prevTask) => ({
+          ...prevTask,
+          priority: "high",
+        }))
+      }
     >
       HIGH
     </Button>,
@@ -124,10 +184,24 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTaskTitle(event.target.value);
+    //setDummyTask((prevTask) => ({ ...prevTask, title: event.target.value }));
   };
 
   const handleTitleBlur = () => {
     setIsEditingTitle(false);
+    setDummyTask((prevTask) => ({
+      ...prevTask,
+      title: taskTitle,
+    }));
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      setDummyTask((prevTask) => ({
+        ...prevTask,
+        title: taskTitle,
+      }));
+    }
   };
 
   //Function to format start date and due date of task
@@ -240,7 +314,9 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           withArrow
           shadow="md"
           opened={progressDropdownOpen}
-          onClose={() => setProgressDropdownOpen(false)}
+          onClose={() => {
+            setProgressDropdownOpen(false);
+          }}
         >
           <Popover.Target>
             <Button
@@ -294,13 +370,21 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
               size="xs"
               className="rounded-[20px] h-[20px]"
               color={
-                priority === "LOW" ? "#12B886" :
-                priority === "MEDIUM" ? "#FAB005" :
-                priority === "HIGH" ? "#FA5252" : ""
+                priority === "LOW"
+                  ? "#12B886"
+                  : priority === "MEDIUM"
+                  ? "#FAB005"
+                  : priority === "HIGH"
+                  ? "#FA5252"
+                  : ""
               }
               onClick={() => setPriorityDropdownOpen(!priorityDropdownOpen)}
             >
-              <IconFlag size="15" className="mr-[5px] flex items-center justify-center"/> {priority === "" ? "N/A" : priority}
+              <IconFlag
+                size="15"
+                className="mr-[5px] flex items-center justify-center"
+              />{" "}
+              {priority === "" ? "N/A" : priority}
             </Button>
           </Popover.Target>
           <Popover.Dropdown>
@@ -380,6 +464,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
             value={taskTitle}
             onChange={handleTitleChange}
             onBlur={handleTitleBlur}
+            onKeyDown={handleKeyDown}
             placeholder="Enter Title"
             variant="unstyled"
             className="border-red-600 flex w-full"
