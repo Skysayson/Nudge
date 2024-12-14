@@ -34,10 +34,10 @@ Nudge is a simple Task Manager with Team Collaboration created in compliance for
 ### UIUX and Design
 
 Click here to view the UI deisgn and UX process
-<a href="https://www.figma.com/design/KNiUcVvqErx09mbVHYZ2QI/nudge?node-id=2-4&t=1RhZCWnfLu7DzAq4-1"><img width="460" height="300" src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/figmabutton.svg"></img></a>
+<a href="https://www.figma.com/design/KNiUcVvqErx09mbVHYZ2QI/nudge?node-id=2-4&t=1RhZCWnfLu7DzAq4-1"><img algin="center" width="460" height="300" src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/figmabutton.svg"></img></a>
 
 ### UI Design Preview 
-<img width="230" height="300" src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/preview.jpg"></img>
+<img width="460" height="300" src="https://github.com/Skysayson/Nudge/blob/stable/Nudge-TaskManager/client/src/assets/preview.jpg"></img>
 
 ### Figma Inclusions
 
