@@ -20,7 +20,7 @@ import {
 import DashboardPage from "./DashboardContent";
 import { useState, useEffect } from "react";
 import NudgeLogo from "../assets/Group 1.svg";
-import { StatTask, TaskContent } from "../interfaces/interfaces";
+import { StatTask, taskComment, TaskContent } from "../interfaces/interfaces";
 import { ThemeContext, TeamMember } from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
 import { useDisclosure } from "@mantine/hooks";
@@ -52,17 +52,18 @@ export const DashBoard: React.FC = () => {
   const [sort, setSort] = useState<string>("");
 
   //=> MARY CODE <=//
+  const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
   const [reloadTasks, setReloadTasks] = useState<boolean>(false);
-  const [numericalState, setNumericalState] = useState<number>(0); //PROBLEM: I need to make the default the first team somehow
-  const [userId, setUserId] = useState<number | null>(null); // State for user_id
+  const [numericalState, setNumericalState] = useState<number>(0);
+  const [userId, setUserId] = useState<number | null>(null);
   const [email, setEmail] = useState("");
   const [teams, setTeams] = useState<string[]>([]);
   const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
   const [teamHeader, setTeamHeader] = useState("");
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const dummyTask: TaskContent = {
-    taskID: 0, // Placeholder ID
-    teamID: 0, // Placeholder team ID
+    taskID: 0,
+    teamID: 0,
     status: "",
     priority: "",
     title: "",
@@ -77,19 +78,6 @@ export const DashBoard: React.FC = () => {
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
-
-  // const dummyTask: TaskContent = {
-  //   taskID: 0,
-  //   teamID: 0,
-  //   status: "",
-  //   priority: "",
-  //   title: "",
-  //   content: "",
-  //   assigned: [],
-  //   comments: [],
-  //   created: null,
-  //   due: null,
-  // };
 
   useEffect(() => {
     const decodeToken = () => {

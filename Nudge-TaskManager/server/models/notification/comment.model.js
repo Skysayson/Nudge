@@ -27,13 +27,6 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
-      //foreign key
-      parent_comment_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        onDelete: "SET NULL",
-        onUpdate: "CASCADE",
-      },
     },
     {
       tableName: "Comments",

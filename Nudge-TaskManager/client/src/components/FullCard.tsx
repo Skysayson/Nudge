@@ -9,7 +9,7 @@ import {
   List,
   ListItem,
 } from "@mantine/core";
-import { TaskContent } from "../interfaces/interfaces";
+import { taskComment, TaskContent } from "../interfaces/interfaces";
 import {
   IconCalendar,
   IconProgress,
@@ -17,8 +17,6 @@ import {
   IconCalendarDue,
   IconUser,
   IconMessage,
-  IconThumbUp,
-  IconThumbDown,
 } from "@tabler/icons-react";
 import { Calendar } from "@mantine/dates";
 import { useEffect, useState } from "react";
@@ -45,6 +43,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //MARY STUFF
   const myContext = useContext(ThemeContext);
 
+  const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
   const [buttonPress, setButtonPress] = useState<boolean>(false);
   const [updatingData, setUpdatingData] = useState<boolean>(false);
   const [updateTaskButton, setUpdateTaskButton] = useState<boolean>(false);
@@ -63,6 +62,63 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     created: null,
     due: null,
   });
+
+  // export interface taskComment {
+  //   author: string;
+  //   comment: string;
+  //   created: Date;
+  //   likes: number;
+  //   dislikes: number;
+  // }
+
+  const fetchUsername = async (userID: number): Promise<string> => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/user/find/${userID}`
+      );
+      return response.data.username; // Assuming the API returns { username: "JohnDoe" }
+    } catch (error) {
+      console.error(`Error fetching username for user_id ${userID}:`, error);
+      return "Unknown"; // Fallback if username fetch fails
+    }
+  };
+
+  const fetchComments = async (taskID: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/comment/find/task/${taskID}`
+      );
+
+      if (response.data) {
+        // Map comments and fetch usernames
+        const formattedComments: taskComment[] = await Promise.all(
+          response.data.map(async (comment: any) => {
+            const username = await fetchUsername(comment.user_id);
+            return {
+              author: username, // Use fetched username
+              comment: comment.content,
+              created: new Date(comment.created_at),
+            };
+          })
+        );
+
+        // Update state
+        setCommentsArray(formattedComments);
+        console.log("Comments fetched successfully:", formattedComments);
+      } else {
+        console.log("No comments found for this task.");
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (myContext?.renderFullTask === true && myContext.emptyTask === false) {
+      fetchComments(TaskContent.taskID);
+      console.log("Here it is...", commentsArray);
+    }
+  }, [myContext?.renderFullTask]);
 
   const createTask = async (currTask: TaskContent, userID: number) => {
     try {
@@ -806,7 +862,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           </div>
         )}
 
-        {TaskContent.comments.map((comment, index) => (
+        {commentsArray.map((comment, index) => (
           <div
             key={index}
             className="flex flex-col text-[16px] mt-[32px] bg-opacity-[10%]"
@@ -818,7 +874,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 <div className="flex ml-[8px] flex-col">
                   <div className="flex items-center border-green-600 w-full">
                     <h1 className="mr-[10px] text-[14px] text-[#B7CDDE]">
-                      {comment.author}
+                      {commentsArray[index].author}
                     </h1>
                     <h1 className="text-[14px] text-[#6C899C]">
                       {formatDate(comment.created)}
@@ -833,49 +889,6 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                   >
                     {comment.comment}
                   </Text>
-                  <div className="flex w-[100%] justify-between mt-[8px] items-center">
-                    <div className="flex w-[75%] items-center border-red justify-between">
-                      <div className="flex w-full items-center">
-                        <IconThumbUp
-                          width="40%"
-                          className="hover:cursor-pointer"
-                          onClick={() => {
-                            comment.likes++; // Update this to update the likes in the backend
-                          }}
-                        />
-                        <h1 className="text-[14px] ml-[5px]">
-                          {" "}
-                          {comment.likes}{" "}
-                        </h1>
-                      </div>
-                      <div className="flex w-full items-center">
-                        <IconThumbDown
-                          width="49%"
-                          className="hover:cursor-pointer"
-                          onClick={() => {
-                            comment.dislikes++; // Update this to update the likes in the backend
-                          }}
-                        />
-                        <h1 className="text-[14px] ml-[5px]">
-                          {" "}
-                          {comment.dislikes}{" "}
-                        </h1>
-                      </div>
-                    </div>
-                    <div className="flex hover:underline">
-                      <Button
-                        variant="transparent"
-                        styles={{
-                          root: {
-                            color: "white", // Sets the initial color
-                          },
-                        }}
-                        className="text-[12px]"
-                      >
-                        Reply
-                      </Button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
