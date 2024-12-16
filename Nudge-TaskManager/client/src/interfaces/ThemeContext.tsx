@@ -22,6 +22,8 @@ export interface ThemeContextType {
   setTeamMembers: Dispatch<SetStateAction<TeamMember[]>>; // Setter for the array of objects
   reloadTasks: boolean;
   setReloadTasks: Dispatch<SetStateAction<boolean>>;
+  sort: string;
+  setSort: Dispatch<SetStateAction<string>>;
 }
 
 // Create the context

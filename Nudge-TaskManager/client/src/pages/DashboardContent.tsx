@@ -5,6 +5,7 @@ import {
   RingProgress,
   Group,
   useMantineTheme,
+  Select,
 } from "@mantine/core";
 import { IconPlus, IconFilter, IconArrowsSort } from "@tabler/icons-react";
 import StatusBar from "../components/StatusBar";
@@ -17,6 +18,9 @@ import { ThemeContext } from "../interfaces/ThemeContext";
 
 // Main Dashboard Page Component
 const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
+  // Click on sort
+  const [clickSort, setClickSort] = useState(false);
+
   // State to manage dashboard visibility
   const [selectDash, setSelectDash] = useState(false);
 
@@ -111,15 +115,35 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
               Filter
             </Button>
 
-            <Button
-              size="sm"
-              variant="subtle"
-              color="#667988"
-              leftSection={<IconArrowsSort size="15" />}
-              className="font-light"
-            >
-              Sort
-            </Button>
+            <div className="flex relative">
+              <Button
+                size="sm"
+                variant="subtle"
+                color="#667988"
+                leftSection={<IconArrowsSort size="15" />}
+                className="font-light"
+                onClick={() => setClickSort(!clickSort)}
+              >
+                Sort
+              </Button>
+              {clickSort && (
+                <div className="absolute mt-[35px] left-[-124px] bg-[#192228] rounded-md shadow-lg p-2 w-[200px] z-10">
+                  {/* Sort Dropdown */}
+                  <Select
+                    placeholder="Sort"
+                    variant="outline"
+                    data={[
+                      { value: "High to Low", label: "High to Low Priority" },
+                      { value: "Low to High", label: "Low to High Priority" },
+                    ]}
+                    value={themeContext?.sort ?? "Low to High"} // Default to "Low to High" if null
+                    onChange={(value) => themeContext?.setSort(value as string)}
+                    size="sm"
+                    styles={{ input: { color: "#8CAFC7" } }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

@@ -48,6 +48,9 @@ export const DashBoard: React.FC = () => {
   // SideBar Drawer
   const [opened, { open, close }] = useDisclosure(false);
 
+  // Sort Api Tasks
+  const [sort, setSort] = useState<string>("");
+
   //=> MARY CODE <=//
   const [reloadTasks, setReloadTasks] = useState<boolean>(false);
   const [numericalState, setNumericalState] = useState<number>(0); //PROBLEM: I need to make the default the first team somehow
@@ -214,15 +217,83 @@ export const DashBoard: React.FC = () => {
             comments: [],
           }));
 
-          const incomplete = tasks.filter((task) => task.status === "pending");
-          const inProgress = tasks.filter(
-            (task) => task.status === "in-progress"
-          );
-          const completed = tasks.filter((task) => task.status === "completed");
+          // Sort Logic
+          if (sort === "Low to High") {
+            const priorityOrder: Record<string, number> = {
+              low: 1,
+              medium: 2,
+              high: 3,
+            };
+            const sortedTasks = tasks.sort((a, b) => {
+              return (
+                (priorityOrder[a.priority] || 0) -
+                (priorityOrder[b.priority] || 0)
+              );
+            });
 
-          setIncompleteTasks(incomplete);
-          setInProgressTasks(inProgress);
-          setCompleteTasks(completed);
+            console.log(`SORT VALUE: ${sort}`);
+
+            // Now filter by status after sorting
+            const incomplete = sortedTasks.filter(
+              (task) => task.status === "pending"
+            );
+            const inProgress = sortedTasks.filter(
+              (task) => task.status === "in-progress"
+            );
+            const completed = sortedTasks.filter(
+              (task) => task.status === "completed"
+            );
+
+            setIncompleteTasks(incomplete);
+            setInProgressTasks(inProgress);
+            setCompleteTasks(completed);
+          } else if (sort === "High to Low") {
+            const priorityOrder: Record<string, number> = {
+              low: 3,
+              medium: 2,
+              high: 1,
+            };
+            const sortedTasks = tasks.sort((a, b) => {
+              return (
+                (priorityOrder[a.priority] || 0) -
+                (priorityOrder[b.priority] || 0)
+              );
+            });
+
+            // Now filter by status after sorting
+            const incomplete = sortedTasks.filter(
+              (task) => task.status === "pending"
+            );
+            const inProgress = sortedTasks.filter(
+              (task) => task.status === "in-progress"
+            );
+            const completed = sortedTasks.filter(
+              (task) => task.status === "completed"
+            );
+
+            setIncompleteTasks(incomplete);
+            setInProgressTasks(inProgress);
+            setCompleteTasks(completed);
+          } else {
+            const incomplete = tasks.filter(
+              (task) => task.status === "pending"
+            );
+            const inProgress = tasks.filter(
+              (task) => task.status === "in-progress"
+            );
+            const completed = tasks.filter(
+              (task) => task.status === "completed"
+            );
+
+            setIncompleteTasks(incomplete);
+            setInProgressTasks(inProgress);
+            setCompleteTasks(completed);
+          }
+
+          // checking if state is being passed via context
+          console.log(`SORT VALUE: ${sort}`);
+
+          // Now filter by status after sorting
         } else {
           console.warn("Unexpected response format:", response.data);
         }
@@ -243,7 +314,7 @@ export const DashBoard: React.FC = () => {
       setReloadTasks(false);
       console.log(reloadTasks);
     }
-  }, [numericalState, teamMembers, reloadTasks]);
+  }, [numericalState, teamMembers, reloadTasks, sort]);
 
   //=>HERE ARE MY METHODS/FUNCTIONS<=//
   const updateCurrentTeam = (index: number) => {
@@ -296,6 +367,8 @@ export const DashBoard: React.FC = () => {
         setTeamMembers,
         reloadTasks,
         setReloadTasks,
+        sort,
+        setSort,
       }}
     >
       <div className="flex max-sm:w-[1000px] max-sm:h-screen w-screen h-screen border-blue-600 overflow-y-hidden">
