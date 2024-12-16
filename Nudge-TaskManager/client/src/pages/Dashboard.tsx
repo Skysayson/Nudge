@@ -298,7 +298,7 @@ export const DashBoard: React.FC = () => {
         setReloadTasks,
       }}
     >
-      <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
+      <div className="flex max-sm:w-[1000px] max-sm:h-screen w-screen h-screen border-blue-600 overflow-y-hidden">
         {/* Sidebar */}
         <div className="flex max-lg:hidden flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
           {/* Logo Section */}

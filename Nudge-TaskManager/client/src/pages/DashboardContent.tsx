@@ -80,11 +80,11 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   }, []);
 
   return (
-    <div className="flex p-[24px] border-red-600 h-full w-full text-white overflow-x-auto overflow-y-hidden">
+    <div className="flex p-[24px] border-red-600 h-full max-sm:w-[1000px] w-full text-white overflow-x-auto overflow-y-hidden">
       {/* Main Dashboard Section */}
-      <div className="flex w-[100%] border-blue-600 flex-col h-full">
+      <div className="flex w-[100%] flex-nowrap border-blue-600 flex-col h-full">
         {/* Header Section */}
-        <div className="items-center h-max justify-between border-white flex w-full">
+        <div className="items-center h-max justify-between border-white flex max-sm:w-[970px]">
           {/* Add Task Button */}
           <Button
             leftSection={<IconPlus />}
