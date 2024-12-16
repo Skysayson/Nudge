@@ -43,6 +43,8 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //MARY STUFF
   const myContext = useContext(ThemeContext);
 
+  const [commentSave, setCommentSave] = useState<boolean>(false);
+  const [commentText, setCommentText] = useState<string>("");
   const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
   const [buttonPress, setButtonPress] = useState<boolean>(false);
   const [updatingData, setUpdatingData] = useState<boolean>(false);
@@ -113,12 +115,41 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   };
 
+  const createComment = async () => {
+    if (commentText.trim() === "") {
+      console.log("Comment text is empty!");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/comment/create",
+        {
+          content: commentText,
+          task_id: TaskContent.taskID, // Example of passing task ID
+          user_id: myContext?.userId, // Replace with actual user ID from your app
+        }
+      );
+
+      console.log("Comment created successfully:", response.data);
+      setCommentText(""); // Clear the input field after success
+    } catch (error) {
+      console.error("Error creating comment:", error);
+    }
+  };
+
   useEffect(() => {
     if (myContext?.renderFullTask === true && myContext.emptyTask === false) {
       fetchComments(TaskContent.taskID);
       console.log("Here it is...", commentsArray);
     }
   }, [myContext?.renderFullTask]);
+
+  useEffect(() => {
+    createComment();
+    fetchComments(TaskContent.taskID);
+    setCommentSave(false);
+  }, [commentSave]);
 
   const createTask = async (currTask: TaskContent, userID: number) => {
     try {
@@ -245,12 +276,6 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       setButtonPress(false);
     }
   }, [updateTaskButton, buttonPress]);
-  //tester:)
-  // useEffect(() => {
-  //   if (myContext?.emptyTask == true) {
-  //     console.log("true now");
-  //   }
-  // }, [myContext?.emptyTask]);
 
   const progressArr = [
     <Button
@@ -427,6 +452,16 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       ...prevTask,
       content: myContent,
     }));
+  };
+
+  const commentBlur = () => {
+    setCommentSave(true);
+  };
+
+  const keyDownComments = (event) => {
+    if (event.key === "Enter") {
+      setCommentSave(true);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -848,12 +883,18 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           Comments
         </div>
         <Textarea
+          value={commentText}
           placeholder="Write a comment..."
           autosize
           minRows={3}
           maxRows={6}
           className="mt-2 placeholder:[#C9C9C9]"
           variant="filled"
+          onKeyDown={keyDownComments}
+          onBlur={commentBlur}
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setCommentText(event.target.value);
+          }}
         />
         {TaskContent.comments.length === 0 && (
           <div className="flex w-full justify-center items-center mt-[5%]  text-[#B7CDDE]">
