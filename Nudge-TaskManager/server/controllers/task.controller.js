@@ -116,12 +116,11 @@ const updateTask = async (req, res) => {
 };
 
 const deleteTask = async (req, res) => {
-  const taskID = req.params.taskID;
-  console.log(taskID);
-
   try {
     // Check if the task exists
-    const task = await Task.findByPk(taskID);
+    const { task_id } = req.params;
+    console.log(task_id);
+    const task = await Task.findByPk(task_id);
 
     if (!task) {
       return res.status(404).json({ message: "Task not found." });

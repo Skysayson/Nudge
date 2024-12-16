@@ -66,7 +66,6 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   const createTask = async (currTask: TaskContent, userID: number) => {
     try {
-      // Preparing task data
       const newTask = {
         title: currTask.title,
         description: currTask.content,
@@ -77,33 +76,17 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         priority: currTask.priority,
       };
 
-      // API call to create a new task
       const response = await axios.post(
         "http://localhost:3000/api/task/create",
         newTask
       );
       console.log(response);
 
-      // setDummyTask({
-      //   taskID: 0, // Placeholder ID
-      //   teamID: myContext?.numericalState, // Placeholder team ID
-      //   status: "pending",
-      //   priority: "",
-      //   title: "",
-      //   content: "",
-      //   assigned: [],
-      //   comments: [],
-      //   created: null,
-      //   due: null,
-      // });
-
-      // Handle success
       console.log("Task created successfully:", response.data);
       return response.data;
     } catch (error) {
-      // Handle error
       console.error("Error creating task:", error);
-      throw error; // You can choose to throw or handle the error as needed
+      throw error;
     }
   };
 
@@ -117,7 +100,6 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       setAddTaskButton(false);
     } catch (error) {
       console.error("Failed to create task:", error);
-      // Optionally: Display error feedback to the user
     }
   };
 
@@ -127,38 +109,33 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     userID: number
   ): Promise<any> => {
     try {
-      // Validate task ID
       if (!taskID || typeof taskID !== "number") {
         throw new Error("Invalid task ID.");
       }
 
-      // Validate context user ID
       if (!myContext?.userId) {
         throw new Error("User ID is not available in context.");
       }
 
-      // Prepare updated task data
       const taskData = {
-        title: updatedTask.title || TaskContent?.title || "Default Title", // Default title
+        title: updatedTask.title || TaskContent?.title || "Default Title",
         description:
-          updatedTask.content || TaskContent?.content || "Default Description", // Default description
-        admin_id: myContext.userId, // Ensure user ID is present
-        team_id: updatedTask.teamID || TaskContent?.teamID || 0, // Default team ID
-        due_date: new Date(), // Default due date
-        status: updatedTask.status || TaskContent?.status || "pending", // Default status
-        priority: updatedTask.priority || TaskContent?.priority || "low", // Default priority
+          updatedTask.content || TaskContent?.content || "Default Description",
+        admin_id: myContext.userId,
+        team_id: updatedTask.teamID || TaskContent?.teamID || 0,
+        due_date: new Date(),
+        status: updatedTask.status || TaskContent?.status || "pending",
+        priority: updatedTask.priority || TaskContent?.priority || "low",
       };
 
-      // Make API call to update the task
       const { data } = await axios.put(
         `http://localhost:3000/api/task/update/${taskID}`,
         taskData
       );
 
       console.log("Task updated successfully:", data);
-      return data; // Return the updated task data
+      return data;
     } catch (error: any) {
-      // Provide detailed error handling
       if (error.response) {
         console.error("Backend error:", error.response.data);
       } else if (error.request) {
@@ -174,17 +151,31 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   };
 
+  const deleteTask = async (taskID: number): Promise<void> => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/task/delete/${taskID}`
+      );
+      console.log("Task deleted successfully:", response.data);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "An unexpected error occurred while deleting the task.";
+      console.error("Error deleting task:", errorMessage);
+      alert(errorMessage);
+    }
+  };
+
   useEffect(() => {
     if (
       count.every((val) => val === true) &&
       myContext?.userId &&
       addTaskButton
     ) {
-      // Prevent duplicate task creation
       newTaskAdder();
     }
-  }, [count, myContext?.userId, addTaskButton]); // Only trigger when 'count' or 'userId' changes
-  // Adjust dependencies if necessary
+  }, [count, myContext?.userId, addTaskButton]);
 
   useEffect(() => {
     console.log(dummyTask);
@@ -892,6 +883,14 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         ))}
       </div>
       {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
+      <button
+        onClick={() => {
+          deleteTask(TaskContent.taskID);
+          setButtonPress(true);
+        }}
+      >
+        Delete
+      </button>
     </div>
   );
 };
