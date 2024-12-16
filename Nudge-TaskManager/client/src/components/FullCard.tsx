@@ -8,7 +8,6 @@ import {
   Popover,
   List,
   ListItem,
-  ActionIcon,
 } from "@mantine/core";
 import { TaskContent } from "../interfaces/interfaces";
 import {
@@ -46,6 +45,9 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //MARY STUFF
   const myContext = useContext(ThemeContext);
 
+  const [buttonPress, setButtonPress] = useState<boolean>(false);
+  const [updatingData, setUpdatingData] = useState<boolean>(false);
+  const [updateTaskButton, setUpdateTaskButton] = useState<boolean>(false);
   const [addTaskButton, setAddTaskButton] = useState<boolean>(false);
   const [myContent, setMyContent] = useState<string>("");
   const [count, setCount] = useState<boolean[]>([false, false, true]);
@@ -119,6 +121,59 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   };
 
+  const updateTask = async (
+    taskID: number,
+    updatedTask: TaskContent,
+    userID: number
+  ): Promise<any> => {
+    try {
+      // Validate task ID
+      if (!taskID || typeof taskID !== "number") {
+        throw new Error("Invalid task ID.");
+      }
+
+      // Validate context user ID
+      if (!myContext?.userId) {
+        throw new Error("User ID is not available in context.");
+      }
+
+      // Prepare updated task data
+      const taskData = {
+        title: updatedTask.title || TaskContent?.title || "Default Title", // Default title
+        description:
+          updatedTask.content || TaskContent?.content || "Default Description", // Default description
+        admin_id: myContext.userId, // Ensure user ID is present
+        team_id: updatedTask.teamID || TaskContent?.teamID || 0, // Default team ID
+        due_date: new Date(), // Default due date
+        status: updatedTask.status || TaskContent?.status || "pending", // Default status
+        priority: updatedTask.priority || TaskContent?.priority || "low", // Default priority
+      };
+
+      // Make API call to update the task
+      const { data } = await axios.put(
+        `http://localhost:3000/api/task/update/${taskID}`,
+        taskData
+      );
+
+      console.log("Task updated successfully:", data);
+      return data; // Return the updated task data
+    } catch (error: any) {
+      // Provide detailed error handling
+      if (error.response) {
+        console.error("Backend error:", error.response.data);
+      } else if (error.request) {
+        console.error("No response received from backend:", error.request);
+      } else {
+        console.error("Error during request setup:", error.message);
+      }
+      throw new Error(
+        error.response?.data?.message ||
+          error.message ||
+          "An unexpected error occurred."
+      );
+    }
+  };
+
   useEffect(() => {
     if (
       count.every((val) => val === true) &&
@@ -134,6 +189,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   useEffect(() => {
     console.log(dummyTask);
   }, [dummyTask]);
+
+  useEffect(() => {
+    myContext?.setReloadTasks(true);
+    setUpdateTaskButton(false);
+    if (buttonPress === true) {
+      setUpdatingData(false);
+      setButtonPress(false);
+    }
+  }, [updateTaskButton, buttonPress]);
   //tester:)
   // useEffect(() => {
   //   if (myContext?.emptyTask == true) {
@@ -147,12 +211,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       size="xs"
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color={"#FA5252"}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           status: "pending",
-        }))
-      }
+        }));
+        if (myContext?.emptyTask === false) {
+          setUpdatingData(true);
+        }
+      }}
     >
       INCOMPLETE
     </Button>,
@@ -161,12 +228,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       size="xs"
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color={"#FAB005"}
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           status: "in-progress",
-        }))
-      }
+        }));
+        if (myContext?.emptyTask === false) {
+          setUpdatingData(true);
+        }
+      }}
     >
       IN-PROGRESS
     </Button>,
@@ -177,12 +247,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       className="rounded-[20px] h-[20px] flex w-full items-center justify-center"
       color={"#12B886"}
       key="status-badge" // Always add a key when creating components dynamically
-      onClick={() =>
+      onClick={() => {
         setDummyTask((prevTask) => ({
           ...prevTask,
           status: "completed",
-        }))
-      }
+        }));
+        if (myContext?.emptyTask === false) {
+          setUpdatingData(true);
+        }
+      }}
     >
       COMPLETE
     </Button>,
@@ -210,11 +283,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           ...prevTask,
           priority: "low",
         }));
-        setCount((prevCount) => {
-          const newCount = [...prevCount];
-          newCount[1] = true;
-          return newCount;
-        });
+        if (myContext?.emptyTask === true) {
+          setCount((prevCount) => {
+            const newCount = [...prevCount];
+            newCount[1] = true;
+            return newCount;
+          });
+        } else {
+          setUpdatingData(true);
+        }
       }}
     >
       LOW
@@ -230,11 +307,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           ...prevTask,
           priority: "medium",
         }));
-        setCount((prevCount) => {
-          const newCount = [...prevCount];
-          newCount[1] = true;
-          return newCount;
-        });
+        if (myContext?.emptyTask === true) {
+          setCount((prevCount) => {
+            const newCount = [...prevCount];
+            newCount[1] = true;
+            return newCount;
+          });
+        } else {
+          setUpdatingData(true);
+        }
       }}
     >
       MEDIUM
@@ -251,11 +332,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           ...prevTask,
           priority: "high",
         }));
-        setCount((prevCount) => {
-          const newCount = [...prevCount];
-          newCount[1] = true;
-          return newCount;
-        });
+        if (myContext?.emptyTask === true) {
+          setCount((prevCount) => {
+            const newCount = [...prevCount];
+            newCount[1] = true;
+            return newCount;
+          });
+        } else {
+          setUpdatingData(true);
+        }
       }}
     >
       HIGH
@@ -270,6 +355,9 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTaskTitle(event.target.value);
+    if (myContext?.emptyTask === false) {
+      setUpdatingData(true);
+    }
     //setDummyTask((prevTask) => ({ ...prevTask, title: event.target.value }));
   };
 
@@ -439,7 +527,11 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
               }
               onClick={() => setProgressDropdownOpen(!progressDropdownOpen)}
             >
-              {TaskContent.status || progress || "INCOMPLETE"}
+              {myContext?.emptyTask
+                ? progress
+                : updatingData
+                ? progress
+                : TaskContent.status}
             </Button>
           </Popover.Target>
           <Popover.Dropdown>
@@ -489,7 +581,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 size="15"
                 className="mr-[5px] flex items-center justify-center"
               />{" "}
-              {TaskContent.priority || priority || "N/A"}
+              {myContext?.emptyTask
+                ? priority === ""
+                  ? "N/A"
+                  : priority
+                : updatingData
+                ? priority === ""
+                  ? "N/A"
+                  : priority
+                : TaskContent.priority}
             </Button>
           </Popover.Target>
           <Popover.Dropdown>
@@ -588,15 +688,31 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
               className="text-[#B7CDDE] w-full cursor-pointer text-[35px]"
               onClick={() => setIsEditingTitle(true)}
             >
-              {TaskContent.title || taskTitle}
+              {myContext?.emptyTask
+                ? taskTitle
+                : updatingData
+                ? taskTitle
+                : TaskContent.title}
             </div>
           )}
         </div>
         <Button
           variant="light"
           color="#B7CDDE"
-          onClick={() => setAddTaskButton(true)}
-          disabled={!myContext?.userId || count.some((val) => val !== true)}
+          onClick={() => {
+            if (myContext?.emptyTask === true) {
+              setAddTaskButton(true);
+            } else {
+              updateTask(TaskContent.taskID, dummyTask, myContext?.userId);
+              setUpdateTaskButton(true);
+              setButtonPress(true);
+            }
+          }}
+          disabled={
+            myContext?.emptyTask
+              ? count.some((val) => val === false)
+              : updatingData === false
+          }
         >
           SAVE
         </Button>
@@ -633,7 +749,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         >
           {" "}
           {/*TASK DESCRIPTION CONTENT DIV*/}
-          {TaskContent.content.length === 0 && (
+          {TaskContent.content.length === 0 ? (
             <div className="text-[#88A7BD]">
               <Textarea
                 value={myContent}
@@ -649,8 +765,34 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 onChange={(e) => setMyContent(e.target.value)}
               />
             </div>
+          ) : (
+            <div className="text-[#88A7BD]">
+              <Textarea
+                value={myContent}
+                placeholder={
+                  updatingData
+                    ? "Enter a new task description..."
+                    : TaskContent.content
+                }
+                variant="unstyled"
+                autosize
+                styles={{
+                  input: {
+                    color: "#C9C9C9",
+                  },
+                }}
+                onBlur={() => {
+                  handleContentBlur();
+                  setUpdateTaskButton(true);
+                  setUpdatingData(true);
+                }}
+                onChange={(e) => {
+                  setMyContent(e.target.value);
+                }}
+              />
+            </div>
           )}
-          {TaskContent.content}
+          {""}
         </div>
       </div>
       <div className="flex flex-col mt-[24px] text-[20px] w-full h-max">

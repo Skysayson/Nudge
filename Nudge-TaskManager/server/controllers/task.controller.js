@@ -115,10 +115,35 @@ const updateTask = async (req, res) => {
   }
 };
 
+const deleteTask = async (req, res) => {
+  const taskID = req.params.taskID;
+  console.log(taskID);
+
+  try {
+    // Check if the task exists
+    const task = await Task.findByPk(taskID);
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+
+    // Delete the task
+    await task.destroy();
+
+    // Send success response
+    return res.status(200).json({ message: "Task deleted successfully." });
+  } catch (error) {
+    // Handle any errors
+    console.error("Error deleting task:", error);
+    return res.status(500).json({ message: "Failed to delete the task." });
+  }
+};
+
 module.exports = {
   createTask,
   getTasksByTeam,
   getAllTasks,
   getTasksByPriority,
   updateTask,
+  deleteTask,
 };
