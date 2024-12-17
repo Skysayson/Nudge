@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       message: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       message_type: {
         type: DataTypes.ENUM("task-update", "due-date", "reminder"),

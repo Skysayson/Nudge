@@ -6,6 +6,8 @@ import {
   Indicator,
   Menu,
   Text,
+  Drawer,
+  Burger,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 import {
@@ -13,19 +15,28 @@ import {
   IconSearch,
   IconLogout,
   IconBell,
+  IconX,
 } from "@tabler/icons-react";
 import DashboardPage from "./DashboardContent";
 import { useState, useEffect } from "react";
 import NudgeLogo from "../assets/Group 1.svg";
-import { StatTask, TaskContent } from "../interfaces/interfaces";
-import { ThemeContext } from "../interfaces/ThemeContext";
+import { StatTask, taskComment, TaskContent } from "../interfaces/interfaces";
+import {
+  ThemeContext,
+  TeamMember,
+  NotifContent,
+} from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
+import { useDisclosure } from "@mantine/hooks";
 
 //MARY IMPORTS
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
 
 export const DashBoard: React.FC = () => {
+  // State for toggling the empty task when add task is clicked
+  const [emptyTask, setEmptyTask] = useState(false);
+
   // State for toggling the rendering of the dashboard
   const [selectDash, setSelectDash] = useState(true);
 
@@ -38,17 +49,37 @@ export const DashBoard: React.FC = () => {
   // Notifications
   const [notificationClick, setNotification] = useState(false);
 
+  // SideBar Drawer
+  const [opened, { open, close }] = useDisclosure(false);
+
+  // Sort Api Tasks
+  const [sort, setSort] = useState<string>("");
+
   //=> MARY CODE <=//
-  const [numericalState, setNumericalState] = useState<number>(0); //PROBLEM: I need to make the default the first team somehow
-  const [userId, setUserId] = useState<number | null>(null); // State for user_id
+  const [notifPasser, setNotifPasser] = useState<NotifContent>({});
+  const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
+  const [reloadTasks, setReloadTasks] = useState<boolean>(false);
+  const [numericalState, setNumericalState] = useState<number>(0);
+  const [userId, setUserId] = useState<number | null>(null);
   const [email, setEmail] = useState("");
   const [teams, setTeams] = useState<string[]>([]);
   const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
   const [teamHeader, setTeamHeader] = useState("");
-  const [teamMembers, setTeamMembers] = useState<string[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const dummyTask: TaskContent = {
+    taskID: 0,
+    teamID: 0,
+    status: "",
+    priority: "",
+    title: "",
+    content: "",
+    assigned: [],
+    comments: [],
+    created: null,
+    due: null,
+  };
 
   //task renders
-  const [renderedTasks, setRenderedTasks] = useState<TaskContent[]>([]);
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
@@ -136,9 +167,14 @@ export const DashBoard: React.FC = () => {
         );
 
         if (response.data && Array.isArray(response.data)) {
-          const usernames = response.data.map((member) => member.username);
-          setTeamMembers(usernames);
-          console.log("Usernames:", usernames);
+          const teamMembers = response.data.map(
+            (member: { user_id: number; username: string }) => ({
+              id: member.user_id, // Map the 'id' field
+              name: member.username, // Map the 'username' field to 'name'
+            })
+          );
+          setTeamMembers(teamMembers);
+          console.log(teamMembers);
         } else {
           console.warn("No members found for the provided team_id.");
         }
@@ -159,7 +195,7 @@ export const DashBoard: React.FC = () => {
           `http://localhost:3000/api/task/find/team/${teamId}`
         );
 
-        if (response.data && Array.isArray(response.data)) {
+        if (Array.isArray(response.data)) {
           console.log("Fetched tasks:", response.data);
           const tasks = response.data.map((task) => ({
             taskID: task.task_id,
@@ -170,40 +206,114 @@ export const DashBoard: React.FC = () => {
             priority: task.priority,
             status: task.status,
             created: task.created_at ? new Date(task.created_at) : null,
-            assigned: [], //teamMembers,
+            assigned: [], // Placeholder for teamMembers
             comments: [],
           }));
-          setRenderedTasks(tasks);
 
-          const incomplete = tasks.filter((task) => task.status === "pending");
-          const inProgress = tasks.filter(
-            (task) => task.status === "in-progress"
-          );
-          const completed = tasks.filter((task) => task.status === "completed");
-          setIncompleteTasks(incomplete);
-          setInProgressTasks(inProgress);
-          setCompleteTasks(completed);
+          // Sort Logic
+          if (sort === "Low to High") {
+            const priorityOrder: Record<string, number> = {
+              low: 1,
+              medium: 2,
+              high: 3,
+            };
+            const sortedTasks = tasks.sort((a, b) => {
+              return (
+                (priorityOrder[a.priority] || 0) -
+                (priorityOrder[b.priority] || 0)
+              );
+            });
+
+            console.log(`SORT VALUE: ${sort}`);
+
+            // Now filter by status after sorting
+            const incomplete = sortedTasks.filter(
+              (task) => task.status === "pending"
+            );
+            const inProgress = sortedTasks.filter(
+              (task) => task.status === "in-progress"
+            );
+            const completed = sortedTasks.filter(
+              (task) => task.status === "completed"
+            );
+
+            setIncompleteTasks(incomplete);
+            setInProgressTasks(inProgress);
+            setCompleteTasks(completed);
+          } else if (sort === "High to Low") {
+            const priorityOrder: Record<string, number> = {
+              low: 3,
+              medium: 2,
+              high: 1,
+            };
+            const sortedTasks = tasks.sort((a, b) => {
+              return (
+                (priorityOrder[a.priority] || 0) -
+                (priorityOrder[b.priority] || 0)
+              );
+            });
+
+            // Now filter by status after sorting
+            const incomplete = sortedTasks.filter(
+              (task) => task.status === "pending"
+            );
+            const inProgress = sortedTasks.filter(
+              (task) => task.status === "in-progress"
+            );
+            const completed = sortedTasks.filter(
+              (task) => task.status === "completed"
+            );
+
+            setIncompleteTasks(incomplete);
+            setInProgressTasks(inProgress);
+            setCompleteTasks(completed);
+          } else {
+            const incomplete = tasks.filter(
+              (task) => task.status === "pending"
+            );
+            const inProgress = tasks.filter(
+              (task) => task.status === "in-progress"
+            );
+            const completed = tasks.filter(
+              (task) => task.status === "completed"
+            );
+
+            setIncompleteTasks(incomplete);
+            setInProgressTasks(inProgress);
+            setCompleteTasks(completed);
+          }
+
+          // checking if state is being passed via context
+          console.log(`SORT VALUE: ${sort}`);
+
+          // Now filter by status after sorting
         } else {
-          console.warn("No tasks found for the provided team_id.");
+          console.warn("Unexpected response format:", response.data);
         }
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          console.warn("No tasks found for the provided team_id.");
+          setIncompleteTasks([]);
+          setInProgressTasks([]);
+          setCompleteTasks([]);
+        } else {
+          console.error("Error fetching tasks:", error);
+        }
       }
     };
 
-    if (numericalState && teamMembers.length > 0) {
+    if ((numericalState && teamMembers.length > 0) || reloadTasks === true) {
       fetchTasksByTeamId(numericalState);
+      setReloadTasks(false);
+      console.log(reloadTasks);
     }
-  }, [numericalState, teamMembers]);
-
-  useEffect(() => {
-    console.log("Rendered tasks", renderedTasks);
-  }, [renderedTasks]);
+  }, [numericalState, teamMembers, reloadTasks, sort]);
 
   //=>HERE ARE MY METHODS/FUNCTIONS<=//
   const updateCurrentTeam = (index: number) => {
     setTeamHeader(teams[index]);
     const teamNumber = teamNumbers[index];
+    //alert(teamNumber);
     setNumericalState(teamNumber);
   };
 
@@ -218,6 +328,8 @@ export const DashBoard: React.FC = () => {
   const notifications = [
     { id: 1, message: "New message from Alice" },
     { id: 2, message: "Reminder: Meeting at 3 PM" },
+    { id: 1, message: "New message from Alice" },
+    { id: 2, message: "Reminder: Meeting at 3 PM" },
   ]; // Example notifications array
 
   // Toggles the visibility of the dashboard and ensures full task view is hidden
@@ -226,7 +338,10 @@ export const DashBoard: React.FC = () => {
       setSelectDash(true);
     }
     setRenderFullTask(false);
+    setEmptyTask(false);
   };
+
+  console.log(`EmptyTask in Dashboard` + emptyTask);
 
   return (
     <ThemeContext.Provider
@@ -239,11 +354,21 @@ export const DashBoard: React.FC = () => {
         setNumericalState,
         userId,
         setUserId,
+        emptyTask,
+        setEmptyTask,
+        teamMembers,
+        setTeamMembers,
+        reloadTasks,
+        setReloadTasks,
+        sort,
+        setSort,
+        notifPasser,
+        setNotifPasser,
       }}
     >
-      <div className="flex w-screen h-screen border-blue-600 overflow-y-hidden overflow-x-hidden">
+      <div className="flex max-sm:w-[1000px] max-sm:h-screen w-screen h-screen border-blue-600 overflow-y-hidden">
         {/* Sidebar */}
-        <div className="flex flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
+        <div className="flex max-lg:hidden flex-col w-[304px] h-full shadow-custom-shadow border-r p-[32px] border-r-[#4B5D6A] bg-[#1A2329]">
           {/* Logo Section */}
           <div className="flex border-blue-600 h-max w-max">
             <img src={NudgeLogo} alt="" width={152} />
@@ -309,11 +434,98 @@ export const DashBoard: React.FC = () => {
             </div>
           </div>
         </div>
+        {/*BURGER SIDEBAR*/}
+        <Drawer
+          opened={opened}
+          onClose={close}
+          size="60%"
+          className="flex flex-col w-full border-red-600 h-full shadow-custom-shadow border-r"
+          styles={{
+            content: {
+              backgroundColor: "#1A2329", // Custom background color
+            },
+            header: {
+              backgroundColor: "#1A2329",
+            },
+          }}
+        >
+          {/* Logo Section */}
+          <div className="flex border-blue-600 h-max w-max">
+            <img src={NudgeLogo} alt="" width={152} />
+          </div>
+          <div className="mt-[29px] flex flex-col h-screen justify-between">
+            {/* Main Menu Section */}
+            <div className="flex flex-col">
+              <Input
+                placeholder="Search"
+                size="xs"
+                leftSection={<IconSearch size={17} />}
+                styles={{
+                  input: {
+                    backgroundColor: "#4B5D6A",
+                    color: "white",
+                  },
+                }}
+                className="text-[#667988] mb-[29px]"
+              />
+              <div className="flex flex-col mb-[29px]">
+                <h1 className="text-[#4B5D69] text-[12px]">MAIN MENU</h1>
+                <Button
+                  variant="subtle"
+                  color="#667988"
+                  leftSection={<IconLayoutDashboard size="1rem" />}
+                  className="flex items-center justify-start font-light"
+                  onClick={toggleDashboard}
+                >
+                  Dashboard
+                </Button>
+              </div>
+              {/* Teams Section */}
+              <div className="flex flex-col">
+                <h1 className="text-[#4B5D69] text-[12px]">TEAMS</h1>
+                {teams.map((team, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => updateCurrentTeam(index)} //bro this just for trial frfr
+                    variant="subtle"
+                    color="#667988"
+                    className="flex items-center justify-start"
+                    leftSection={<IconLayoutDashboard size="1rem" />}
+                  >
+                    <span className="text-[14px] font-light">{team}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+            {/* Logout Section */}
+            <div className="flex h-max items-center justify-center">
+              <Button
+                leftSection={<IconLogout size="16px" />}
+                variant="subtle"
+                color="#667988"
+                mt="md"
+                className="h-[32px] text-[16px] font-light"
+                style={{ fontSize: "14px", color: "#667988" }}
+                component={Link}
+                to={"/"}
+              >
+                Log Out
+              </Button>
+            </div>
+          </div>
+        </Drawer>
 
         {/* Main Content */}
         <div className="bg-[#151C21] w-full h-full flex flex-col">
           {/* Header Section */}
           <div className="flex items-center pl-[24px] pr-[24px] justify-between shadow-custom-shadow w-full border-b border-[#4B5D6A] min-h-[60px] bg-[#1A2329]">
+            <ActionIcon
+              variant="transparent"
+              onClick={open}
+              className="lg:hidden"
+            >
+              <Burger color="#6C899C" />
+            </ActionIcon>
             <div className="text-[#6C899C] text-[32px]">{teamHeader}</div>
             <div className="flex items-center">
               <ActionIcon
@@ -350,9 +562,18 @@ export const DashBoard: React.FC = () => {
                     </ActionIcon>
                   </Menu.Target>
 
-                  <Menu.Dropdown className="flex flex-col">
-                    <div className="flex w-[308px]">
-                      <h1>Notifications</h1>
+                  <Menu.Dropdown className="flex flex-col p-2 bg-[#485560] border-none">
+                    <div className="flex items-center justify-between mb-3">
+                      <h1 className="text-lg font-semibold text-[#ECF1F6]">
+                        Notifications
+                      </h1>
+                      <ActionIcon
+                        variant="transparent"
+                        color="gray"
+                        onClick={() => setNotification(false)}
+                      >
+                        <IconX size={20} />
+                      </ActionIcon>
                     </div>
 
                     {notifications.length === 0 ? (
@@ -361,11 +582,27 @@ export const DashBoard: React.FC = () => {
                       </Text>
                     ) : (
                       notifications.map((notification) => (
-                        <Menu.Item key={notification.id}>
-                          {notification.message}
-                        </Menu.Item>
+                        <div
+                          key={notification.id}
+                          className="flex items-center justify-between p-2 my-1 rounded-lg hover:bg-gray-500 hover:cursor-pointer"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <IconBell size={20} color="gray" />
+                            <Text size="sm" className="text-[#ECF1F6]">
+                              {notification.message}
+                            </Text>
+                          </div>
+                          <ActionIcon
+                            variant="transparent"
+                            color="gray"
+                            size={18}
+                          >
+                            <IconX size={16} />
+                          </ActionIcon>
+                        </div>
                       ))
                     )}
+
                     <Button
                       fullWidth
                       variant="subtle"
@@ -387,10 +624,13 @@ export const DashBoard: React.FC = () => {
             </div>
           </div>
           {/* Conditional Rendering of Dashboard and Full Task View */}
-          {selectDash && !renderFullTask && <DashboardPage StatTask={status} />}
+          {selectDash && !renderFullTask && !emptyTask && (
+            <DashboardPage StatTask={status} />
+          )}
           {renderFullTask && selectedTask && (
             <FullCard TaskContent={selectedTask} />
           )}
+          {emptyTask && <FullCard TaskContent={dummyTask} />}
         </div>
       </div>
     </ThemeContext.Provider>

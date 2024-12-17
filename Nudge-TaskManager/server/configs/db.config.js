@@ -1,7 +1,7 @@
 module.exports = {
   HOST: "localhost",
   USER: "root",
-  PASSWORD: "1234",
+  PASSWORD: "",
   DB: "Nudge",
   dialect: "mysql",
 };

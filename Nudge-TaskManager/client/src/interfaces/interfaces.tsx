@@ -27,8 +27,6 @@ export interface taskComment {
   author: string;
   comment: string;
   created: Date;
-  likes: number;
-  dislikes: number;
 }
 
 export interface StatTask {

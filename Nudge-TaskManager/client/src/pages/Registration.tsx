@@ -4,7 +4,7 @@ import { Input, PasswordInput } from "@mantine/core"; // Mantine input component
 import { Button } from "@mantine/core"; // Mantine button component
 import "../index.css"; // Import custom styles
 
-//=> MARY IMPORTS (am adding comments like this now so ion get conf.) <=//
+//=> MARY IMPORTS <=//
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -42,13 +42,12 @@ const Registration = () => {
     }
 
     if (password.length < 8) {
-      //I dunno baya if we should make this 8 or 6, change it lang or smthn
       alert("The password aint long enough enough cuh.");
       return false;
     }
 
     if (password !== confirmPassword) {
-      alert("Bro you're trippin, passwords ain't the same cuh."); //please insert the 8) emoji here, sir Ean will like it, promise
+      alert("Bro you're trippin, passwords ain't the same cuh.");
       return false;
     }
 
@@ -66,7 +65,9 @@ const Registration = () => {
         navigate("/");
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          alert(error.response?.data?.message || "Uh oh! Something went wrong...");
+          alert(
+            error.response?.data?.message || "Uh oh! Something went wrong..."
+          );
         } else {
           alert("An unknown error occurred.");
         }
@@ -76,14 +77,19 @@ const Registration = () => {
 
   return (
     <div className="flex w-screen h-screen">
-      {/* Left Section: Login Form */}
-      <div className="flex border-red-600 w-[50%] h-full bg-[#151C21] items-center justify-center">
-        <div className="flex flex-col border-white 2xl:w-[43%] 2xl:h-[55%] lg:w-[50%] lg:h-[60%]">
-          {/* Login Form Header */}
-          <div className="flex flex-col lg:h-max md:h-[30%] border-orange-600 lg:w-[100%]">
-            <h1 className="text-[#B7CDDE] mb-[15px] 2xl:text-[20px] lg:text-[22px]">
-              Welcome to Nudge!
-            </h1>
+      {/* Left Section: Registration Form */}
+      <div className="flex max-lg:w-full lg:w-[50%] h-full bg-[#151C21] items-center justify-center">
+        <div className="flex flex-col justify-center max-sm:w-[75%] max-lg:w-[60%] 2xl:w-[43%] 2xl:h-[55%] lg:w-[50%] lg:h-[70%]">
+          {/* Registration Header */}
+          <div className="flex flex-col max-lg:w-[100%] lg:h-max md:h-[30%]">
+            <div className="text-[#B7CDDE] mb-[15px] flex max-sm:justify-center items-center 2xl:text-[20px] lg:text-[22px]">
+              <h1 className="max-sm:hidden">Welcome to Nudge!</h1>
+              <img
+                src={NudgeLogo}
+                alt="Nudge Logo"
+                className="sm:hidden w-[75%] max-sm:w-[70%]"
+              />
+            </div>
 
             {/* Email Input */}
             <div className="lg:mb-[15px]">
@@ -98,8 +104,8 @@ const Registration = () => {
                   placeholder="Your Email"
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Input background color
-                      color: "white", // Input text color
+                      backgroundColor: "#4B5D6A",
+                      color: "white",
                     },
                   }}
                   name="email"
@@ -109,6 +115,7 @@ const Registration = () => {
               </Input.Wrapper>
             </div>
 
+            {/* Username Input */}
             <div className="lg:mb-[15px]">
               <Input.Label
                 required
@@ -121,8 +128,8 @@ const Registration = () => {
                   placeholder="Your Username"
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Input background color
-                      color: "white", // Input text color
+                      backgroundColor: "#4B5D6A",
+                      color: "white",
                     },
                   }}
                   name="username"
@@ -145,8 +152,8 @@ const Registration = () => {
                   placeholder="Password"
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Input background color
-                      color: "white", // Input text color
+                      backgroundColor: "#4B5D6A",
+                      color: "white",
                     },
                   }}
                   name="password"
@@ -156,6 +163,7 @@ const Registration = () => {
               </Input.Wrapper>
             </div>
 
+            {/* Confirm Password */}
             <div className="lg:mb-[15px]">
               <Input.Label
                 required
@@ -168,8 +176,8 @@ const Registration = () => {
                   placeholder="Confirm Password"
                   styles={{
                     input: {
-                      backgroundColor: "#4B5D6A", // Input background color
-                      color: "white", // Input text color
+                      backgroundColor: "#4B5D6A",
+                      color: "white",
                     },
                   }}
                   name="confirmPassword"
@@ -180,33 +188,31 @@ const Registration = () => {
             </div>
           </div>
 
-          <div className="flex h-full w-full items-center flex-col">
-            <div className="flex lg:w-full flex-col lg:h-[65%]">
-              <div className="flex flex-col items-center">
-                <Button
-                  fullWidth
-                  size="sm"
-                  className="rounded-[100px] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] 2xl:mb-[35px] mt-[32px]"
-                  onClick={submitDetails}
-                >
-                  <h1 className="text-[15px] font-normal text-[#1b2329]">
-                    Sign In
-                  </h1>
-                </Button>
-              </div>
+          {/* Register Button */}
+          <div className="flex w-full items-center flex-col">
+            <Button
+              fullWidth
+              size="sm"
+              className="rounded-[100px] border border-[#698192] bg-[#698192] lg:mb-[30px] 2xl:h-[45px] mt-[32px] max-lg:h-[40px]"
+              onClick={submitDetails}
+            >
+              <h1 className="text-[15px] font-normal text-[#33424C]">
+                Sign Up
+              </h1>
+            </Button>
 
-              <div className="flex lg:w-full justify-center items-center">
-                <div className="flex 2xl:w-[49%] justify-between">
-                  <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px] 2xl:text-[14px]">
-                    Already have an account?
-                  </h1>
-                  <ul
-                    className="text-[#4285F4] lg:text-[12px] 2xl:text-[14px] hover:underline hover:cursor-pointer"
-                    onClick={() => navigate("/")}
-                  >
-                    Log in
-                  </ul>
-                </div>
+            {/* Login Redirect */}
+            <div className="flex lg:w-full justify-center items-center">
+              <div className="flex 2xl:w-[43%] justify-between max-sm:mt-[16px]">
+                <h1 className="text-[#8B8B8B] lg:text-[12px] mr-[5px]">
+                  Already have an account?
+                </h1>
+                <h1
+                  className="text-[#4285F4] lg:text-[12px] hover:underline hover:cursor-pointer"
+                  onClick={() => navigate("/")}
+                >
+                  Log in
+                </h1>
               </div>
             </div>
           </div>
@@ -214,8 +220,8 @@ const Registration = () => {
       </div>
 
       {/* Right Section: Nudge Logo */}
-      <div className="flex border-blue-600 justify-center items-center w-[50%] h-full bg-[#33424C]">
-        <img src={NudgeLogo} alt="#" className="w-[75%]" />
+      <div className="max-lg:hidden flex justify-center items-center w-[50%] h-full bg-[#33424C]">
+        <img src={NudgeLogo} alt="Nudge Logo" className="w-[75%]" />
       </div>
     </div>
   );

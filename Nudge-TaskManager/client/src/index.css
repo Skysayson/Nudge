@@ -2,50 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
 body {
-    font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
+  overflow-y: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .custom-placeholder::placeholder {
-    color: #33424C; /* Replace with your desired color */
-  }
+  color: #33424c; /* Replace with your desired color */
+}
 
-  .scrollbar-hide {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
-  }
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
 
-  .card {
-    background-color: var(--mantine-color-body);
-  }
-  
-  .label {
-    font-family:
-      Greycliff CF,
-      var(--mantine-font-family);
-    font-weight: 700;
-    line-height: 1;
-  }
-  
-  .lead {
-    font-family:
-      Greycliff CF,
-      var(--mantine-font-family);
-    font-weight: 700;
-    font-size: rem(22px);
-    line-height: 1;
-  }
-  
-  .inner {
-    display: flex;
-  }
-  
-  .ring {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-  }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.card {
+  background-color: var(--mantine-color-body);
+}
+
+.label {
+  font-family: Greycliff CF, var(--mantine-font-family);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.lead {
+  font-family: Greycliff CF, var(--mantine-font-family);
+  font-weight: 700;
+  font-size: rem(22px);
+  line-height: 1;
+}
+
+.inner {
+  display: flex;
+}
+
+.ring {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
