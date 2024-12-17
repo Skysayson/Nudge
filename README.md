@@ -120,13 +120,13 @@ npm install
 ### Running the Project:
 
 ```bash
-(running frontend)
+(running frontend on 1st terminal)
 cd Nudge-TaskManager/client
 npm run dev
 ```
 
 ```bash
-(running backend)
+(running backend 2nd terminal)
 cd Nudge-TaskManager/server
 nodemon server.js
 ```
