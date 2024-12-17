@@ -88,6 +88,10 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   };
 
+  useEffect(() => {
+    console.log(selectedMember);
+  }, [selectedMember]);
+
   const fetchUsername = async (userID: number): Promise<string> => {
     try {
       const response = await axios.get(
@@ -436,18 +440,13 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   const handleSelectMember = (member) => {
     setSelectedMember((prevMember) => {
+      if (prevMember.some((m) => m.id === member.id)) {
+        // Member is already in the list, don't add again
+        return prevMember;
+      }
       return [...prevMember, member];
     });
-    if (myContext?.emptyTask === false) {
-      setUpdateTaskButton(true);
-    } else {
-      //make it available for saving
-      selectedMember.map((member) => {
-        createAssignee(member.id, TaskContent.taskID);
-      });
-    }
     //axios create new assignee
-    console.log(selectedMember);
     setMemberList(false);
     // Add logic to handle assignment to the task
   };
@@ -741,7 +740,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
             </Popover.Target>
             <text>
               {selectedMember.map((item) => (
-                <tspan key={item.id}>{item.name}</tspan>
+                <span key={item.id}>{item.name}</span>
               ))}
             </text>
             <Popover.Dropdown>
