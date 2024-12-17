@@ -7,7 +7,7 @@ import {
   useMantineTheme,
   Select,
 } from "@mantine/core";
-import { IconPlus, IconFilter, IconArrowsSort } from "@tabler/icons-react";
+import { IconPlus, IconArrowsSort } from "@tabler/icons-react";
 import StatusBar from "../components/StatusBar";
 import { StatTask } from "../interfaces/interfaces";
 import { Calendar } from "@mantine/dates";
