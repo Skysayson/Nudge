@@ -42,6 +42,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //MARY STUFF
   const myContext = useContext(ThemeContext);
 
+  const [assignedMembers, setAssignedMembers] = useState<TeamMember[]>([]);
   const [commentSave, setCommentSave] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
   const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
@@ -88,9 +89,44 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
   };
 
+  const fetchAssigneessByTaskId = async (taskId: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/assignee/find/task/${taskId}`
+      );
+
+      if (response.data && Array.isArray(response.data)) {
+        const members = response.data.map(
+          (member: { user_id: number; username: string }) => ({
+            id: member.user_id, // Map the 'id' field
+            name: member.username, // Map the 'username' field to 'name'
+          })
+        );
+        setAssignedMembers(members);
+        console.log(assignedMembers);
+      } else {
+        console.warn("No members found for the provided team_id.");
+      }
+    } catch (error) {
+      console.error("Error fetching members:", error);
+    }
+  };
+
   useEffect(() => {
     console.log(selectedMember);
+    selectedMember.map((member) => {
+      createAssignee(TaskContent.taskID, member.id);
+    });
+    fetchAssigneessByTaskId(TaskContent.taskID);
   }, [selectedMember]);
+
+  useEffect(() => {
+    fetchAssigneessByTaskId(TaskContent.taskID);
+  }, [myContext?.renderFullTask]);
+
+  useEffect(() => {
+    console.log(assignedMembers);
+  }, [assignedMembers]);
 
   const fetchUsername = async (userID: number): Promise<string> => {
     try {
@@ -739,9 +775,13 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
               </Button>
             </Popover.Target>
             <text>
-              {selectedMember.map((item) => (
-                <span key={item.id}>{item.name}</span>
-              ))}
+              {myContext?.emptyTask
+                ? selectedMember.map((item) => (
+                    <span key={item.id}>{item.name}</span>
+                  ))
+                : assignedMembers.map((item) => (
+                    <span key={item.id}>{item.name}</span>
+                  ))}
             </text>
             <Popover.Dropdown>
               <Input

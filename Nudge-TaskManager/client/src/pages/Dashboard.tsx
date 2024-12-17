@@ -21,7 +21,11 @@ import DashboardPage from "./DashboardContent";
 import { useState, useEffect } from "react";
 import NudgeLogo from "../assets/Group 1.svg";
 import { StatTask, taskComment, TaskContent } from "../interfaces/interfaces";
-import { ThemeContext, TeamMember } from "../interfaces/ThemeContext";
+import {
+  ThemeContext,
+  TeamMember,
+  NotifContent,
+} from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -52,6 +56,7 @@ export const DashBoard: React.FC = () => {
   const [sort, setSort] = useState<string>("");
 
   //=> MARY CODE <=//
+  const [notifPasser, setNotifPasser] = useState<NotifContent>({});
   const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
   const [reloadTasks, setReloadTasks] = useState<boolean>(false);
   const [numericalState, setNumericalState] = useState<number>(0);
@@ -357,6 +362,8 @@ export const DashBoard: React.FC = () => {
         setReloadTasks,
         sort,
         setSort,
+        notifPasser,
+        setNotifPasser,
       }}
     >
       <div className="flex max-sm:w-[1000px] max-sm:h-screen w-screen h-screen border-blue-600 overflow-y-hidden">

@@ -7,7 +7,17 @@ export interface TeamMember {
   name: string; // Member's name
 }
 
+export interface NotifContent {
+  user_id: number;
+  task_id: number;
+  message: string;
+  message_type: string;
+  sent_at: Date;
+}
+
 export interface ThemeContextType {
+  notifPasser: NotifContent;
+  setNotifPasser: Dispatch<SetStateAction<NotifContent>>;
   renderFullTask: boolean;
   setRenderFullTask: Dispatch<SetStateAction<boolean>>;
   selectedTask: TaskContent | null;
