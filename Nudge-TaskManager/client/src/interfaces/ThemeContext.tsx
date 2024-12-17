@@ -8,14 +8,17 @@ export interface TeamMember {
 }
 
 export interface NotifContent {
-  user_id: number;
-  task_id: number;
+  notification_id: number | null;
+  user_id: number | null;
+  task_id: number | null;
   message: string;
   message_type: string;
   sent_at: Date;
 }
 
 export interface ThemeContextType {
+  reloadNotif: boolean;
+  setReloadNotif: Dispatch<SetStateAction<boolean>>;
   notifPasser: NotifContent;
   setNotifPasser: Dispatch<SetStateAction<NotifContent>>;
   renderFullTask: boolean;

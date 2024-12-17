@@ -56,7 +56,13 @@ export const DashBoard: React.FC = () => {
   const [sort, setSort] = useState<string>("");
 
   //=> MARY CODE <=//
-  const [notifPasser, setNotifPasser] = useState<NotifContent>({});
+  const [notifPasser, setNotifPasser] = useState<NotifContent>({
+    user_id: null,
+    task_id: null,
+    message: "",
+    message_type: "",
+    sent_at: new Date(),
+  });
   const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
   const [reloadTasks, setReloadTasks] = useState<boolean>(false);
   const [numericalState, setNumericalState] = useState<number>(0);
@@ -80,9 +86,75 @@ export const DashBoard: React.FC = () => {
   };
 
   //task renders
+  const [reloadNotif, setReloadNotif] = useState<boolean>(false);
+  const [notifArray, setNotifArray] = useState<NotifContent[]>([]);
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
+
+  const createNotification = async (payload: NotifContent) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/notification/create",
+        {
+          message: payload.message || null,
+          message_type: payload.message_type,
+          task_id: payload.task_id,
+          user_id: payload.user_id,
+          sent_at: payload.sent_at,
+        }
+      );
+
+      console.log("Notification created successfully:", response.data);
+      return response.data; // Return response for further use if needed
+    } catch (error) {
+      console.error("Error creating notification:", error.message);
+      throw error; // Re-throw for higher-level error handling
+    }
+  };
+
+  const fetchNotifications = async (userID: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/notification/find/user/${userID}`
+      );
+      console.log("Backend response:", response.data);
+
+      if (response.data && Array.isArray(response.data)) {
+        const notifications = response.data.map(
+          (notif: {
+            notification_id: number;
+            user_id: number;
+            task_id: number;
+            message_type: string;
+            message: string;
+            sent_at: Date;
+          }) => ({
+            notification_id: notif.notification_id,
+            user_id: notif.user_id,
+            task_id: notif.user_id,
+            message_type: notif.message_type,
+            message: notif.message,
+            sent_at: notif.sent_at,
+          })
+        );
+        setNotifArray(notifications);
+        console.log("Fetched notifications:", notifArray);
+      } else {
+        console.warn("No notifications found for the provided user_id.");
+      }
+    } catch (error) {
+      console.error("Error fetching norifications from backend:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (reloadNotif === true) {
+      createNotification(notifPasser);
+      fetchNotifications(userId);
+      setReloadNotif(false);
+    }
+  }, [reloadNotif]);
 
   useEffect(() => {
     const decodeToken = () => {
@@ -364,6 +436,8 @@ export const DashBoard: React.FC = () => {
         setSort,
         notifPasser,
         setNotifPasser,
+        reloadNotif,
+        setReloadNotif,
       }}
     >
       <div className="flex max-sm:w-[1000px] max-sm:h-screen w-screen h-screen border-blue-600 overflow-y-hidden">
@@ -545,7 +619,7 @@ export const DashBoard: React.FC = () => {
                       color="gray"
                       onClick={() => setNotification(!notificationClick)}
                     >
-                      {notifications.length === 0 ? (
+                      {notifArray.length === 0 ? (
                         <IconBell size={32} color="#4A5568" />
                       ) : (
                         <Indicator
@@ -576,14 +650,14 @@ export const DashBoard: React.FC = () => {
                       </ActionIcon>
                     </div>
 
-                    {notifications.length === 0 ? (
+                    {notifArray.length === 0 ? (
                       <Text size="sm" color="dimmed" p="xs">
                         No notifications
                       </Text>
                     ) : (
-                      notifications.map((notification) => (
+                      notifArray.map((notification) => (
                         <div
-                          key={notification.id}
+                          key={notification.notification_id}
                           className="flex items-center justify-between p-2 my-1 rounded-lg hover:bg-gray-500 hover:cursor-pointer"
                         >
                           <div className="flex items-center space-x-2">

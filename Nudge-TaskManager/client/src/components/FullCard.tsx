@@ -25,7 +25,7 @@ import { TeamMember, ThemeContext } from "../interfaces/ThemeContext";
 import React, { useContext } from "react";
 
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
-  //const [statusColor, setStatusColor] = useState("");
+  const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState("");
   const [taskTitle, setTaskTitle] = useState("Enter Title"); //MARY NOTE: Fix this later and make the default title the actual title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -116,6 +116,15 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     console.log(selectedMember);
     selectedMember.map((member) => {
       createAssignee(TaskContent.taskID, member.id);
+      myContext?.setNotifPasser({
+        notification_id: null,
+        user_id: member.id,
+        task_id: TaskContent.taskID,
+        message: `You have now been assigned to task - "${TaskContent.taskID}"`,
+        message_type: "task-update",
+        sent_at: new Date(),
+      });
+      myContext?.setReloadNotif(true);
     });
     fetchAssigneessByTaskId(TaskContent.taskID);
   }, [selectedMember]);
@@ -204,6 +213,19 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     createComment();
     fetchComments(TaskContent.taskID);
     setCommentSave(false);
+
+    assignedMembers.map((member) => {
+      createAssignee(TaskContent.taskID, member.id);
+      myContext?.setNotifPasser({
+        notification_id: null,
+        user_id: member.id,
+        task_id: TaskContent.taskID,
+        message: `New comment on task ${TaskContent.taskID}`,
+        message_type: "reminder",
+        sent_at: new Date(),
+      });
+      myContext?.setReloadNotif(true);
+    });
   }, [commentSave]);
 
   const createTask = async (currTask: TaskContent, userID: number) => {
