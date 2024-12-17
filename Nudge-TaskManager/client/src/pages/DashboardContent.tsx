@@ -105,16 +105,6 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
 
           {/* Filter and Sort Buttons */}
           <div className="flex mr-[20px] items-center">
-            <Button
-              size="sm"
-              variant="subtle"
-              color="#667988"
-              leftSection={<IconFilter size="15" />}
-              className="font-light"
-            >
-              Filter
-            </Button>
-
             <div className="flex relative">
               <Button
                 size="sm"
@@ -150,8 +140,8 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
         {/* Status Bars for Tasks */}
         <div className="border-green-600 w-full h-full flex mt-[27.65px]">
           {StatTask[0].Task.length > 0 ||
-          StatTask[1].Task.length > 0 ||
-          StatTask[2].Task.length > 0 ? (
+            StatTask[1].Task.length > 0 ||
+            StatTask[2].Task.length > 0 ? (
             <div className="border-green-600 w-full h-full flex mt-[27.65px]">
               {StatTask.map((stat: StatTask, index: number) => (
                 <StatusBar
