@@ -21,12 +21,11 @@ import {
 import { Calendar } from "@mantine/dates";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ThemeContext } from "../interfaces/ThemeContext";
+import { TeamMember, ThemeContext } from "../interfaces/ThemeContext";
 import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
-  const [statusColor, setStatusColor] = useState("");
+  //const [statusColor, setStatusColor] = useState("");
   const [priorityColors, setPriorityColors] = useState("");
   const [taskTitle, setTaskTitle] = useState("Enter Title"); //MARY NOTE: Fix this later and make the default title the actual title
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -34,7 +33,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [memberList, setMemberList] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [startCalendar, setStartCalendar] = useState(false);
-  const [selectedMember, setSelectedMember] = useState(null);
+  const [selectedMember, setSelectedMember] = useState<TeamMember[]>([]);
   const [progressDropdownOpen, setProgressDropdownOpen] = useState(false);
   const [progress, setProgress] = useState<string>("INCOMPLETE");
   const [priorityDropdownOpen, setPriorityDropdownOpen] = useState(false);
@@ -65,13 +64,29 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     due: null,
   });
 
-  // export interface taskComment {
-  //   author: string;
-  //   comment: string;
-  //   created: Date;
-  //   likes: number;
-  //   dislikes: number;
-  // }
+  const createAssignee = async (taskID, userID) => {
+    try {
+      // Replace the URL with your actual API endpoint
+      const response = await axios.post(
+        "http://localhost:3000/api/assignee/create",
+        {
+          task_id: taskID,
+          user_id: userID,
+        }
+      );
+
+      // Success response
+      console.log("Assignee created successfully:", response.data);
+      return response.data; // You can return or handle the response as needed
+    } catch (error) {
+      // Handle error
+      console.error(
+        "Error creating assignee:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  };
 
   const fetchUsername = async (userID: number): Promise<string> => {
     try {
@@ -420,7 +435,19 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   ];
 
   const handleSelectMember = (member) => {
-    setSelectedMember(member);
+    setSelectedMember((prevMember) => {
+      return [...prevMember, member];
+    });
+    if (myContext?.emptyTask === false) {
+      setUpdateTaskButton(true);
+    } else {
+      //make it available for saving
+      selectedMember.map((member) => {
+        createAssignee(member.id, TaskContent.taskID);
+      });
+    }
+    //axios create new assignee
+    console.log(selectedMember);
     setMemberList(false);
     // Add logic to handle assignment to the task
   };
@@ -709,9 +736,14 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
                 className="h-[90%] text-[13px]"
                 onClick={() => setMemberList(!memberList)}
               >
-                Assign Member
+                {"Assign Member"}
               </Button>
             </Popover.Target>
+            <text>
+              {selectedMember.map((item) => (
+                <tspan key={item.id}>{item.name}</tspan>
+              ))}
+            </text>
             <Popover.Dropdown>
               <Input
                 placeholder="Search for a member..."
