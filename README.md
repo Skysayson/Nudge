@@ -87,6 +87,7 @@ README.md
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v14 or higher)
+- [mySQL]([https://](https://dev.mysql.com/downloads/installer/))(v8.0.40 or higher)
 
 ### Installation
 
@@ -104,10 +105,30 @@ cd Nudge-TaskManager/Client
 npm install
 ```
 
+```bash
+cd ..
+```
+
+```bash
+cd Nudge-TaskManager/Server
+```
+
+```bash
+npm install
+```
+
 ### Running the Project:
 
 ```bash
+(running frontend)
+cd Nudge-TaskManager/client
 npm run dev
+```
+
+```bash
+(running backend)
+cd Nudge-TaskManager/server
+nodemon server.js
 ```
 
 ## Contributing
