@@ -87,7 +87,7 @@ README.md
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v14 or higher)
-- [mySQL]([https://](https://dev.mysql.com/downloads/installer/))(v8.0.40 or higher)
+- [mySQL](https://dev.mysql.com/downloads/installer/)(v8.0.40 or higher)
 
 ### Installation
 
