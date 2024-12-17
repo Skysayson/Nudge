@@ -24,6 +24,7 @@ const taskRoutes = require("./routes/task.routes");
 const memberRoutes = require("./routes/member.routes");
 const commentRoutes = require("./routes/comment.routes");
 const assigneeRoutes = require("./routes/assignee.routes");
+const notificationRoutes = require("./routes/notification.routes");
 
 //API
 app.use("/api/user", userRoutes);
@@ -32,6 +33,7 @@ app.use("/api/task", taskRoutes);
 app.use("/api/member", memberRoutes);
 app.use("/api/comment", commentRoutes);
 app.use("/api/assignee", assigneeRoutes);
+app.use("/api/notification", notificationRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
