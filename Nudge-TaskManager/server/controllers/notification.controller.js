@@ -1,7 +1,5 @@
 const { Notification, Task, User } = require("../models");
-const { get } = require("../routes/assignee.routes");
 
-// Create a new Assignee
 const createNotification = async (req, res) => {
   try {
     const { message, message_type, task_id, user_id } = req.body;
@@ -18,7 +16,6 @@ const createNotification = async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Create the assignee record
     const notification = await Notification.create({
       message,
       message_type,
@@ -28,17 +25,15 @@ const createNotification = async (req, res) => {
 
     res.status(201).json(notification);
   } catch (error) {
-    console.error("Error creating assignee:", error);
+    console.error("Error creating notification:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Get all Assignees for a task
 const getNotificationByUser = async (req, res) => {
   try {
     const { user_id } = req.params;
 
-    // Fetch all assignees for the given task_id
     const notification = await Notification.findAll({ where: { user_id } });
 
     res.status(200).json(notification);
@@ -48,22 +43,20 @@ const getNotificationByUser = async (req, res) => {
   }
 };
 
-// Delete an Assignee
-const deleteAssignee = async (req, res) => {
+const deleteNotification = async (req, res) => {
   try {
-    const { assignee_id } = req.params;
+    const { notification_id } = req.params;
 
-    // Find and delete the assignee
-    const assignee = await Assignee.findByPk(assignee_id);
+    const notification = await Notification.findByPk(notification_id);
 
-    if (!assignee) {
-      return res.status(404).json({ message: "Assignee not found" });
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
     }
 
-    await assignee.destroy();
-    res.status(200).json({ message: "Assignee deleted successfully" });
+    await notification.destroy();
+    res.status(200).json({ message: "Notification deleted successfully" });
   } catch (error) {
-    console.error("Error deleting assignee:", error);
+    console.error("Error deleting notification:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -71,4 +64,5 @@ const deleteAssignee = async (req, res) => {
 module.exports = {
   createNotification,
   getNotificationByUser,
+  deleteNotification,
 };

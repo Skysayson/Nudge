@@ -1,22 +1,32 @@
 const { Assignee, User } = require("../models");
 
-// Create a new Assignee
 const createAssignee = async (req, res) => {
   try {
     const { task_id, user_id } = req.body;
 
-    // Find the username from the User model
     const user = await User.findByPk(user_id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Create the assignee record
+    const existingAssignee = await Assignee.findOne({
+      where: {
+        task_id,
+        user_id,
+      },
+    });
+
+    if (existingAssignee) {
+      return res
+        .status(400)
+        .json({ message: "User is already an assignee for this task" });
+    }
+
     const assignee = await Assignee.create({
       task_id,
       user_id,
-      username: user.username, // Retrieve the username from the User model
+      username: user.username,
     });
 
     res.status(201).json(assignee);
