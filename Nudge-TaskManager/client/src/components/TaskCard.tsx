@@ -1,11 +1,5 @@
-import { Card, Text, Badge, Group, Avatar, ActionIcon } from "@mantine/core";
-import {
-  IconX,
-  IconMessage,
-  IconLoader,
-  IconCheck,
-  IconFlag,
-} from "@tabler/icons-react";
+import { Card, Text, Badge, Group } from "@mantine/core";
+import { IconX, IconLoader, IconCheck, IconFlag } from "@tabler/icons-react";
 import { useEffect, useState, useContext } from "react";
 import { StatTask, TaskContent } from "../interfaces/interfaces";
 import { ThemeContext } from "../interfaces/ThemeContext";
@@ -118,36 +112,7 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
 
             {/* Footer: Assigned Avatars, Comments, and Due Date */}
             <div className="flex flex-col justify-center border-red-600">
-              <div className="flex w-full h-max items-center justify-between">
-                {/* Assigned User Avatars */}
-                <div className="flex">
-                  {task.assigned && task.assigned.length > 0 ? (
-                    task.assigned.map((name, nameIndex) => (
-                      <Avatar
-                        key={nameIndex} // Unique key for each avatar
-                        variant="filled"
-                        name={name} // Avatar's name initials
-                        size="30"
-                        color="initials"
-                        className="mr-[-14px]" // Overlapping effect for avatars
-                      ></Avatar>
-                    ))
-                  ) : (
-                    <span className="text-[#688193] text-[80%]">
-                      No one assigned {/* Message if no one is assigned */}
-                    </span>
-                  )}
-                </div>
-
-                {/* Comment Count */}
-                <div className="w-[40px] items-center justify-between flex text-white">
-                  <ActionIcon variant="transparent">
-                    <IconMessage color="#688193" /> {/* Comment icon */}
-                  </ActionIcon>
-                  <h1 className="text-[#688193]">{task.comments.length}</h1>{" "}
-                  {/* Comment count */}
-                </div>
-              </div>
+              <div className="flex w-full h-max items-center justify-between"></div>
 
               {/* Due Date */}
               <h1 className="mt-[10px] text-[14px] text-[#688193] underline">

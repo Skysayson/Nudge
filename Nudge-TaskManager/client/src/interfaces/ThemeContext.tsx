@@ -17,6 +17,8 @@ export interface NotifContent {
 }
 
 export interface ThemeContextType {
+  commentsLength: number;
+  setCommentsLength: Dispatch<SetStateAction<number>>;
   reloadNotif: boolean;
   setReloadNotif: Dispatch<SetStateAction<boolean>>;
   notifPasser: NotifContent;

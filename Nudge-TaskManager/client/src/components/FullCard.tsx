@@ -11,14 +11,13 @@ import {
 } from "@mantine/core";
 import { taskComment, TaskContent } from "../interfaces/interfaces";
 import {
-  IconCalendar,
   IconProgress,
   IconFlag,
   IconCalendarDue,
   IconUser,
   IconMessage,
 } from "@tabler/icons-react";
-import { Calendar } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { TeamMember, ThemeContext } from "../interfaces/ThemeContext";
@@ -32,7 +31,6 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [renderCalendar, setRenderCalendar] = useState(false);
   const [memberList, setMemberList] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [startCalendar, setStartCalendar] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember[]>([]);
   const [progressDropdownOpen, setProgressDropdownOpen] = useState(false);
   const [progress, setProgress] = useState<string>("INCOMPLETE");
@@ -42,6 +40,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //MARY STUFF
   const myContext = useContext(ThemeContext);
 
+  const [dueDate, setDueDate] = useState<Date | null>(null);
   const [assignedMembers, setAssignedMembers] = useState<TeamMember[]>([]);
   const [commentSave, setCommentSave] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
@@ -64,6 +63,12 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     created: null,
     due: null,
   });
+
+  useEffect(() => {
+    if (dueDate) {
+      console.log("Updated Due Date:", formatDate(dueDate));
+    }
+  }, [dueDate]);
 
   const createAssignee = async (taskID, userID) => {
     try {
@@ -210,7 +215,9 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   }, [myContext?.renderFullTask]);
 
   useEffect(() => {
-    createComment();
+    if (commentSave === true) {
+      createComment();
+    }
     fetchComments(TaskContent.taskID);
     setCommentSave(false);
 
@@ -235,7 +242,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         description: currTask.content,
         admin_id: userID,
         team_id: currTask.teamID,
-        due_date: new Date(),
+        due_date: dueDate,
         status: currTask.status,
         priority: currTask.priority,
       };
@@ -564,16 +571,25 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   };
 
   //Function to format start date and due date of task
-  const formatDate = (date: Date | null) => {
+  const formatDate = (date: Date | string | null) => {
     if (!date) {
+      console.log("This is date data:", date);
+      //return false;
+    }
+
+    const validDate = new Date(date);
+    if (isNaN(validDate.getTime())) {
+      // If the date is invalid, return false
       return false;
     }
+
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
       year: "numeric",
-    }).format(new Date(date));
+    }).format(validDate);
   };
+
   const mapAssigned = () => {
     return TaskContent.assigned.map((assignee) => assignee).join(", ");
   };
@@ -613,55 +629,38 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   //This is an object array that contains the contents to be rendered for the Task Specifications
   const taskSpecifications = [
     {
-      label: "Start Date",
-      icon: <IconCalendar size={16} />,
-      value: TaskContent.created ? (
-        formatDate(TaskContent.created)
-      ) : (
-        <Popover>
-          <Popover.Target>
-            <Button
-              variant="filled"
-              color="#688193"
-              className="h-[90%] text-[13px]"
-              onClick={() => setStartCalendar(!startCalendar)}
-            >
-              Set Start Date
-            </Button>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Calendar />
-          </Popover.Dropdown>
-        </Popover>
-      ), // Fallback message
-    },
-    {
       label: "Due Date",
       icon: <IconCalendarDue size={16} />,
-      value: (
-        <Popover
-          position="bottom"
-          withArrow
-          shadow="md"
-          opened={renderCalendar}
-          onClose={() => setRenderCalendar(false)}
-        >
-          <Popover.Target>
-            <Button
-              variant="filled"
-              color="#688193"
-              className="h-[90%] text-[13px]"
-              onClick={() => {
-                setRenderCalendar(!renderCalendar);
-              }}
-            >
-              Set Due Date
-            </Button>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Calendar />
-          </Popover.Dropdown>
-        </Popover>
+      value: myContext?.emptyTask ? (
+        dueDate != null ? (
+          formatDate(dueDate)
+        ) : (
+          <Popover
+            position="bottom"
+            withArrow
+            shadow="md"
+            opened={renderCalendar}
+            onClose={() => setRenderCalendar(false)}
+          >
+            <Popover.Target>
+              <Button
+                variant="filled"
+                color="#688193"
+                className="h-[90%] text-[13px]"
+                onClick={() => {
+                  setRenderCalendar(!renderCalendar);
+                }}
+              >
+                Set Due Date
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <DatePicker value={dueDate} onChange={setDueDate} />
+            </Popover.Dropdown>
+          </Popover>
+        )
+      ) : (
+        formatDate(TaskContent.due)
       ), // Fallback message
     },
     {
@@ -894,6 +893,23 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       </div>
       {/*------------------------------! TASK TITLE DIV !------------------------------------*/}
       {/*------------------------------! TABLE COMPONENT (TASK SPECIFICATIONS) !------------------------------------*/}
+      <div>
+        {myContext?.emptyTask ? (
+          ""
+        ) : (
+          <div>
+            <tr className="mb-[10px] flex w-[35%] justify-between">
+              <td className="flex items-center space-x-2">
+                {<IconCalendarDue size={16} />}
+                <span className="text-[#B7CDDE] text-[16px]">Start Date</span>
+              </td>
+              <td className="text-[#B7CDDE] w-[150px] text-[16px] flex justify-center">
+                {formatDate(TaskContent.created)}
+              </td>
+            </tr>
+          </div>
+        )}
+      </div>
       <Table verticalSpacing="md">
         <tbody>
           {taskSpecifications.map((spec, index) => (
@@ -970,74 +986,78 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
           {""}
         </div>
       </div>
-      <div className="flex flex-col mt-[24px] text-[20px] w-full h-max">
-        <div className="flex justify-between 2xl:w-[9%] lg:w-[13%] items-center border-red-600 text-[#B7CDDE]">
-          <IconMessage />
-          Comments
-        </div>
-        <Textarea
-          value={commentText}
-          placeholder="Write a comment..."
-          autosize
-          minRows={3}
-          maxRows={6}
-          className="mt-2 placeholder:[#C9C9C9]"
-          variant="filled"
-          onKeyDown={keyDownComments}
-          onBlur={commentBlur}
-          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setCommentText(event.target.value);
-          }}
-        />
-        {TaskContent.comments.length === 0 && (
-          <div className="flex w-full justify-center items-center mt-[5%]  text-[#B7CDDE]">
-            {" "}
-            No Comments{" "}
+      {!myContext?.emptyTask && (
+        <div className="flex flex-col mt-[24px] text-[20px] w-full h-max">
+          <div className="flex justify-between 2xl:w-[9%] lg:w-[13%] items-center border-red-600 text-[#B7CDDE]">
+            <IconMessage />
+            Comments
           </div>
-        )}
+          <Textarea
+            value={commentText}
+            placeholder="Write a comment..."
+            autosize
+            minRows={3}
+            maxRows={6}
+            className="mt-2 placeholder:[#C9C9C9]"
+            variant="filled"
+            onKeyDown={keyDownComments}
+            onBlur={commentBlur}
+            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+              setCommentText(event.target.value);
+            }}
+          />
+          {TaskContent.comments.length === 0 && (
+            <div className="flex w-full justify-center items-center mt-[5%]  text-[#B7CDDE]">
+              {" "}
+              No Comments{" "}
+            </div>
+          )}
 
-        {commentsArray.map((comment, index) => (
-          <div
-            key={index}
-            className="flex flex-col text-[16px] mt-[32px] bg-opacity-[10%]"
-          >
-            {/* COMMENT DIV */}
-            <div className="flex items-center border-red-600 w-full">
-              <div className="flex w-max h-max  border-green-600">
-                <Avatar size="48" />
-                <div className="flex ml-[8px] flex-col">
-                  <div className="flex items-center border-green-600 w-full">
-                    <h1 className="mr-[10px] text-[14px] text-[#B7CDDE]">
-                      {commentsArray[index].author}
-                    </h1>
-                    <h1 className="text-[14px] text-[#6C899C]">
-                      {formatDate(comment.created)}
-                    </h1>
+          {commentsArray.map((comment, index) => (
+            <div
+              key={index}
+              className="flex flex-col text-[16px] mt-[32px] bg-opacity-[10%]"
+            >
+              {/* COMMENT DIV */}
+              <div className="flex items-center border-red-600 w-full">
+                <div className="flex w-max h-max  border-green-600">
+                  <Avatar size="48" />
+                  <div className="flex ml-[8px] flex-col">
+                    <div className="flex items-center border-green-600 w-full">
+                      <h1 className="mr-[10px] text-[14px] text-[#B7CDDE]">
+                        {commentsArray[index].author}
+                      </h1>
+                      <h1 className="text-[14px] text-[#6C899C]">
+                        {formatDate(comment.created)}
+                      </h1>
+                    </div>
+                    <Text
+                      className="text-[14px] w-full border-red-600 flex text-white"
+                      style={{
+                        wordBreak: "break-word", // Break words for long content
+                        overflowWrap: "break-word", // Ensure proper wrapping
+                      }}
+                    >
+                      {comment.comment}
+                    </Text>
                   </div>
-                  <Text
-                    className="text-[14px] w-full border-red-600 flex text-white"
-                    style={{
-                      wordBreak: "break-word", // Break words for long content
-                      overflowWrap: "break-word", // Ensure proper wrapping
-                    }}
-                  >
-                    {comment.comment}
-                  </Text>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
       {/*------------------------------! TASK DESCRIPTION MAIN DIV !------------------------------------*/}
-      <button
-        onClick={() => {
-          deleteTask(TaskContent.taskID);
-          setButtonPress(true);
-        }}
-      >
-        Delete
-      </button>
+      {!myContext?.emptyTask && (
+        <button
+          onClick={() => {
+            deleteTask(TaskContent.taskID);
+            setButtonPress(true);
+          }}
+        >
+          Delete
+        </button>
+      )}
     </div>
   );
 };

@@ -20,7 +20,7 @@ import {
 import DashboardPage from "./DashboardContent";
 import { useState, useEffect } from "react";
 import NudgeLogo from "../assets/Group 1.svg";
-import { StatTask, taskComment, TaskContent } from "../interfaces/interfaces";
+import { StatTask, TaskContent } from "../interfaces/interfaces";
 import {
   ThemeContext,
   TeamMember,
@@ -32,6 +32,7 @@ import { useDisclosure } from "@mantine/hooks";
 //MARY IMPORTS
 import axios, { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 export const DashBoard: React.FC = () => {
   // State for toggling the empty task when add task is clicked
@@ -57,13 +58,15 @@ export const DashBoard: React.FC = () => {
 
   //=> MARY CODE <=//
   const [notifPasser, setNotifPasser] = useState<NotifContent>({
+    notification_id: null,
     user_id: null,
     task_id: null,
     message: "",
     message_type: "",
     sent_at: new Date(),
   });
-  const [commentsArray, setCommentsArray] = useState<taskComment[]>([]);
+
+  const [commentsLength, setCommentsLength] = useState<number>(0);
   const [reloadTasks, setReloadTasks] = useState<boolean>(false);
   const [numericalState, setNumericalState] = useState<number>(0);
   const [userId, setUserId] = useState<number | null>(null);
@@ -91,6 +94,16 @@ export const DashBoard: React.FC = () => {
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
+
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("jwtToken");
+
+    console.log("Token after removal:", localStorage.getItem("jwtToken"));
+
+    navigate("/");
+  };
 
   const createNotification = async (payload: NotifContent) => {
     try {
@@ -339,6 +352,32 @@ export const DashBoard: React.FC = () => {
             setIncompleteTasks(incomplete);
             setInProgressTasks(inProgress);
             setCompleteTasks(completed);
+          } else if (sort === "Due Date") {
+            const sortedTasks = tasks.sort((a, b) => {
+              if (a.due && b.due) {
+                return a.due.getTime() - b.due.getTime(); // Ascending order
+              } else if (a.due && !b.due) {
+                return -1; // Tasks with due date come first
+              } else if (!a.due && b.due) {
+                return 1; // Tasks without due date come last
+              }
+              return 0; // If both are null, leave unchanged
+            });
+
+            // Now filter by status after sorting
+            const incomplete = sortedTasks.filter(
+              (task) => task.status === "pending"
+            );
+            const inProgress = sortedTasks.filter(
+              (task) => task.status === "in-progress"
+            );
+            const completed = sortedTasks.filter(
+              (task) => task.status === "completed"
+            );
+
+            setIncompleteTasks(incomplete);
+            setInProgressTasks(inProgress);
+            setCompleteTasks(completed);
           } else {
             const incomplete = tasks.filter(
               (task) => task.status === "pending"
@@ -396,14 +435,6 @@ export const DashBoard: React.FC = () => {
     { status: "Complete", Task: completeTasks },
   ];
 
-  // Toggle notification
-  const notifications = [
-    { id: 1, message: "New message from Alice" },
-    { id: 2, message: "Reminder: Meeting at 3 PM" },
-    { id: 1, message: "New message from Alice" },
-    { id: 2, message: "Reminder: Meeting at 3 PM" },
-  ]; // Example notifications array
-
   // Toggles the visibility of the dashboard and ensures full task view is hidden
   const toggleDashboard = () => {
     if (selectDash === false) {
@@ -438,6 +469,8 @@ export const DashBoard: React.FC = () => {
         setNotifPasser,
         reloadNotif,
         setReloadNotif,
+        commentsLength,
+        setCommentsLength,
       }}
     >
       <div className="flex max-sm:w-[1000px] max-sm:h-screen w-screen h-screen border-blue-600 overflow-y-hidden">
@@ -450,7 +483,7 @@ export const DashBoard: React.FC = () => {
           <div className="mt-[29px] flex flex-col h-screen justify-between">
             {/* Main Menu Section */}
             <div className="flex flex-col">
-              <Input
+              {/* <Input
                 placeholder="Search"
                 size="xs"
                 leftSection={<IconSearch size={17} />}
@@ -461,7 +494,7 @@ export const DashBoard: React.FC = () => {
                   },
                 }}
                 className="text-[#667988] mb-[29px]"
-              />
+              /> */}
               <div className="flex flex-col mb-[29px]">
                 <h1 className="text-[#4B5D69] text-[12px]">MAIN MENU</h1>
                 <Button
@@ -500,8 +533,7 @@ export const DashBoard: React.FC = () => {
                 mt="md"
                 className="h-[32px] text-[16px] font-light"
                 style={{ fontSize: "14px", color: "#667988" }}
-                component={Link}
-                to={"/"}
+                onClick={logout}
               >
                 Log Out
               </Button>
@@ -580,8 +612,7 @@ export const DashBoard: React.FC = () => {
                 mt="md"
                 className="h-[32px] text-[16px] font-light"
                 style={{ fontSize: "14px", color: "#667988" }}
-                component={Link}
-                to={"/"}
+                onClick={logout}
               >
                 Log Out
               </Button>
