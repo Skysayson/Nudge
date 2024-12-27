@@ -27,6 +27,12 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        team_name: "Philippines",
+        admin_name: "Ean Velayo",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 
