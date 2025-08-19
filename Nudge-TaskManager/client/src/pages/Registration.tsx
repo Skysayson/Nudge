@@ -37,17 +37,19 @@ const Registration = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert("The email aint valid cuh.");
+      alert("The email is not valid");
       return false;
     }
 
-    if (password.length < 8) {
-      alert("The password aint long enough enough cuh.");
+    if (password.length <= 8) {
+      alert(
+        "The password is not long enough, it needs to be at least 8 characters."
+      );
       return false;
     }
 
     if (password !== confirmPassword) {
-      alert("Bro you're trippin, passwords ain't the same cuh.");
+      alert("Passwords do not match.");
       return false;
     }
 

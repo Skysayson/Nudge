@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const hashedPassword = await bcrypt.hash("password123", 10); // Example password hashing
 
-    await queryInterface.bulkInsert("Users", [
+    await queryInterface.bulkInsert("User", [
       {
         username: "Mary Modesto",
         email: "Mary@gmail.com",
@@ -45,6 +45,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("Users", null, {});
+    await queryInterface.bulkDelete("User", null, {});
   },
 };

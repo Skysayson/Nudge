@@ -8,8 +8,8 @@ import {
   Text,
   Drawer,
   Burger,
+  Modal,
 } from "@mantine/core";
-import { Link } from "react-router-dom";
 import {
   IconLayoutDashboard,
   IconSearch,
@@ -75,6 +75,7 @@ export const DashBoard: React.FC = () => {
   const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
   const [teamHeader, setTeamHeader] = useState("");
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [clickCreateTeam, isClickCreateTeam] = useState(false);
   const dummyTask: TaskContent = {
     taskID: 0,
     teamID: 0,
@@ -94,6 +95,7 @@ export const DashBoard: React.FC = () => {
   const [incompleteTasks, setIncompleteTasks] = useState<TaskContent[]>([]);
   const [inProgressTasks, setInProgressTasks] = useState<TaskContent[]>([]);
   const [completeTasks, setCompleteTasks] = useState<TaskContent[]>([]);
+  const [teamName, setTeamName] = useState("");
 
   const navigate = useNavigate();
 
@@ -121,7 +123,11 @@ export const DashBoard: React.FC = () => {
       console.log("Notification created successfully:", response.data);
       return response.data; // Return response for further use if needed
     } catch (error) {
-      console.error("Error creating notification:", error.message);
+      if (error instanceof Error) {
+        console.error("Error creating notification:", error.message);
+      } else {
+        console.error("Error creating notification:", error);
+      }
       throw error; // Re-throw for higher-level error handling
     }
   };
@@ -164,7 +170,9 @@ export const DashBoard: React.FC = () => {
   useEffect(() => {
     if (reloadNotif === true) {
       createNotification(notifPasser);
-      fetchNotifications(userId);
+      if (userId !== null) {
+        fetchNotifications(userId);
+      }
       setReloadNotif(false);
     }
   }, [reloadNotif]);
@@ -208,6 +216,48 @@ export const DashBoard: React.FC = () => {
       fetchUserId(email);
     }
   }, [email]);
+
+  const handleCreateTeam = async () => {
+    if (!teamName.trim()) return;
+    try {
+      await axios.post(
+        "http://localhost:3000/api/team/create",
+        {
+          team_name: teamName.trim(),
+          admin_name: email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+        }
+      );
+
+      // refresh the teams list
+      if (userId) {
+        interface MemberResponse {
+          Team: { team_name: string };
+          team_id: number;
+        }
+        const res = await axios.get(
+          `http://localhost:3000/api/member/find/user/${userId}`
+        );
+        const ts = res.data.map(
+          (m: MemberResponse) => m.Team.team_name || "Unknown Team"
+        );
+        const ids = res.data.map((m: MemberResponse) => m.team_id || 0);
+        setTeams(ts);
+        setTeamNumbers(ids);
+        if (ids.length) setNumericalState(ids[0]);
+        if (ts.length) setTeamHeader(ts[0]);
+      }
+
+      setTeamName("");
+      isClickCreateTeam(false);
+    } catch (err) {
+      console.error("Error creating team:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchTeams = async (userID: number) => {
@@ -510,18 +560,29 @@ export const DashBoard: React.FC = () => {
               {/* Teams Section */}
               <div className="flex flex-col">
                 <h1 className="text-[#4B5D69] text-[12px]">TEAMS</h1>
-                {teams.map((team, index) => (
+                {teams.length > 0 ? (
+                  teams.map((team, index) => (
+                    <Button
+                      key={index}
+                      onClick={() => updateCurrentTeam(index)}
+                      variant="subtle"
+                      color="#667988"
+                      className="flex items-center justify-start"
+                      leftSection={<IconLayoutDashboard size="1rem" />}
+                    >
+                      <span className="text-[14px] font-light">{team}</span>
+                    </Button>
+                  ))
+                ) : (
                   <Button
-                    key={index}
-                    onClick={() => updateCurrentTeam(index)} //bro this just for trial frfr
-                    variant="subtle"
+                    className="text-[12px]"
                     color="#667988"
-                    className="flex items-center justify-start"
-                    leftSection={<IconLayoutDashboard size="1rem" />}
+                    variant="subtle"
+                    onClick={() => isClickCreateTeam(!clickCreateTeam)}
                   >
-                    <span className="text-[14px] font-light">{team}</span>
+                    Create Team +
                   </Button>
-                ))}
+                )}
               </div>
             </div>
             {/* Logout Section */}
@@ -738,6 +799,32 @@ export const DashBoard: React.FC = () => {
           {emptyTask && <FullCard TaskContent={dummyTask} />}
         </div>
       </div>
+      <Modal
+        opened={clickCreateTeam}
+        onClose={() => isClickCreateTeam(false)}
+        title="Create Team"
+        centered
+        size="lg"
+      >
+        <div className="flex flex-col gap-3">
+          <Input
+            placeholder="Team name"
+            value={teamName}
+            onChange={(e) => setTeamName(e.currentTarget.value)}
+          />
+          <Input
+            placeholder="Admin name"
+            value={email}
+            onChange={(e) => setEmail(e.currentTarget.value)}
+          />
+          <div className="flex justify-end gap-2 mt-2">
+            <Button variant="default" onClick={() => isClickCreateTeam(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateTeam}>Create</Button>
+          </div>
+        </div>
+      </Modal>
     </ThemeContext.Provider>
   );
 };

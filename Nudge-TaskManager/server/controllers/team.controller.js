@@ -1,18 +1,45 @@
 const { Team, Member } = require("../models");
 
 const createTeam = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
-    const { team_name, admin_name } = req.body;
+    const { team_name, admin_name, user_id: bodyUserId } = req.body;
 
-    const team = await Team.create({
-      team_name,
-      admin_name,
-    });
+    // Prefer JWT user if you have auth middleware; fall back to body
+    const creatorUserId = req.user?.user_id || bodyUserId;
+    if (!creatorUserId) {
+      await t.rollback();
+      return res.status(400).json({ message: "user_id is required" });
+    }
+    if (!team_name?.trim()) {
+      await t.rollback();
+      return res.status(400).json({ message: "team_name is required" });
+    }
 
-    res.status(201).json({ message: "Team created successfully", team });
+    const team = await Team.create(
+      { team_name: team_name.trim(), admin_name: admin_name || null },
+      { transaction: t }
+    );
+
+    await Member.create(
+      {
+        team_id: team.team_id,
+        user_id: creatorUserId,
+        role: "admin",
+      },
+      { transaction: t }
+    );
+
+    await t.commit();
+    return res
+      .status(201)
+      .json({ message: "Team created successfully", team });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Uh oh, something went wrong!!!", error });
+    await t.rollback();
+    console.error("createTeam error:", error);
+    return res
+      .status(500)
+      .json({ message: "Uh oh, something went wrong!!!", error });
   }
 };
 

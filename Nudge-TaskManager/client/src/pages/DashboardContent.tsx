@@ -10,7 +10,7 @@ import {
 import { IconPlus, IconArrowsSort } from "@tabler/icons-react";
 import StatusBar from "../components/StatusBar";
 import { StatTask } from "../interfaces/interfaces";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import classes from "../StatsRingCard.module.css";
 import { ThemeContext } from "../interfaces/ThemeContext";
 
@@ -24,7 +24,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   const [selectDash, setSelectDash] = useState(false);
 
   // State to track current screen size for responsive design
-  const [screenSize, setScreenSize] = useState("sm");
+  // const [screenSize, setScreenSize] = useState("sm");
 
   // Extract statistics for in-progress and incomplete tasks
   const stats = [
@@ -53,19 +53,19 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   ));
 
   // Handle screen resize and adjust screen size state
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenSize(window.innerWidth > 1536 ? "md" : "sm");
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setScreenSize(window.innerWidth > 1536 ? "md" : "sm");
+  //   };
 
-    window.addEventListener("resize", handleResize);
-    handleResize();
+  //   window.addEventListener("resize", handleResize);
+  //   handleResize();
 
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  //   // Cleanup event listener on component unmount
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
   return (
     <div className="flex p-[24px] border-red-600 h-full max-sm:w-[1000px] w-full text-white overflow-x-auto overflow-y-hidden">
