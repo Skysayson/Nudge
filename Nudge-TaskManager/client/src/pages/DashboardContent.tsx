@@ -19,6 +19,7 @@ import { useState, useContext, useMemo } from "react";
 import classes from "../StatsRingCard.module.css";
 import { ThemeContext } from "../interfaces/ThemeContext";
 import axios from "axios";
+import { API_BASE } from "../lib/api";
 
 // Main Dashboard Page Component
 const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
@@ -87,7 +88,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
     if (!id) return;
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/team/find/members/${id}`
+        `http://${API_BASE}:3000/api/team/find/members/${id}`
       );
       if (Array.isArray(res.data)) {
         // Map to the TeamMember shape used in ThemeContext (id, name)
@@ -137,7 +138,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
     setAddingMember(true);
     try {
       await axios.post(
-        "http://localhost:3000/api/member/create",
+        `http://${API_BASE}:3000/api/member/create`,
         {
           user_id: Number(newMemberId),
           team_id: teamId,

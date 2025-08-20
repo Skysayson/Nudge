@@ -28,6 +28,7 @@ import {
 } from "../interfaces/ThemeContext";
 import FullCard from "../components/FullCard";
 import { useDisclosure } from "@mantine/hooks";
+import { API_BASE } from "../lib/api";
 
 //MARY IMPORTS
 import axios, { AxiosError } from "axios";
@@ -109,16 +110,13 @@ export const DashBoard: React.FC = () => {
 
   const createNotification = async (payload: NotifContent) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/notification/create",
-        {
-          message: payload.message || null,
-          message_type: payload.message_type,
-          task_id: payload.task_id,
-          user_id: payload.user_id,
-          sent_at: payload.sent_at,
-        }
-      );
+      const response = await axios.post(`${API_BASE}/api/notification/create`, {
+        message: payload.message || null,
+        message_type: payload.message_type,
+        task_id: payload.task_id,
+        user_id: payload.user_id,
+        sent_at: payload.sent_at,
+      });
 
       console.log("Notification created successfully:", response.data);
       return response.data; // Return response for further use if needed
@@ -135,7 +133,7 @@ export const DashBoard: React.FC = () => {
   const fetchNotifications = async (userID: number) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/notification/find/user/${userID}`
+        `${API_BASE}/api/notification/find/user/${userID}`
       );
       console.log("Backend response:", response.data);
 
@@ -180,10 +178,9 @@ export const DashBoard: React.FC = () => {
   // Move fetchUserId outside so it can be used elsewhere
   const fetchUserId = async (userEmail: string) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/user/find/email",
-        { email: userEmail }
-      );
+      const response = await axios.post(`${API_BASE}/api/user/find/email`, {
+        email: userEmail,
+      });
       if (response.data && response.data.user_id) {
         setUserId(response.data.user_id);
         console.log("Fetched user_id:", response.data.user_id);
@@ -236,7 +233,7 @@ export const DashBoard: React.FC = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/team/create",
+        `${API_BASE}/api/team/create`,
         {
           team_name: teamName.trim(),
           admin_name: email,
@@ -251,7 +248,7 @@ export const DashBoard: React.FC = () => {
 
       // refetch teams for this user to update UI
       const res = await axios.get(
-        `http://localhost:3000/api/member/find/user/${adminId}`
+        `${API_BASE}/api/member/find/user/${adminId}`
       );
 
       type MemberResponse = { Team: { team_name: string }; team_id: number };
@@ -281,7 +278,7 @@ export const DashBoard: React.FC = () => {
     const fetchTeams = async (userID: number) => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/member/find/user/${userID}`
+          `${API_BASE}/api/member/find/user/${userID}`
         );
         console.log("Backend response:", response.data);
 
@@ -316,7 +313,7 @@ export const DashBoard: React.FC = () => {
     const fetchMembersByTeamId = async (teamId: number) => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/team/find/members/${teamId}`
+          `${API_BASE}/api/team/find/members/${teamId}`
         );
 
         if (response.data && Array.isArray(response.data)) {
@@ -345,7 +342,7 @@ export const DashBoard: React.FC = () => {
     const fetchTasksByTeamId = async (teamId: number) => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/task/find/team/${teamId}`
+          `${API_BASE}/api/task/find/team/${teamId}`
         );
 
         if (Array.isArray(response.data)) {

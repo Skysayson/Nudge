@@ -8,6 +8,7 @@ import "../index.css"; // Import custom styles
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../lib/api.ts"; // Import API_BASE from the new api file
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -57,22 +58,23 @@ const Registration = () => {
   };
 
   const submitDetails = async () => {
-    if (validateDetails()) {
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/api/user/create",
-          regData
+    if (!validateDetails()) return;
+
+    try {
+      const response = await axios.post(
+        `${API_BASE}/api/user/create`,
+        regData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      alert(response.data.message || "Registration successful!");
+      navigate("/");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        alert(
+          error.response?.data?.message || "Uh oh! Something went wrong..."
         );
-        alert(response.data.message || "Registration successful!");
-        navigate("/");
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          alert(
-            error.response?.data?.message || "Uh oh! Something went wrong..."
-          );
-        } else {
-          alert("An unknown error occurred.");
-        }
+      } else {
+        alert("An unknown error occurred.");
       }
     }
   };

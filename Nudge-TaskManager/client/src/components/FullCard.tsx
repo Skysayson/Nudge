@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { TeamMember, ThemeContext } from "../interfaces/ThemeContext";
 import React, { useContext } from "react";
+import { API_BASE } from "../lib/api";
 
 const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const [taskTitle, setTaskTitle] = useState(
@@ -127,13 +128,10 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const createAssignee = async (taskID: number, userID: number) => {
     try {
       // Replace the URL with your actual API endpoint
-      const response = await axios.post(
-        "http://localhost:3000/api/assignee/create",
-        {
-          task_id: taskID,
-          user_id: userID,
-        }
-      );
+      const response = await axios.post(`${API_BASE}/api/assignee/create`, {
+        task_id: taskID,
+        user_id: userID,
+      });
 
       // Success response
       console.log("Assignee created successfully:", response.data);
@@ -219,7 +217,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const fetchAssigneessByTaskId = async (taskId: number) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/assignee/find/task/${taskId}`
+        `${API_BASE}/api/assignee/find/task/${taskId}`
       );
 
       if (response.data && Array.isArray(response.data)) {
@@ -266,9 +264,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
 
   const fetchUsername = async (userID: number): Promise<string> => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/user/find/${userID}`
-      );
+      const response = await axios.get(`${API_BASE}/api/user/find/${userID}`);
       return response.data.username; // Assuming the API returns { username: "JohnDoe" }
     } catch (error) {
       console.error(`Error fetching username for user_id ${userID}:`, error);
@@ -298,7 +294,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const fetchComments = async (taskID: number) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/comment/find/task/${taskID}`
+        `${API_BASE}/api/comment/find/task/${taskID}`
       );
 
       if (response.data) {
@@ -338,14 +334,11 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/comment/create",
-        {
-          content: commentText,
-          task_id: TaskContent.taskID, // Example of passing task ID
-          user_id: myContext?.userId, // Replace with actual user ID from your app
-        }
-      );
+      const response = await axios.post(`${API_BASE}/api/comment/create`, {
+        content: commentText,
+        task_id: TaskContent.taskID, // Example of passing task ID
+        user_id: myContext?.userId, // Replace with actual user ID from your app
+      });
 
       console.log("Comment created successfully:", response.data);
       setCommentText(""); // Clear the input field after success
@@ -394,10 +387,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
         priority: currTask.priority,
       };
 
-      const response = await axios.post(
-        "http://localhost:3000/api/task/create",
-        newTask
-      );
+      const response = await axios.post(`${API_BASE}/api/task/create`, newTask);
       console.log(response);
 
       console.log("Task created successfully:", response.data);
@@ -446,7 +436,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
       };
 
       const { data } = await axios.put(
-        `http://localhost:3000/api/task/update/${taskID}`,
+        `${API_BASE}/api/task/update/${taskID}`,
         taskData
       );
 
@@ -507,7 +497,7 @@ const FullCard = ({ TaskContent }: { TaskContent: TaskContent }) => {
   const deleteTask = async (taskID: number): Promise<void> => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/task/delete/${taskID}`
+        `${API_BASE}/api/task/delete/${taskID}`
       );
       console.log("Task deleted successfully:", response.data);
     } catch (error: unknown) {

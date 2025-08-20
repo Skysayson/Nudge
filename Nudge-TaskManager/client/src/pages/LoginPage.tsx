@@ -7,8 +7,7 @@ import "../index.css"; // Import custom styles
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
-const API_URL = "http://localhost:3000"; // Replace with your actual API URL
+import { API_BASE } from "../lib/api";
 
 // interface User {
 //   id: number;
