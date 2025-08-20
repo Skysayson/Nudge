@@ -1,22 +1,37 @@
-# Node & build
+# Node
 node_modules/
-dist/
-build/
-.vscode/
-.idea/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# env
+# Client / Server build
+/dist
+/build
+/.next
+/.vite
+
+# Monorepo client/server
+/client/node_modules/
+/server/node_modules/
+/client/dist/
+/server/dist/
+
+# Env files (do NOT commit real secrets)
 .env
 .env.local
 .env.*.local
 .env.production
 .env.development
 
-# OS
+# OS / editor
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.log
 
-# logs
-npm-debug.log*
+# Misc
+coverage/
+coverage-final.json
+*.tgz
 yarn-debug.log*
-yarn-error.log*
