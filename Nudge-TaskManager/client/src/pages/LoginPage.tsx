@@ -34,7 +34,7 @@ function LoginPage() {
     console.log("Request payload:", user);
 
     axios
-      .post(`${API_URL}/api/user/login`, user, {
+      .post(`${API_BASE}/api/user/login`, user, {
         headers: {
           "Content-Type": "application/json",
         },
