@@ -39,6 +39,8 @@ export interface ThemeContextType {
   setReloadTasks: Dispatch<SetStateAction<boolean>>;
   sort: string;
   setSort: Dispatch<SetStateAction<string>>;
+  selectDash: boolean;
+  setSelectDash: Dispatch<SetStateAction<boolean>>;
 }
 
 // Create the context

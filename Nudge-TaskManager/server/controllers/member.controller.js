@@ -16,7 +16,7 @@ const addMember = async (req, res) => {
     res.status(201).json({ message: "Member created successfully...", member });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error creating member...", error });
+    res.status(500).json({ message: "Error creating memdddber...", error });
   }
 };
 

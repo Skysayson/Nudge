@@ -9,20 +9,23 @@ import "./index.css";
 import "@mantine/dates/styles.css";
 import Registration from "./pages/Registration";
 import PrivateRoute from "./components/PrivateRoute";
+import { ViewProvider } from "./interfaces/ViewContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <MantineProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/Dashboard"
-            element={<PrivateRoute element={<Dashboard />} />}
-          />
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/Registration" element={<Registration />} />
-        </Routes>
-      </BrowserRouter>
-    </MantineProvider>
+    <ViewProvider>
+      <MantineProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/Dashboard"
+              element={<PrivateRoute element={<Dashboard />} />}
+            />
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/Registration" element={<Registration />} />
+          </Routes>
+        </BrowserRouter>
+      </MantineProvider>
+    </ViewProvider>
   </StrictMode>
 );

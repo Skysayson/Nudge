@@ -1,3 +1,4 @@
+// ...existing code...
 import {
   Button,
   Text,
@@ -6,17 +7,21 @@ import {
   Group,
   useMantineTheme,
   Select,
+  Avatar,
+  Modal,
+  Input,
+  Stack,
 } from "@mantine/core";
 import { IconPlus, IconArrowsSort } from "@tabler/icons-react";
 import StatusBar from "../components/StatusBar";
 import { StatTask } from "../interfaces/interfaces";
-import { useState, useContext } from "react";
+import { useState, useContext, useMemo } from "react";
 import classes from "../StatsRingCard.module.css";
 import { ThemeContext } from "../interfaces/ThemeContext";
+import axios from "axios";
 
 // Main Dashboard Page Component
 const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
-  const myContext = useContext(ThemeContext);
   // Click on sort
   const [clickSort, setClickSort] = useState(false);
 
@@ -26,11 +31,28 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
   // State to track current screen size for responsive design
   // const [screenSize, setScreenSize] = useState("sm");
 
+  const { incompleteCount, inProgressCount, completedCount, total } =
+    useMemo(() => {
+      const incomplete = StatTask?.[0]?.Task?.length ?? 0;
+      const inProgress = StatTask?.[1]?.Task?.length ?? 0;
+      const completed = StatTask?.[2]?.Task?.length ?? 0;
+      return {
+        incompleteCount: incomplete,
+        inProgressCount: inProgress,
+        completedCount: completed,
+        total: incomplete + inProgress + completed,
+      };
+    }, [StatTask]);
+
   // Extract statistics for in-progress and incomplete tasks
-  const stats = [
-    { value: StatTask[1], label: "In Progress" },
-    { value: StatTask[0], label: "Incomplete" },
-  ];
+  const stats = useMemo(
+    () => [
+      { value: completedCount, label: "Completed" },
+      { value: inProgressCount, label: "In Progress" },
+      { value: incompleteCount, label: "Incomplete" },
+    ],
+    [inProgressCount, incompleteCount, completedCount]
+  );
 
   const themeContext = useContext(ThemeContext); // Access theme context for task selection and rendering logic
 
@@ -39,33 +61,114 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
 
   // Calculate completed and total tasks for progress ring
   const completed = StatTask[2].Task.length;
-  const total =
-    StatTask[0].Task.length + StatTask[1].Task.length + StatTask[2].Task.length;
 
   // Generate items for task statistics display
-  const items = stats.map((stat) => (
-    <div key={stat.label}>
-      <Text className={classes.label}>s</Text>
-      <Text size="xs" c="dimmed">
-        {stat.label}
-      </Text>
-    </div>
-  ));
+  const items = useMemo(
+    () =>
+      stats.map((stat) => (
+        <div key={stat.label}>
+          <Text className={classes?.label}>{stat.value}</Text>
+          <Text size="xs" c="dimmed">
+            {stat.label}
+          </Text>
+        </div>
+      )),
+    [stats]
+  );
 
-  // Handle screen resize and adjust screen size state
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     setScreenSize(window.innerWidth > 1536 ? "md" : "sm");
-  //   };
+  // --- Members UI & Add Member ---
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [newMemberId, setNewMemberId] = useState<string>("");
+  const [newMemberName, setNewMemberName] = useState<string>("");
+  const [addingMember, setAddingMember] = useState(false);
 
-  //   window.addEventListener("resize", handleResize);
-  //   handleResize();
+  const fetchMembers = async (teamId?: number) => {
+    const id = teamId ?? themeContext?.numericalState;
+    if (!id) return;
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/team/find/members/${id}`
+      );
+      if (Array.isArray(res.data)) {
+        // Map to the TeamMember shape used in ThemeContext (id, name)
+        interface MemberApiResponse {
+          user_id?: number;
+          username?: string;
+          User?: {
+            user_id?: number;
+            username?: string;
+          };
+        }
+        const mapped = (res.data as MemberApiResponse[])
+          .map((m) => {
+            const id =
+              m.user_id !== undefined
+                ? m.user_id
+                : m.User?.user_id !== undefined
+                ? m.User.user_id
+                : undefined;
+            if (typeof id !== "number") return null;
+            return {
+              id,
+              name: m.username ?? m.User?.username ?? m.username ?? String(id),
+            };
+          })
+          .filter((m): m is { id: number; name: string } => m !== null);
+        themeContext?.setTeamMembers(mapped);
+      } else {
+        themeContext?.setTeamMembers([]);
+      }
+    } catch (err) {
+      console.error("Error fetching members:", err);
+    }
+  };
 
-  //   // Cleanup event listener on component unmount
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, []);
+  const handleAddMember = async () => {
+    const teamId = themeContext?.numericalState;
+    if (!teamId) {
+      alert("Select a team first.");
+      return;
+    }
+    if (!newMemberId.trim() || !newMemberName.trim()) {
+      alert("Provide member id and name.");
+      return;
+    }
+
+    setAddingMember(true);
+    try {
+      await axios.post(
+        "http://localhost:3000/api/member/create",
+        {
+          user_id: Number(newMemberId),
+          team_id: teamId,
+          username: newMemberName.trim(),
+          role: "member",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+        }
+      );
+
+      // refresh members
+      await fetchMembers(teamId);
+      setNewMemberId("");
+      setNewMemberName("");
+      setAddModalOpen(false);
+    } catch (err) {
+      console.error("Error adding member:", err);
+      alert("Failed to add member. Check console for details.");
+    } finally {
+      setAddingMember(false);
+    }
+  };
+
+  // keep members in sync when team changes
+  useMemo(() => {
+    if (themeContext?.numericalState) fetchMembers(themeContext.numericalState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [themeContext?.numericalState]);
 
   return (
     <div className="flex p-[24px] border-red-600 h-full max-sm:w-[1000px] w-full text-white overflow-x-auto overflow-y-hidden">
@@ -74,7 +177,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
         {/* Header Section */}
         <div className="items-center h-max justify-between border-white flex max-sm:w-[970px]">
           {/* Add Task Button */}
-          {myContext?.numericalState != 0 && (
+          {themeContext?.numericalState != 0 && (
             <Button
               leftSection={<IconPlus />}
               variant="subtle"
@@ -91,7 +194,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
 
           {/* Filter and Sort Buttons */}
           <div className="flex mr-[20px] items-center">
-            {myContext?.numericalState != 0 && (
+            {themeContext?.numericalState != 0 && (
               <div className="flex relative">
                 <Button
                   size="sm"
@@ -145,7 +248,7 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
             </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              {myContext?.numericalState != 0 ? (
+              {themeContext?.numericalState != 0 ? (
                 <p className="text-center text-[#B7CDDE] text-xl text-gray font-normal opacity-50">
                   No tasks available for the selected team.
                 </p>
@@ -161,37 +264,15 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
 
       {/* Sidebar Section */}
       <div className="w-max flex flex-col h-full max-lg:hidden">
-        {/* Calendar Component */}
-        {/* <Calendar
-          className="bg-[#33424C] p-4 rounded-md mt-[10px] w-full"
-          size={screenSize === "sm" ? "sm" : "md"}
-          getDayProps={(date) => ({
-            selected: selected.some((s) => dayjs(date).isSame(s, "date")),
-            onClick: () => handleSelect(date),
-          })}
-          styles={{
-            day: {
-              color: "#C9C9C9", // Change default day text color
-            },
-          }}
-        /> */}
-
         {/* Progress Overview Section */}
-        {myContext?.numericalState != 0 && (
+        {themeContext?.numericalState != 0 && (
           <Card p="xl" radius="md" className={`${classes.card}`}>
             <div className={`${classes.inner}`}>
               <div>
                 <Text fz="xl" className={`${classes.label}`}>
-                  Progress Overview
+                  Progress Tracker
                 </Text>
-                <div>
-                  <Text className={classes.lead} mt={30}>
-                    {StatTask[2].Task.length}
-                  </Text>
-                  <Text fz="xs" c="dimmed">
-                    Completed
-                  </Text>
-                </div>
+                <div></div>
                 {/* Task Statistics Items */}
                 <Group className="text-white" mt="lg">
                   {items}
@@ -200,34 +281,109 @@ const DashboardPage = ({ StatTask }: { StatTask: StatTask[] }) => {
 
               {/* Ring Progress Indicator */}
               <div className={classes.ring}>
-                <RingProgress
-                  roundCaps
-                  thickness={6}
-                  size={150}
-                  sections={[
-                    {
-                      value: (completed / total) * 100,
-                      color: theme.primaryColor,
-                    },
-                  ]}
-                  label={
-                    <div>
+                <div className="flex flex-col items-center">
+                  <RingProgress
+                    roundCaps
+                    thickness={6}
+                    size={150}
+                    sections={[
+                      {
+                        value: (completed / total) * 100,
+                        color: theme.primaryColor,
+                      },
+                    ]}
+                    label={
                       <Text ta="center" fz="lg" className={classes.label}>
                         {((completed / total) * 100).toFixed(0)}%
                       </Text>
-                      <Text ta="center" fz="xs" c="dimmed">
-                        Completed
-                      </Text>
-                    </div>
-                  }
-                />
+                    }
+                  />
+                  <Text ta="center" fz="md" c="dimmed" mt="sm">
+                    {Number(((completed / total) * 100).toFixed(0)) === 100
+                      ? "Done for the day! 🎉"
+                      : Number(((completed / total) * 100).toFixed(0)) < 50
+                      ? "Keep going!"
+                      : "Almost There!"}
+                  </Text>
+
+                  {/* NEW: Team Members Section */}
+                </div>
               </div>
             </div>
           </Card>
         )}
+        <div className="w-full mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <Text fz="sm" className="text-[#C9D6DF]">
+              Team Members
+            </Text>
+            <Button
+              size="xs"
+              variant="light"
+              onClick={() => setAddModalOpen(true)}
+            >
+              Add Member
+            </Button>
+          </div>
+
+          <div className="flex flex-col gap-2 max-h-40 overflow-y-auto">
+            {themeContext?.teamMembers &&
+            themeContext.teamMembers.length > 0 ? (
+              themeContext.teamMembers.map((m) => (
+                <div
+                  key={m.id}
+                  className="flex items-center justify-start gap-3 p-2 rounded-md hover:bg-[#122022]"
+                >
+                  <Avatar radius="xl" size={28}>
+                    {m.name ? m.name.charAt(0).toUpperCase() : "?"}
+                  </Avatar>
+                  <div>
+                    <Text fz="sm">{m.name}</Text>
+                    <Text fz="xs" c="dimmed">
+                      ID: {m.id}
+                    </Text>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <Text size="sm" c="dimmed">
+                No members in this team.
+              </Text>
+            )}
+          </div>
+        </div>
       </div>
+
+      <Modal
+        opened={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        title="Add Team Member"
+        centered
+      >
+        <Stack>
+          <Input
+            placeholder="Member user id (numeric)"
+            value={newMemberId}
+            onChange={(e) => setNewMemberId(e.currentTarget.value)}
+          />
+          <Input
+            placeholder="Member name"
+            value={newMemberName}
+            onChange={(e) => setNewMemberName(e.currentTarget.value)}
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="default" onClick={() => setAddModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddMember} loading={addingMember}>
+              Add
+            </Button>
+          </div>
+        </Stack>
+      </Modal>
     </div>
   );
 };
 
 export default DashboardPage;
+// ...existing code...

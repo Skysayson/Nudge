@@ -40,7 +40,6 @@ const TaskCard = ({ TaskStat }: { TaskStat: StatTask }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       {/* Container for the task cards */}
-
       {TaskStat.Task.map((task, index) => (
         <Card
           key={task.title} // Unique key for each card

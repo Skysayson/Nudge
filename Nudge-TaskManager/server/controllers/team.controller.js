@@ -1,89 +1,79 @@
-const { Team, Member } = require("../models");
+const { Team, Member, User, sequelize } = require("../models"); // ensure sequelize is imported
+// If your models/index.js exports differently, adjust the require accordingly.
 
 const createTeam = async (req, res) => {
-  const t = await sequelize.transaction();
+  const { team_name, admin_name, user_id } = req.body;
+
+  if (!team_name || !user_id) {
+    return res.status(400).json({ error: "team_name and user_id are required" });
+  }
+
+  let t;
   try {
-    const { team_name, admin_name, user_id: bodyUserId } = req.body;
+    t = await sequelize.transaction();
 
-    // Prefer JWT user if you have auth middleware; fall back to body
-    const creatorUserId = req.user?.user_id || bodyUserId;
-    if (!creatorUserId) {
-      await t.rollback();
-      return res.status(400).json({ message: "user_id is required" });
-    }
-    if (!team_name?.trim()) {
-      await t.rollback();
-      return res.status(400).json({ message: "team_name is required" });
-    }
-
-    const team = await Team.create(
-      { team_name: team_name.trim(), admin_name: admin_name || null },
+    const newTeam = await Team.create(
+      { team_name, admin_name },
       { transaction: t }
     );
 
+    // ensure we provide a username for the Member (Member.username is notNull)
+    const user = await User.findOne({ where: { user_id } , transaction: t });
+    const memberUsername = (user && user.username) ? user.username : (admin_name || "Unknown");
+
     await Member.create(
       {
-        team_id: team.team_id,
-        user_id: creatorUserId,
+        user_id: user_id,
+        team_id: newTeam.team_id,
+        username: memberUsername,
         role: "admin",
       },
       { transaction: t }
     );
 
     await t.commit();
-    return res
-      .status(201)
-      .json({ message: "Team created successfully", team });
-  } catch (error) {
-    await t.rollback();
-    console.error("createTeam error:", error);
-    return res
-      .status(500)
-      .json({ message: "Uh oh, something went wrong!!!", error });
+
+    return res.status(201).json({ message: "Team created", team: newTeam });
+  } catch (err) {
+    if (t) await t.rollback();
+    console.error("createTeam error:", err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const getAllTeams = async (req, res) => {
   try {
     const teams = await Team.findAll();
-    res.status(200).json(teams);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Uh oh, something went wrong!!!", error });
+    res.json(teams);
+  } catch (err) {
+    console.error("getAllTeams error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const getTeamById = async (req, res) => {
+  const { team_id } = req.params;
   try {
-    const { team_id } = req.params;
     const team = await Team.findOne({ where: { team_id } });
-
-    if (!team) {
-      return res.status(404).json({ message: "Team DNE" });
-    }
-
-    res.status(200).json(team);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Uh oh, something went wrong!!!", error });
+    if (!team) return res.status(404).json({ error: "Team not found" });
+    res.json(team);
+  } catch (err) {
+    console.error("getTeamById error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const getMemberByTeamId = async (req, res) => {
+  const { team_id } = req.params;
   try {
-    const { team_id } = req.params;
-    const team = await Member.findAll({ where: { team_id } });
-
-    if (!team || team.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No members found for this team." });
-    }
-
-    res.status(200).json(team);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Uh oh, something went wrong!!!", error });
+    const members = await Member.findAll({
+      where: { team_id },
+      include: [{ model: User, attributes: ["user_id", "username", "email"] }],
+    });
+    res.json(members);
+  } catch (err) {
+    console.error("getMemberByTeamId error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

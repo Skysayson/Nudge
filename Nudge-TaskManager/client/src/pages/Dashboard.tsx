@@ -177,6 +177,27 @@ export const DashBoard: React.FC = () => {
     }
   }, [reloadNotif]);
 
+  // Move fetchUserId outside so it can be used elsewhere
+  const fetchUserId = async (userEmail: string) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/user/find/email",
+        { email: userEmail }
+      );
+      if (response.data && response.data.user_id) {
+        setUserId(response.data.user_id);
+        console.log("Fetched user_id:", response.data.user_id);
+        return response.data.user_id;
+      } else {
+        console.warn("No user_id found for the provided email.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching user_id from backend:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const decodeToken = () => {
       const token = localStorage.getItem("jwtToken");
@@ -193,23 +214,6 @@ export const DashBoard: React.FC = () => {
       }
     };
 
-    const fetchUserId = async (userEmail: string) => {
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/api/user/find/email",
-          { email: userEmail }
-        );
-        if (response.data && response.data.user_id) {
-          setUserId(response.data.user_id);
-          console.log("Fetched user_id:", response.data.user_id);
-        } else {
-          console.warn("No user_id found for the provided email.");
-        }
-      } catch (error) {
-        console.error("Error fetching user_id from backend:", error);
-      }
-    };
-
     decodeToken();
 
     if (email) {
@@ -218,13 +222,25 @@ export const DashBoard: React.FC = () => {
   }, [email]);
 
   const handleCreateTeam = async () => {
-    if (!teamName.trim()) return;
+    if (!teamName.trim()) {
+      alert("Please enter a team name.");
+      return;
+    }
+
+    // Prefer the current userId if already set; otherwise try to resolve from email
+    const adminId = userId ?? (await fetchUserId(email));
+    if (!adminId) {
+      alert("Unable to identify the current user. Please log in again.");
+      return;
+    }
+
     try {
       await axios.post(
         "http://localhost:3000/api/team/create",
         {
           team_name: teamName.trim(),
           admin_name: email,
+          user_id: adminId, // backend expects creator's user id
         },
         {
           headers: {
@@ -233,29 +249,31 @@ export const DashBoard: React.FC = () => {
         }
       );
 
-      // refresh the teams list
-      if (userId) {
-        interface MemberResponse {
-          Team: { team_name: string };
-          team_id: number;
-        }
-        const res = await axios.get(
-          `http://localhost:3000/api/member/find/user/${userId}`
-        );
-        const ts = res.data.map(
-          (m: MemberResponse) => m.Team.team_name || "Unknown Team"
-        );
-        const ids = res.data.map((m: MemberResponse) => m.team_id || 0);
-        setTeams(ts);
-        setTeamNumbers(ids);
-        if (ids.length) setNumericalState(ids[0]);
-        if (ts.length) setTeamHeader(ts[0]);
-      }
+      // refetch teams for this user to update UI
+      const res = await axios.get(
+        `http://localhost:3000/api/member/find/user/${adminId}`
+      );
+
+      type MemberResponse = { Team: { team_name: string }; team_id: number };
+      const ts = Array.isArray(res.data)
+        ? res.data.map(
+            (m: MemberResponse) => m.Team.team_name || "Unknown Team"
+          )
+        : [];
+      const ids = Array.isArray(res.data)
+        ? res.data.map((m: MemberResponse) => m.team_id || 0)
+        : [];
+
+      setTeams(ts);
+      setTeamNumbers(ids);
+      if (ids.length) setNumericalState(ids[0]);
+      if (ts.length) setTeamHeader(ts[0]);
 
       setTeamName("");
       isClickCreateTeam(false);
     } catch (err) {
       console.error("Error creating team:", err);
+      alert("Failed to create team. Check console for details.");
     }
   };
 
@@ -485,15 +503,6 @@ export const DashBoard: React.FC = () => {
     { status: "Complete", Task: completeTasks },
   ];
 
-  // Toggles the visibility of the dashboard and ensures full task view is hidden
-  const toggleDashboard = () => {
-    if (selectDash === false) {
-      setSelectDash(true);
-    }
-    setRenderFullTask(false);
-    setEmptyTask(false);
-  };
-
   console.log(`EmptyTask in Dashboard` + emptyTask);
 
   return (
@@ -521,6 +530,8 @@ export const DashBoard: React.FC = () => {
         setReloadNotif,
         commentsLength,
         setCommentsLength,
+        selectDash,
+        setSelectDash,
       }}
     >
       <div className="flex max-sm:w-[1000px] max-sm:h-screen w-screen h-screen border-blue-600 overflow-y-hidden">
@@ -545,44 +556,29 @@ export const DashBoard: React.FC = () => {
                 }}
                 className="text-[#667988] mb-[29px]"
               /> */}
-              <div className="flex flex-col mb-[29px]">
-                <h1 className="text-[#4B5D69] text-[12px]">MAIN MENU</h1>
-                <Button
-                  variant="subtle"
-                  color="#667988"
-                  leftSection={<IconLayoutDashboard size="1rem" />}
-                  className="flex items-center justify-start font-light"
-                  onClick={toggleDashboard}
-                >
-                  Dashboard
-                </Button>
-              </div>
-              {/* Teams Section */}
               <div className="flex flex-col">
                 <h1 className="text-[#4B5D69] text-[12px]">TEAMS</h1>
-                {teams.length > 0 ? (
-                  teams.map((team, index) => (
-                    <Button
-                      key={index}
-                      onClick={() => updateCurrentTeam(index)}
-                      variant="subtle"
-                      color="#667988"
-                      className="flex items-center justify-start"
-                      leftSection={<IconLayoutDashboard size="1rem" />}
-                    >
-                      <span className="text-[14px] font-light">{team}</span>
-                    </Button>
-                  ))
-                ) : (
+
+                {teams.map((team, index) => (
                   <Button
-                    className="text-[12px]"
-                    color="#667988"
+                    key={index}
+                    onClick={() => updateCurrentTeam(index)}
                     variant="subtle"
-                    onClick={() => isClickCreateTeam(!clickCreateTeam)}
+                    color="#667988"
+                    className="flex items-center justify-start"
+                    leftSection={<IconLayoutDashboard size="1rem" />}
                   >
-                    Create Team +
+                    <span className="text-[14px] font-light">{team}</span>
                   </Button>
-                )}
+                ))}
+                <Button
+                  className="text-[12px]"
+                  color="#667988"
+                  variant="subtle"
+                  onClick={() => isClickCreateTeam(!clickCreateTeam)}
+                >
+                  Create Team +
+                </Button>
               </div>
             </div>
             {/* Logout Section */}
@@ -637,23 +633,14 @@ export const DashBoard: React.FC = () => {
               />
               <div className="flex flex-col mb-[29px]">
                 <h1 className="text-[#4B5D69] text-[12px]">MAIN MENU</h1>
-                <Button
-                  variant="subtle"
-                  color="#667988"
-                  leftSection={<IconLayoutDashboard size="1rem" />}
-                  className="flex items-center justify-start font-light"
-                  onClick={toggleDashboard}
-                >
-                  Dashboard
-                </Button>
               </div>
               {/* Teams Section */}
               <div className="flex flex-col">
-                <h1 className="text-[#4B5D69] text-[12px]">TEAMS</h1>
+                <h1 className="text-[#4B5D69] text-[12px]">TEAMS</h1>s
                 {teams.map((team, index) => (
                   <Button
                     key={index}
-                    onClick={() => updateCurrentTeam(index)} //bro this just for trial frfr
+                    onClick={() => updateCurrentTeam(index)}
                     variant="subtle"
                     color="#667988"
                     className="flex items-center justify-start"
